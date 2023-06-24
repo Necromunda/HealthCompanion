@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.companion.health_companion">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="health_companion"
         android:name="${applicationName}"
