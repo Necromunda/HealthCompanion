@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>323774713076-0jm3m0iem2hbiv78jmigp21a50n1vcl5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.323774713076-0jm3m0iem2hbiv78jmigp21a50n1vcl5</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC5aZydv5jcL1-lWnoGTGNg8Pg01Qyu3xc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>323774713076</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.companion.healthCompanion</string>
+	<key>PROJECT_ID</key>
+	<string>healthcompanion-7fa3a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>healthcompanion-7fa3a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:323774713076:ios:24cb2bac5fe6fe49a5e2a1</string>
+</dict>
+</plist>
