@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:health_companion/screens/signin_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 
@@ -7,64 +10,66 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  MyApp({super.key});
+  final User? _firebaseUser = FirebaseAuth.instance.currentUser;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  static const String _username = "testiukko";
+  static const String _email = "testi@gmail.com";
+  static const String _password = "testi123";
+
+  void _test() async {
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: _email, password: _password)
+        .then(
+      (responseData) async {
+        User? user = responseData.user;
+        await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
+          'username': _username,
+          'email': _email,
+          'joinDate': user?.metadata.creationTime,
+        });
+      },
+    ).onError(
+      (error, stackTrace) {
+        print(error);
+        print(stackTrace);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      // theme: ThemeData.dark(),
+      darkTheme: ThemeData.dark(),
+      home: widget._firebaseUser != null
+          ? SignIn()
+          : FutureBuilder(
+        // future: AppUser.createUserWithUid(widget._firebaseUser!.uid),
+        future: null,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // return PageContainer(
+            //   user: snapshot.data!,
+            //   changeTheme: changeTheme,
+            // );
+            return const Center(child: Text("User logged in, enter main app"),);
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }
