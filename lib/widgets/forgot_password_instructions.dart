@@ -1,0 +1,34 @@
+import 'package:flutter/material.dart';
+
+class ForgotPasswordInstructions extends StatelessWidget {
+  final String email;
+
+  const ForgotPasswordInstructions({Key? key, required this.email})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 25.0),
+          child: Icon(
+            Icons.send,
+            size: 32,
+          ),
+        ),
+        const Text(
+          "Instructions on how to change your password have been sent to",
+          style: TextStyle(fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          email,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        )
+      ],
+    );
+  }
+}

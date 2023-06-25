@@ -1,5 +1,7 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:health_companion/screens/forgot_password_screen.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -11,20 +13,25 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isEmailValid = false;
 
   void _loginButtonHandler() {
     print(_emailController.text);
     print(_passwordController.text.isEmpty);
   }
 
-  void _forgotPasswordButtonHandler() {}
+  void _forgotPasswordButtonHandler() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ForgotPassword(),
+        ));
+  }
 
   void _createAccountButtonHandler() {}
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       // appBar: AppBar(),
@@ -44,14 +51,22 @@ class _SignInState extends State<SignIn> {
                 child: TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: (_) => setState(() {}),
+                  onChanged: (value) {
+                    setState(() {
+                      _isEmailValid =
+                          EmailValidator.validate(value) ? true : false;
+                    });
+                  },
                   decoration: InputDecoration(
-                    // labelText: "Email",
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.circular(15.0),
+                    // labelText: _isEmailValid ? null : "Invalid email",
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                      // borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: const Icon(Icons.email, color: Colors.grey,),
+                    prefixIcon: const Icon(
+                      Icons.email,
+                      color: Colors.grey,
+                    ),
                     hintText: "Email",
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.0),
@@ -68,27 +83,28 @@ class _SignInState extends State<SignIn> {
                   obscureText: true,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.circular(15.0),
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                      // borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: const Icon(Icons.password, color: Colors.grey,),
+                    prefixIcon: const Icon(
+                      Icons.password,
+                      color: Colors.grey,
+                    ),
                     // label: Text("Password"),
                     hintText: "Password",
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: const BorderSide(
-                            width: 1, style: BorderStyle.none)),
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide:
+                          const BorderSide(width: 1, style: BorderStyle.none),
+                    ),
                   ),
                 ),
               ),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: (_emailController.text.isEmpty ||
-                          _passwordController.text.isEmpty)
-                      ? null
-                      : _loginButtonHandler,
+                  onPressed: _isEmailValid ? _loginButtonHandler : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.green,
                     shape: RoundedRectangleBorder(

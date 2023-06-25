@@ -1,0 +1,114 @@
+import 'package:email_validator/email_validator.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../widgets/forgot_password_instructions.dart';
+
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
+
+  @override
+  State<ForgotPassword> createState() => _ForgotPasswordState();
+}
+
+class _ForgotPasswordState extends State<ForgotPassword> {
+  final TextEditingController _emailController = TextEditingController();
+  bool _didPressButton = false;
+  bool _isEmailValid = false;
+
+  void _forgotPasswordButtonHandler() {
+    setState(() {
+      _didPressButton = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.close),
+            color: Colors.black,
+          )),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 125, left: 30, right: 30),
+          child: _didPressButton
+              ? ForgotPasswordInstructions(email: _emailController.text)
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Text(
+                        "Forgot your password?",
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20.0),
+                      child: Text(
+                        "Please enter your email and we will send you instructions on how to change it.",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: TextField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) {
+                          setState(() {
+                            _isEmailValid =
+                                EmailValidator.validate(value) ? true : false;
+                          });
+                        },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.singleLineFormatter,
+                        ],
+                        decoration: InputDecoration(
+                          // labelText: "Email",
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 2.0),
+                            // borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.email,
+                            color: Colors.grey,
+                          ),
+                          hintText: "Email",
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: const BorderSide(
+                                  width: 1, style: BorderStyle.none)),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed:
+                            _isEmailValid ? _forgotPasswordButtonHandler : null,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(1.0),
+                            // side: BorderSide(color: Colors.red)
+                          ),
+                        ),
+                        child: const Text("Send"),
+                      ),
+                    ),
+                    // const Expanded(flex: 2, child: SizedBox())
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
