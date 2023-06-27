@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:health_companion/screens/forgot_password_screen.dart';
+import 'package:health_companion/screens/signup_screen.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -22,13 +23,21 @@ class _SignInState extends State<SignIn> {
 
   void _forgotPasswordButtonHandler() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ForgotPassword(),
-        ));
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ForgotPassword(),
+      ),
+    );
   }
 
-  void _createAccountButtonHandler() {}
+  void _createAccountButtonHandler() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SignUp(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
