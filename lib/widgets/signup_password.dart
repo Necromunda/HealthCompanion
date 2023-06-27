@@ -59,6 +59,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
             controller: _passwordController,
             keyboardType: TextInputType.visiblePassword,
             obscureText: true,
+            maxLength: 64,
             onChanged: (value) {
               setState(() {
                 if (_passwordRegExp.hasMatch(value)) {
