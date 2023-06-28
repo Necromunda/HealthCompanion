@@ -1,8 +1,12 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/screens/forgot_password_screen.dart';
 import 'package:health_companion/screens/signup_screen.dart';
+
+import '../widgets/pagecontainer.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -16,9 +20,32 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isEmailValid = false;
 
-  void _loginButtonHandler() {
-    print(_emailController.text);
-    print(_passwordController.text.isEmpty);
+  void _login(String email, String password) {
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+        email: _emailController.text, password: _passwordController.text)
+        .then(
+          (responseData) async {
+        print("VALUE : $responseData");
+        // var user = await AppUser.createUserWithUid(responseData.user!.uid);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PageContainer(
+              user: AppUser.fromJson({}),
+            ),
+          ),
+        );
+      },
+    ).catchError(
+          (error) {
+        print(error);
+      },
+    );
+  }
+
+  void _loginButtonHandler() async {
+    _login(_emailController.text, _passwordController.text);
   }
 
   void _forgotPasswordButtonHandler() {
@@ -30,13 +57,15 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void _createAccountButtonHandler() {
-    Navigator.push(
+  void _createAccountButtonHandler() async {
+    AppUser? appUser = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SignUp(),
       ),
     );
+    print("here");
+    print(appUser);
   }
 
   @override

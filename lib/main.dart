@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_companion/screens/signin_screen.dart';
+import 'package:health_companion/widgets/pagecontainer.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+
+import 'models/appuser_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,11 +63,10 @@ class _MyAppState extends State<MyApp> {
         future: null,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            // return PageContainer(
-            //   user: snapshot.data!,
-            //   changeTheme: changeTheme,
-            // );
-            return const Center(child: Text("User logged in, enter main app"),);
+            return PageContainer(
+              // user: snapshot.data!
+              user: AppUser.fromJson({})
+            );
           }
           return const Center(
             child: CircularProgressIndicator(),

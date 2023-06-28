@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:health_companion/models/appuser_model.dart';
+import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/signup_email.dart';
 import 'package:health_companion/widgets/signup_password.dart';
 import 'package:health_companion/widgets/signup_username.dart';
@@ -45,6 +47,12 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  String? _getUsername() => _username;
+
+  String? _getEmail() => _email;
+
+  String? _getPassword() => _password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +83,9 @@ class _SignUpState extends State<SignUp> {
             pageIndex: 2,
             inputCallback: _setPasswordCallback,
             switchPageCallback: _switchPage,
+            getUsernameCallback: _getUsername,
+            getEmailCallback: _getEmail,
+            getPasswordCallback: _getPassword,
           ),
         ],
         onPageChanged: (index) {

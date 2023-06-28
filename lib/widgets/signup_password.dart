@@ -1,15 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/models/appuser_model.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 class SignUpPassword extends StatefulWidget {
   final int pageIndex;
   final Function inputCallback;
   final Function switchPageCallback;
+  final Function getUsernameCallback;
+  final Function getEmailCallback;
+  final Function getPasswordCallback;
 
   const SignUpPassword({
     Key? key,
     required this.pageIndex,
     required this.inputCallback,
     required this.switchPageCallback,
+    required this.getUsernameCallback,
+    required this.getEmailCallback,
+    required this.getPasswordCallback,
   }) : super(key: key);
 
   @override
@@ -20,11 +29,14 @@ class _SignUpPasswordState extends State<SignUpPassword>
     with AutomaticKeepAliveClientMixin<SignUpPassword> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordValid = false;
-  RegExp _passwordRegExp = RegExp(
+  final RegExp _passwordRegExp = RegExp(
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
   late final _pageIndex = widget.pageIndex;
   late final _inputCallback = widget.inputCallback;
   late final _switchPageCallback = widget.switchPageCallback;
+  late final _getUsernameCallback = widget.getUsernameCallback;
+  late final _getEmailCallback = widget.getEmailCallback;
+  late final _getPasswordCallback = widget.getPasswordCallback;
 
   @override
   bool get wantKeepAlive => true;
@@ -39,6 +51,57 @@ class _SignUpPasswordState extends State<SignUpPassword>
   @override
   void didUpdateWidget(covariant SignUpPassword oldWidget) {
     super.didUpdateWidget(oldWidget);
+  }
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title, textAlign: TextAlign.center,),
+        content: Text(message, textAlign: TextAlign.center,),
+        actions: <Widget>[
+          FilledButton(
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+            },
+            child: const Text("Login"),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _createUser() {
+    FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _getEmailCallback()!, password: _getPasswordCallback()!)
+        .then(
+      (responseData) async {
+        FirebaseService.createUserOnSignup(responseData.user!,
+                _getEmailCallback()!, _getPasswordCallback()!)
+            .then((appUser) {
+          FocusScope.of(context).unfocus();
+          Navigator.of(context).pop(appUser);
+        });
+      },
+    ).onError(
+      (error, stackTrace) {
+        if (error is FirebaseAuthException) {
+          if (error.code == 'email-already-in-use') {
+            showAlertDialog(
+                context,
+                "There is already an account with this email address",
+                "${_getEmailCallback()} is already in use. Login to continue using HealthCompanion.");
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -135,8 +198,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
                     IconButton(
                       onPressed: _isPasswordValid
                           ? () {
-                              FocusScope.of(context).unfocus();
-                              Navigator.of(context).pop();
+                              _createUser();
                             }
                           : null,
                       icon: Icon(
