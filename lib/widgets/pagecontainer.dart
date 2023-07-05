@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:health_companion/screens/components_screen.dart';
+import 'package:health_companion/screens/overview_screen.dart';
+import 'package:health_companion/screens/profile_screen.dart';
+import 'package:health_companion/screens/search_screen.dart';
+import 'package:health_companion/screens/settings_screen.dart';
 
 import '../models/appuser_model.dart';
 
@@ -62,18 +67,24 @@ class _PageContainerState extends State<PageContainer> {
         backgroundColor: Colors.deepPurple.shade400,
         onTap: _onItemTapped,
       ),
-      body: Padding(padding: const EdgeInsets.only(top: 20.0), child: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          Text(_user.email!),
-        ],
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 30.0),
+        child: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            Settings(),
+            Search(),
+            Overview(),
+            Components(),
+            Profile()
+          ],
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
