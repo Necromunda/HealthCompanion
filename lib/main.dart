@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:health_companion/screens/signin_screen.dart';
+import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/pagecontainer.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
@@ -53,19 +54,19 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
       // theme: ThemeData.dark(),
       darkTheme: ThemeData.dark(),
-      home: widget._firebaseUser != null
+      home: widget._firebaseUser == null
           ? const SignIn()
           : FutureBuilder(
-        // future: AppUser.createUserWithUid(widget._firebaseUser!.uid),
-        future: null,
+        future: FirebaseService.createUser(widget._firebaseUser!.uid),
+        // future: null,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return PageContainer(
-              // user: snapshot.data!
-              user: AppUser.fromJson({})
+              user: snapshot.data!
+              // user: AppUser.fromJson({})
             );
           }
           return const Center(

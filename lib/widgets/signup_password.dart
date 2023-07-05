@@ -57,8 +57,14 @@ class _SignUpPasswordState extends State<SignUpPassword>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title, textAlign: TextAlign.center,),
-        content: Text(message, textAlign: TextAlign.center,),
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
           FilledButton(
             onPressed: () {
@@ -84,10 +90,13 @@ class _SignUpPasswordState extends State<SignUpPassword>
         .then(
       (responseData) async {
         FirebaseService.createUserOnSignup(responseData.user!,
-                _getEmailCallback()!, _getPasswordCallback()!)
-            .then((appUser) {
+                _getUsernameCallback()!, _getEmailCallback()!)
+            .then((_) {
           FocusScope.of(context).unfocus();
-          Navigator.of(context).pop(appUser);
+          Navigator.of(context).pop({
+            'email': _getEmailCallback(),
+            'password': _getPasswordCallback()
+          });
         });
       },
     ).onError(

@@ -13,7 +13,7 @@ class PageContainer extends StatefulWidget {
 
 class _PageContainerState extends State<PageContainer> {
   final PageController _pageController = PageController(initialPage: 2);
-  late final AppUser user = widget.user;
+  late final AppUser _user = widget.user;
   int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
@@ -31,6 +31,7 @@ class _PageContainerState extends State<PageContainer> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             label: "Settings",
@@ -45,8 +46,8 @@ class _PageContainerState extends State<PageContainer> {
             icon: Icon(Icons.menu),
           ),
           BottomNavigationBarItem(
-            label: "Components",
-            icon: Icon(Icons.add),
+            label: "Food",
+            icon: Icon(Icons.emoji_food_beverage),
           ),
           BottomNavigationBarItem(
             label: "Profile",
@@ -54,18 +55,25 @@ class _PageContainerState extends State<PageContainer> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFFE0C3FC),
+        // selectedItemColor: const Color(0xFFE0C3FC),
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.white,
+        // unselectedLabelStyle: TextStyle(color: Colors.black),
+        backgroundColor: Colors.deepPurple.shade400,
         onTap: _onItemTapped,
       ),
-      body: PageView(
+      body: Padding(padding: const EdgeInsets.only(top: 20.0), child: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: <Widget>[],
+        children: <Widget>[
+          Text(_user.email!),
+        ],
         onPageChanged: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
+      ),
       ),
     );
   }

@@ -10,10 +10,10 @@ class AppUser {
   });
 
   AppUser.fromJson(Map<String, dynamic> json) {
-    uid = null;
-    username = null;
-    email = null;
-    joinDate = null;
+    uid = json['uid'];
+    username = json['username'];
+    email = json['email'];
+    joinDate = json['joinDate'].toDate();
   }
 
   Map<String, dynamic> toJson() => {

@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/screens/forgot_password_screen.dart';
 import 'package:health_companion/screens/signup_screen.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 import '../widgets/pagecontainer.dart';
 
@@ -19,26 +20,54 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isEmailValid = false;
+  bool _isPasswordValid = false;
+  final RegExp _passwordRegExp = RegExp(
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _login(String email, String password) {
     FirebaseAuth.instance
         .signInWithEmailAndPassword(
-        email: _emailController.text, password: _passwordController.text)
+            email: email, password: password)
         .then(
-          (responseData) async {
+      (responseData) {
         print("VALUE : $responseData");
-        // var user = await AppUser.createUserWithUid(responseData.user!.uid);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PageContainer(
-              user: AppUser.fromJson({}),
+        FirebaseService.createUser(responseData.user!.uid).then(
+          (appUser) => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PageContainer(
+                user: appUser ?? AppUser(),
+              ),
             ),
           ),
         );
       },
     ).catchError(
-          (error) {
+      (error) {
         print(error);
       },
     );
@@ -58,14 +87,28 @@ class _SignInState extends State<SignIn> {
   }
 
   void _createAccountButtonHandler() async {
-    AppUser? appUser = await Navigator.push(
+    _clearInput();
+
+    Map<String, dynamic>? obj = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SignUp(),
       ),
     );
-    print("here");
-    print(appUser);
+    print(obj);
+    if (obj != null) {
+      _login(obj['email'], obj['password']);
+    }
+  }
+
+  void _clearInput() {
+    setState(() {
+      _emailController.clear();
+      _passwordController.clear();
+      _isEmailValid = false;
+      _isPasswordValid = false;
+    });
+    // Focus.of(context).unfocus();
   }
 
   @override
@@ -89,27 +132,28 @@ class _SignInState extends State<SignIn> {
                 child: TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) {
-                    setState(() {
-                      _isEmailValid =
-                          EmailValidator.validate(value) ? true : false;
-                    });
-                  },
+                  onChanged: (value) => setState(() {
+                    _isEmailValid =
+                        EmailValidator.validate(value) ? true : false;
+                  }),
                   decoration: InputDecoration(
                     // labelText: _isEmailValid ? null : "Invalid email",
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                      // borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    prefixIcon: const Icon(
+                    // focusedBorder: const OutlineInputBorder(
+                    //   borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    //   // borderRadius: BorderRadius.circular(15.0),
+                    // ),
+                    prefixIcon: Icon(
                       Icons.email,
-                      color: Colors.grey,
+                      color: _isEmailValid ? Colors.green : Colors.red,
                     ),
                     hintText: "Email",
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: const BorderSide(
-                            width: 1, style: BorderStyle.none)),
+                      borderRadius: BorderRadius.circular(5.0),
+                      borderSide: const BorderSide(
+                          width: 3,
+                          style: BorderStyle.solid,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
               ),
@@ -119,15 +163,21 @@ class _SignInState extends State<SignIn> {
                   controller: _passwordController,
                   keyboardType: TextInputType.visiblePassword,
                   obscureText: true,
-                  onChanged: (_) => setState(() {}),
+                  onChanged: (value) => setState(() {
+                    if (_passwordRegExp.hasMatch(value)) {
+                      _isPasswordValid = true;
+                    } else {
+                      _isPasswordValid = false;
+                    }
+                  }),
                   decoration: InputDecoration(
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey, width: 2.0),
                       // borderRadius: BorderRadius.circular(15.0),
                     ),
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.password,
-                      color: Colors.grey,
+                      color: _isPasswordValid ? Colors.green : Colors.red,
                     ),
                     // label: Text("Password"),
                     hintText: "Password",
@@ -142,9 +192,10 @@ class _SignInState extends State<SignIn> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  onPressed: _isEmailValid ? _loginButtonHandler : null,
+                  // onPressed: _isEmailValid ? _loginButtonHandler : null,
+                  onPressed: _loginButtonHandler,
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Colors.deepPurple.shade400,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1.0),
                       // side: BorderSide(color: Colors.red)
@@ -157,14 +208,14 @@ class _SignInState extends State<SignIn> {
                 onPressed: _forgotPasswordButtonHandler,
                 child: const Text(
                   "Forgot password?",
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
               TextButton(
                 onPressed: _createAccountButtonHandler,
                 child: const Text(
                   "Create account",
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
             ],
