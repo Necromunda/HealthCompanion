@@ -1,3 +1,5 @@
+import 'package:health_companion/models/component_model.dart';
+
 class FineliModel {
   int? id;
   Type? type;
@@ -123,6 +125,26 @@ class FineliModel {
     data['sugar'] = sugar;
     data['fat'] = fat;
     return data;
+  }
+
+  Component toComponent() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name?.fi;
+    data['description'] = type?.description?.fi;
+    data['subComponents'] = null;
+    data['salt'] = salt;
+    data['energy'] = energy;
+    data['energyKcal'] = energyKcal;
+    data['protein'] = protein;
+    data['carbohydrate'] = carbohydrate;
+    data['alcohol'] = alcohol;
+    data['organicAcids'] = organicAcids;
+    data['sugarAlcohol'] = sugarAlcohol;
+    data['saturatedFat'] = saturatedFat;
+    data['fiber'] = fiber;
+    data['sugar'] = sugar;
+    data['fat'] = fat;
+    return Component.fromJson(data);
   }
 }
 
