@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/screens/signin_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/pagecontainer.dart';
@@ -69,9 +70,7 @@ class _MyAppState extends State<MyApp> {
               // user: AppUser.fromJson({})
             );
           }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const LoadingScreen();
         },
       ),
     );
