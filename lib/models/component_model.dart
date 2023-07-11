@@ -1,19 +1,18 @@
 class Component {
-  String? name;
-  String? description;
+  String? name, description;
   List<Component>? subComponents;
-  double? salt;
-  double? energy;
-  double? energyKcal;
-  double? protein;
-  double? carbohydrate;
-  int? alcohol;
-  double? organicAcids;
-  int? sugarAlcohol;
-  double? saturatedFat;
-  double? fiber;
-  double? sugar;
-  double? fat;
+  double? salt,
+      energy,
+      energyKcal,
+      protein,
+      carbohydrate,
+      alcohol,
+      organicAcids,
+      sugarAlcohol,
+      saturatedFat,
+      fiber,
+      sugar,
+      fat;
 
   Component({
     this.name,
@@ -42,18 +41,18 @@ class Component {
         subComponents!.add(Component.fromJson(v));
       });
     }
-    salt = json['salt'];
-    energy = json['energy'];
-    energyKcal = json['energyKcal'];
-    protein = json['protein'];
-    carbohydrate = json['carbohydrate'];
-    alcohol = json['alcohol'];
-    organicAcids = json['organicAcids'];
-    sugarAlcohol = json['sugarAlcohol'];
-    saturatedFat = json['saturatedFat'];
-    fiber = json['fiber'];
-    sugar = json['sugar'];
-    fat = json['fat'];
+    salt = json['salt'].toDouble();
+    energy = json['energy'].toDouble();
+    energyKcal = json['energyKcal'].toDouble();
+    protein = json['protein'].toDouble();
+    carbohydrate = json['carbohydrate'].toDouble();
+    alcohol = json['alcohol'].toDouble();
+    organicAcids = json['organicAcids'].toDouble();
+    sugarAlcohol = json['sugarAlcohol'].toDouble();
+    saturatedFat = json['saturatedFat'].toDouble();
+    fiber = json['fiber'].toDouble();
+    sugar = json['sugar'].toDouble();
+    fat = json['fat'].toDouble();
   }
 
   Map<String, dynamic> toJson() {

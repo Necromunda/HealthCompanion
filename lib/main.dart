@@ -20,35 +20,28 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   MyApp({super.key});
-  final User? _firebaseUser = FirebaseAuth.instance.currentUser;
+
+  User? _firebaseUser = FirebaseAuth.instance.currentUser;
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  static const String _username = "testiukko";
-  static const String _email = "testi@gmail.com";
-  static const String _password = "testi123";
-
-  void _test() async {
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: _email, password: _password)
-        .then(
-      (responseData) async {
-        User? user = responseData.user;
-        await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
-          'username': _username,
-          'email': _email,
-          'joinDate': user?.metadata.creationTime,
-        });
-      },
-    ).onError(
-      (error, stackTrace) {
-        print(error);
-        print(stackTrace);
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print("Logged out");
+        // setState(() {
+        //   widget._firebaseUser = user;
+        //   print(widget._firebaseUser);
+        // });
+      } else {
+        print('User is signed in!');
+      }
+    });
   }
 
   @override
@@ -61,18 +54,17 @@ class _MyAppState extends State<MyApp> {
       home: widget._firebaseUser == null
           ? const SignIn()
           : FutureBuilder(
-        future: FirebaseService.createUser(widget._firebaseUser!.uid),
-        // future: null,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return PageContainer(
-              user: snapshot.data!
-              // user: AppUser.fromJson({})
-            );
-          }
-          return const LoadingScreen();
-        },
-      ),
+              future: FirebaseService.createUser(widget._firebaseUser!.uid),
+              // future: null,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return PageContainer(user: snapshot.data!
+                      // user: AppUser.fromJson({})
+                      );
+                }
+                return const LoadingScreen();
+              },
+            ),
     );
   }
 }

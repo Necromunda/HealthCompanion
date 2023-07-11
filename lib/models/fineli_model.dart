@@ -6,23 +6,21 @@ class FineliModel {
   Name? name;
   List<PreparationMethod>? preparationMethod;
   int? ediblePortion;
-  List<String>? specialDiets;
-  List<String>? themes;
+  List<String>? specialDiets, themes;
   List<Units>? units;
-  Type? ingredientClass;
-  Type? functionClass;
-  double? salt;
-  double? energy;
-  double? energyKcal;
-  double? protein;
-  double? carbohydrate;
-  int? alcohol;
-  double? organicAcids;
-  int? sugarAlcohol;
-  double? saturatedFat;
-  double? fiber;
-  double? sugar;
-  double? fat;
+  Type? ingredientClass, functionClass;
+  double? salt,
+      energy,
+      energyKcal,
+      protein,
+      carbohydrate,
+      alcohol,
+      organicAcids,
+      sugarAlcohol,
+      saturatedFat,
+      fiber,
+      sugar,
+      fat;
 
   FineliModel(
       {this.id,
@@ -58,9 +56,21 @@ class FineliModel {
         preparationMethod!.add(PreparationMethod.fromJson(v));
       });
     }
+    // if (json['specialDiets'] != null) {
+    //   specialDiets = <String>[];
+    //   json['preparationMethod'].forEach((v) {
+    //     specialDiets!.add(v.toString());
+    //   });
+    // }
+    // if (json['themes'] != null) {
+    //   themes = <String>[];
+    //   json['preparationMethod'].forEach((v) {
+    //     themes!.add(v.toString());
+    //   });
+    // }
     ediblePortion = json['ediblePortion'];
-    specialDiets = json['specialDiets'];
-    themes = json['themes'];
+    specialDiets = json['specialDiets'].cast<String>();
+    themes = json['themes'].cast<String>();
     if (json['units'] != null) {
       units = <Units>[];
       json['units'].forEach((v) {
@@ -73,18 +83,18 @@ class FineliModel {
     functionClass = json['functionClass'] != null
         ? Type.fromJson(json['functionClass'])
         : null;
-    salt = json['salt'];
-    energy = json['energy'];
-    energyKcal = json['energyKcal'];
-    protein = json['protein'];
-    carbohydrate = json['carbohydrate'];
-    alcohol = json['alcohol'];
-    organicAcids = json['organicAcids'];
-    sugarAlcohol = json['sugarAlcohol'];
-    saturatedFat = json['saturatedFat'];
-    fiber = json['fiber'];
-    sugar = json['sugar'];
-    fat = json['fat'];
+    salt = json['salt'].toDouble();
+    energy = json['energy'].toDouble();
+    energyKcal = json['energyKcal'].toDouble();
+    protein = json['protein'].toDouble();
+    carbohydrate = json['carbohydrate'].toDouble();
+    alcohol = json['alcohol'].toDouble();
+    organicAcids = json['organicAcids'].toDouble();
+    sugarAlcohol = json['sugarAlcohol'].toDouble();
+    saturatedFat = json['saturatedFat'].toDouble();
+    fiber = json['fiber'].toDouble();
+    sugar = json['sugar'].toDouble();
+    fat = json['fat'].toDouble();
   }
 
   Map<String, dynamic> toJson() {

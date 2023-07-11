@@ -50,7 +50,7 @@ class _SignUpEmailState extends State<SignUpEmail>
           Padding(
             padding: const EdgeInsets.only(bottom: 175.0),
             child: Text(
-              "Page ${_pageIndex + 1} / 3",
+              "Page ${_pageIndex + 1} / 4",
               textAlign: TextAlign.center,
             ),
           ),
@@ -123,23 +123,27 @@ class _SignUpEmailState extends State<SignUpEmail>
                         FocusScope.of(context).unfocus();
                         _switchPageCallback(0);
                       },
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_circle_left_outlined,
                         size: 48,
-                        color: Colors.red,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                     IconButton(
                       onPressed: _isEmailValid
                           ? () {
-                              FocusScope.of(context).unfocus();
+                              if (FocusScope.of(context).hasFocus) {
+                                FocusScope.of(context).unfocus();
+                              }
                               _switchPageCallback(2);
                             }
                           : null,
                       icon: Icon(
                         Icons.arrow_circle_right_outlined,
                         size: 48,
-                        color: _isEmailValid ? Colors.green : Colors.grey,
+                        color: _isEmailValid
+                            ? Theme.of(context).primaryColor
+                            : Colors.grey,
                       ),
                     )
                   ],

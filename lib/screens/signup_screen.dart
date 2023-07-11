@@ -3,6 +3,7 @@ import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/signup_email.dart';
 import 'package:health_companion/widgets/signup_password.dart';
+import 'package:health_companion/widgets/signup_background_info.dart';
 import 'package:health_companion/widgets/signup_username.dart';
 
 class SignUp extends StatefulWidget {
@@ -14,9 +15,9 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController();
-  String? _username;
-  String? _email;
-  String? _password;
+  String? _username, _email, _password;
+  int? _height;
+  double? _weight;
   int _selectedIndex = 0;
 
   void _switchPage(int index) {
@@ -32,6 +33,18 @@ class _SignUpState extends State<SignUp> {
   void _setUsernameCallback(String username) {
     setState(() {
       _username = username;
+    });
+  }
+
+  void _setHeightCallback(int height) {
+    setState(() {
+      _height = height;
+    });
+  }
+
+  void _setWeightCallback(double weight) {
+    setState(() {
+      _weight = weight;
     });
   }
 
@@ -53,6 +66,10 @@ class _SignUpState extends State<SignUp> {
 
   String? _getPassword() => _password;
 
+  int? _getHeight() => _height;
+
+  double? _getWeight() => _weight;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +89,14 @@ class _SignUpState extends State<SignUp> {
           SignUpUsername(
             pageIndex: 0,
             inputCallback: _setUsernameCallback,
+            switchPageCallback: _switchPage,
+          ),
+          SignUpBackgroundInfo(
+            pageIndex: 1,
+            inputCallback: (height, weight) {
+              _setHeightCallback(height);
+              _setWeightCallback(weight);
+            },
             switchPageCallback: _switchPage,
           ),
           SignUpEmail(

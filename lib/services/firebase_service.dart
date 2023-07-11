@@ -15,10 +15,11 @@ class FirebaseService {
         'joinDate': user.metadata.creationTime,
       });
       return AppUser(
-          email: email,
-          uid: user.uid,
-          username: username,
-          joinDate: user.metadata.creationTime);
+        email: email,
+        uid: user.uid,
+        username: username,
+        joinDate: user.metadata.creationTime,
+      );
     } catch (e) {
       print(e);
       return null;

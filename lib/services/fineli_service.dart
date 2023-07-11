@@ -10,8 +10,8 @@ class FineliService {
     try {
       var response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
-        print(response.body);
-        print(jsonDecode(response.body).runtimeType);
+        // print(response.body);
+        // print(jsonDecode(response.body).runtimeType);
         final data = (jsonDecode(response.body) as List).map((e) => e as Map<String, dynamic>).toList();
         return data;
       } else {

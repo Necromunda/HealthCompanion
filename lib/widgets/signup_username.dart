@@ -50,7 +50,7 @@ class _SignUpUsernameState extends State<SignUpUsername>
           Padding(
             padding: const EdgeInsets.only(bottom: 175.0),
             child: Text(
-              "Page ${_pageIndex + 1} / 3",
+              "Page ${_pageIndex + 1} / 4",
               textAlign: TextAlign.center,
             ),
           ),
@@ -114,13 +114,17 @@ class _SignUpUsernameState extends State<SignUpUsername>
                   disabledColor: Colors.grey,
                   onPressed: _isUsernameValid
                       ? () {
-                          FocusScope.of(context).unfocus();
+                          if (FocusScope.of(context).hasFocus) {
+                            FocusScope.of(context).unfocus();
+                          }
                           _switchPageCallback(1);
                         }
                       : null,
                   icon: Icon(
                     Icons.arrow_circle_right_outlined,
-                    color: _isUsernameValid ? Colors.green : Colors.grey,
+                    color: _isUsernameValid
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
                     size: 48,
                   ),
                 ),

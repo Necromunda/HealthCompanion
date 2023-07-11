@@ -123,7 +123,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
           Padding(
             padding: const EdgeInsets.only(bottom: 175.0),
             child: Text(
-              "Page ${_pageIndex + 1} / 3",
+              "Page ${_pageIndex + 1} / 4",
               textAlign: TextAlign.center,
             ),
           ),
