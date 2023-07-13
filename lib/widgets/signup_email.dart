@@ -41,7 +41,7 @@ class _SignUpEmailState extends State<SignUpEmail>
     super.didUpdateWidget(oldWidget);
   }
 
-  Color get _getColor => _emailController.text.isEmpty
+  Color get _emailColor => _emailController.text.isEmpty
       ? Colors.grey
       : _isEmailValid
           ? Colors.green
@@ -87,19 +87,19 @@ class _SignUpEmailState extends State<SignUpEmail>
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _emailColor,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _emailColor,
                   width: 2.0,
                 ),
               ),
               prefixIcon: Icon(
                 Icons.email,
-                color: _getColor,
+                color: _emailColor,
               ),
               suffixIcon: _emailController.text.isEmpty
                   ? null

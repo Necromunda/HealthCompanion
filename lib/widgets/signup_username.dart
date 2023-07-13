@@ -41,7 +41,7 @@ class _SignUpUsernameState extends State<SignUpUsername>
     super.didUpdateWidget(oldWidget);
   }
 
-  Color get _getColor => _usernameController.text.isEmpty
+  Color get _usernameColor => _usernameController.text.isEmpty
       ? Colors.grey
       : _isUsernameValid
           ? Colors.green
@@ -89,19 +89,19 @@ class _SignUpUsernameState extends State<SignUpUsername>
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _usernameColor,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _usernameColor,
                   width: 2.0,
                 ),
               ),
               prefixIcon: Icon(
                 Icons.person,
-                color: _getColor,
+                color: _usernameColor,
               ),
               suffixIcon: _usernameController.text.isEmpty
                   ? null

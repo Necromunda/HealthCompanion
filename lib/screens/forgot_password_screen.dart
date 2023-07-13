@@ -22,6 +22,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     });
   }
 
+  Color get _emailColor => _emailController.text.isEmpty
+      ? Colors.grey
+      : _isEmailValid
+          ? Colors.green
+          : Colors.red;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +61,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       child: Text(
                         "Please enter your email and we will send you instructions on how to change it.",
                         style: TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Padding(
@@ -72,15 +79,29 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           FilteringTextInputFormatter.singleLineFormatter,
                         ],
                         decoration: InputDecoration(
-                          // labelText: "Email",
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 2.0),
-                            // borderRadius: BorderRadius.circular(15.0),
+                          errorBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _emailController.text.isEmpty
+                                  ? Colors.grey
+                                  : Colors.red,
+                              width: 2.0,
+                            ),
                           ),
-                          prefixIcon: const Icon(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _emailColor,
+                              width: 2.0,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: _emailColor,
+                              width: 2.0,
+                            ),
+                          ),
+                          prefixIcon: Icon(
                             Icons.email,
-                            color: Colors.grey,
+                            color: _emailColor,
                           ),
                           hintText: "Email",
                           border: OutlineInputBorder(

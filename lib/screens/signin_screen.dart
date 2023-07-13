@@ -126,9 +126,19 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        // leading: IconButton(
+        //   onPressed: () => Navigator.of(context).pop(),
+        //   icon: const Icon(Icons.close),
+        //   color: Colors.black,
+        // ),
+      ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
+          // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
               Padding(

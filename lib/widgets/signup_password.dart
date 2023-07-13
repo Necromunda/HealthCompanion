@@ -128,7 +128,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
     );
   }
 
-  Color get _getColor => _passwordController.text.isEmpty
+  Color get _passwordColor => _passwordController.text.isEmpty
       ? Colors.grey
       : _isPasswordValid
           ? Colors.green
@@ -177,19 +177,19 @@ class _SignUpPasswordState extends State<SignUpPassword>
               ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _passwordColor,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _getColor,
+                  color: _passwordColor,
                   width: 2.0,
                 ),
               ),
               prefixIcon: Icon(
                 Icons.password,
-                color: _getColor,
+                color: _passwordColor,
               ),
               suffixIcon: _passwordController.text.isEmpty
                   ? null
