@@ -8,6 +8,7 @@ import 'package:health_companion/screens/signup_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
 
 import '../widgets/pagecontainer.dart';
+import 'loading_screen.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -48,27 +49,55 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  // void _login(String email, String password) {
+  //   FirebaseAuth.instance
+  //       .signInWithEmailAndPassword(email: email, password: password)
+  //       .then(
+  //     (responseData) {
+  //       print("VALUE : $responseData");
+  //       FirebaseService.createUser(responseData.user!.uid).then(
+  //         (appUser) => Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => PageContainer(
+  //               user: appUser ?? AppUser(),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   ).catchError(
+  //     (error) {
+  //       print(error);
+  //     },
+  //   );
+  // }
+
   void _login(String email, String password) {
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password)
-        .then(
-      (responseData) {
-        print("VALUE : $responseData");
-        FirebaseService.createUser(responseData.user!.uid).then(
-          (appUser) => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PageContainer(
-                user: appUser ?? AppUser(),
-              ),
-            ),
-          ),
-        );
-      },
-    ).catchError(
-      (error) {
-        print(error);
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FutureBuilder(
+          future: FirebaseAuth.instance
+              .signInWithEmailAndPassword(email: email, password: password),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              print("VALUE : ${snapshot.data}");
+              FirebaseService.createUser(snapshot.data!.user!.uid).then(
+                (appUser) => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PageContainer(
+                      user: appUser!,
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const LoadingScreen(message: "Logging in");
+          },
+        ),
+      ),
     );
   }
 
@@ -107,7 +136,6 @@ class _SignInState extends State<SignIn> {
       _isEmailValid = false;
       _isPasswordValid = false;
     });
-    // Focus.of(context).unfocus();
   }
 
   Color get _emailColor => _emailController.text.isEmpty
@@ -129,11 +157,6 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
-        // leading: IconButton(
-        //   onPressed: () => Navigator.of(context).pop(),
-        //   icon: const Icon(Icons.close),
-        //   color: Colors.black,
-        // ),
       ),
       body: Center(
         child: Padding(

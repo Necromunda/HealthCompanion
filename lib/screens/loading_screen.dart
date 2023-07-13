@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatelessWidget {
-  const LoadingScreen({Key? key}) : super(key: key);
+  final String message;
+
+  const LoadingScreen({Key? key, required this.message}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 15.0),
+              child: CircularProgressIndicator(),
+            ),
+            Text(message),
+          ],
+        ),
       ),
     );
   }

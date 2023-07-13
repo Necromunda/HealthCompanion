@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
                       // user: AppUser.fromJson({})
                       );
                 }
-                return const LoadingScreen();
+                return const LoadingScreen(message: "Logging in",);
               },
             ),
     );
