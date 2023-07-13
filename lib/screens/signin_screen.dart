@@ -81,6 +81,10 @@ class _SignInState extends State<SignIn> {
           future: FirebaseAuth.instance
               .signInWithEmailAndPassword(email: email, password: password),
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              print("ERROR : ${snapshot.error}");
+              Navigator.of(context).popUntil(ModalRoute.withName("/"));
+            }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
               FirebaseService.createUser(snapshot.data!.user!.uid).then(
