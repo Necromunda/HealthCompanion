@@ -50,8 +50,7 @@ class _SignInState extends State<SignIn> {
 
   void _login(String email, String password) {
     FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-            email: email, password: password)
+        .signInWithEmailAndPassword(email: email, password: password)
         .then(
       (responseData) {
         print("VALUE : $responseData");
@@ -111,17 +110,26 @@ class _SignInState extends State<SignIn> {
     // Focus.of(context).unfocus();
   }
 
+  Color get _emailColor => _emailController.text.isEmpty
+      ? Colors.grey
+      : _isEmailValid
+          ? Colors.green
+          : Colors.red;
+
+  Color get _passwordColor => _passwordController.text.isEmpty
+      ? Colors.grey
+      : _isPasswordValid
+          ? Colors.green
+          : Colors.red;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // appBar: AppBar(),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -137,22 +145,37 @@ class _SignInState extends State<SignIn> {
                         EmailValidator.validate(value) ? true : false;
                   }),
                   decoration: InputDecoration(
-                    // labelText: _isEmailValid ? null : "Invalid email",
-                    // focusedBorder: const OutlineInputBorder(
-                    //   borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                    //   // borderRadius: BorderRadius.circular(15.0),
-                    // ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _emailController.text.isEmpty
+                            ? Colors.grey
+                            : Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _emailColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _emailColor,
+                        width: 2.0,
+                      ),
+                    ),
                     prefixIcon: Icon(
                       Icons.email,
-                      color: _isEmailValid ? Colors.green : Colors.red,
+                      color: _emailColor,
                     ),
                     hintText: "Email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
                       borderSide: const BorderSide(
-                          width: 3,
-                          style: BorderStyle.solid,
-                          color: Colors.black),
+                        width: 2.0,
+                        style: BorderStyle.none,
+                      ),
                     ),
                   ),
                 ),
@@ -171,20 +194,38 @@ class _SignInState extends State<SignIn> {
                     }
                   }),
                   decoration: InputDecoration(
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                      // borderRadius: BorderRadius.circular(15.0),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _passwordController.text.isEmpty
+                            ? Colors.grey
+                            : Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _passwordColor,
+                        width: 2.0,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: _passwordColor,
+                        width: 2.0,
+                      ),
                     ),
                     prefixIcon: Icon(
                       Icons.password,
-                      color: _isPasswordValid ? Colors.green : Colors.red,
+                      color: _passwordColor,
                     ),
                     // label: Text("Password"),
                     hintText: "Password",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
-                      borderSide:
-                          const BorderSide(width: 1, style: BorderStyle.none),
+                      borderSide: const BorderSide(
+                        width: 2.0,
+                        style: BorderStyle.none,
+                      ),
                     ),
                   ),
                 ),
@@ -192,13 +233,11 @@ class _SignInState extends State<SignIn> {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  // onPressed: _isEmailValid ? _loginButtonHandler : null,
                   onPressed: _loginButtonHandler,
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.deepPurple.shade400,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1.0),
-                      // side: BorderSide(color: Colors.red)
                     ),
                   ),
                   child: const Text("Log in"),

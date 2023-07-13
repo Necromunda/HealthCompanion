@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/widgets/signup_info_card.dart';
 
 class SignUpEmail extends StatefulWidget {
   final int pageIndex;
@@ -40,6 +41,12 @@ class _SignUpEmailState extends State<SignUpEmail>
     super.didUpdateWidget(oldWidget);
   }
 
+  Color get _getColor => _emailController.text.isEmpty
+      ? Colors.grey
+      : _isEmailValid
+          ? Colors.green
+          : Colors.red;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -48,7 +55,7 @@ class _SignUpEmailState extends State<SignUpEmail>
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 175.0),
+            padding: const EdgeInsets.only(bottom: 125.0),
             child: Text(
               "Page ${_pageIndex + 1} / 4",
               textAlign: TextAlign.center,
@@ -68,14 +75,31 @@ class _SignUpEmailState extends State<SignUpEmail>
               });
             },
             decoration: InputDecoration(
-              // labelText: _isEmailValid ? null : "Invalid email",
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey, width: 2.0),
-                // borderRadius: BorderRadius.circular(15.0),
+              errorText: _isEmailValid || _emailController.text.isEmpty
+                  ? null
+                  : 'Invalid email',
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color:
+                      _emailController.text.isEmpty ? Colors.grey : Colors.red,
+                  width: 2.0,
+                ),
               ),
-              prefixIcon: const Icon(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: _getColor,
+                  width: 2.0,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: _getColor,
+                  width: 2.0,
+                ),
+              ),
+              prefixIcon: Icon(
                 Icons.email,
-                color: Colors.grey,
+                color: _getColor,
               ),
               suffixIcon: _emailController.text.isEmpty
                   ? null
@@ -90,25 +114,17 @@ class _SignUpEmailState extends State<SignUpEmail>
                         ),
               hintText: "Email",
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide:
-                      const BorderSide(width: 1, style: BorderStyle.none)),
-            ),
-          ),
-          const SizedBox(
-            width: double.infinity,
-            child: Card(
-              elevation: 1,
-              margin: EdgeInsets.only(top: 25.0),
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  "Email must be a valid email address.\nEmail is used for sign in.",
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
+                borderRadius: BorderRadius.circular(5.0),
+                borderSide: const BorderSide(
+                  width: 2.0,
+                  style: BorderStyle.none,
                 ),
               ),
             ),
+          ),
+          const SignUpInfoCard(
+            hint:
+                "Email must be a valid email address.\nEmail is used for sign in.",
           ),
           Expanded(
             child: Padding(
@@ -120,11 +136,13 @@ class _SignUpEmailState extends State<SignUpEmail>
                   children: [
                     IconButton(
                       onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        _switchPageCallback(0);
+                        if (FocusScope.of(context).hasFocus) {
+                          FocusScope.of(context).unfocus();
+                        }
+                        _switchPageCallback(_pageIndex - 1);
                       },
                       icon: Icon(
-                        Icons.arrow_circle_left_outlined,
+                        Icons.arrow_circle_left,
                         size: 48,
                         color: Theme.of(context).primaryColor,
                       ),
@@ -135,11 +153,11 @@ class _SignUpEmailState extends State<SignUpEmail>
                               if (FocusScope.of(context).hasFocus) {
                                 FocusScope.of(context).unfocus();
                               }
-                              _switchPageCallback(2);
+                              _switchPageCallback(_pageIndex + 1);
                             }
                           : null,
                       icon: Icon(
-                        Icons.arrow_circle_right_outlined,
+                        Icons.arrow_circle_right,
                         size: 48,
                         color: _isEmailValid
                             ? Theme.of(context).primaryColor

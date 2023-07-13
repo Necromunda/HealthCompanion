@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_companion/widgets/signup_info_card.dart';
 
 class SignUpUsername extends StatefulWidget {
   final int pageIndex;
@@ -40,6 +41,12 @@ class _SignUpUsernameState extends State<SignUpUsername>
     super.didUpdateWidget(oldWidget);
   }
 
+  Color get _getColor => _usernameController.text.isEmpty
+      ? Colors.grey
+      : _isUsernameValid
+          ? Colors.green
+          : Colors.red;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -48,7 +55,7 @@ class _SignUpUsernameState extends State<SignUpUsername>
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 175.0),
+            padding: const EdgeInsets.only(bottom: 125.0),
             child: Text(
               "Page ${_pageIndex + 1} / 4",
               textAlign: TextAlign.center,
@@ -57,23 +64,44 @@ class _SignUpUsernameState extends State<SignUpUsername>
           TextField(
             controller: _usernameController,
             keyboardType: TextInputType.text,
+            maxLength: 30,
             onChanged: (value) {
               setState(() {
                 if (_usernameRegExp.hasMatch(value)) {
-                  _inputCallback(value);
                   _isUsernameValid = true;
+                  _inputCallback(value);
                 } else {
                   _isUsernameValid = false;
                 }
               });
             },
             decoration: InputDecoration(
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+              errorText: _isUsernameValid || _usernameController.text.isEmpty
+                  ? null
+                  : 'Invalid username',
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: _usernameController.text.isEmpty
+                      ? Colors.grey
+                      : Colors.red,
+                  width: 2.0,
+                ),
               ),
-              prefixIcon: const Icon(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: _getColor,
+                  width: 2.0,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: _getColor,
+                  width: 2.0,
+                ),
+              ),
+              prefixIcon: Icon(
                 Icons.person,
-                color: Colors.grey,
+                color: _getColor,
               ),
               suffixIcon: _usernameController.text.isEmpty
                   ? null
@@ -88,22 +116,17 @@ class _SignUpUsernameState extends State<SignUpUsername>
                         ),
               hintText: "Username",
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                  borderSide:
-                      const BorderSide(width: 1, style: BorderStyle.none)),
-            ),
-          ),
-          const Card(
-            elevation: 1,
-            margin: EdgeInsets.only(top: 25.0),
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "Username must start with a letter, contain only letters and numbers & be between 2-30 characters long.\nUsername is not used for sign in.",
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
+                borderRadius: BorderRadius.circular(5.0),
+                borderSide: const BorderSide(
+                  width: 2.0,
+                  style: BorderStyle.none,
+                ),
               ),
             ),
+          ),
+          const SignUpInfoCard(
+            hint:
+                "Username must start with a letter, contain only letters and numbers & be between 2-30 characters long.\nUsername is not used for sign in.",
           ),
           Expanded(
             child: Padding(
@@ -117,11 +140,11 @@ class _SignUpUsernameState extends State<SignUpUsername>
                           if (FocusScope.of(context).hasFocus) {
                             FocusScope.of(context).unfocus();
                           }
-                          _switchPageCallback(1);
+                          _switchPageCallback(_pageIndex + 1);
                         }
                       : null,
                   icon: Icon(
-                    Icons.arrow_circle_right_outlined,
+                    Icons.arrow_circle_right,
                     color: _isUsernameValid
                         ? Theme.of(context).primaryColor
                         : Colors.grey,

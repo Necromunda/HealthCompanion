@@ -16,13 +16,13 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController();
   String? _username, _email, _password;
-  int? _height;
+  int? _age, _height;
   double? _weight;
   int _selectedIndex = 0;
 
   void _switchPage(int index) {
     print("Switch page to $index");
-    print("username: $_username\nEmail: $_email\nPassword: $_password");
+    print("username: $_username\nAge: $_age\nHeight: $_height\nWeight: $_weight\nEmail: $_email\nPassword: $_password");
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -33,6 +33,12 @@ class _SignUpState extends State<SignUp> {
   void _setUsernameCallback(String username) {
     setState(() {
       _username = username;
+    });
+  }
+
+  void _setAgeCallback(int age) {
+    setState(() {
+      _age = age;
     });
   }
 
@@ -66,6 +72,8 @@ class _SignUpState extends State<SignUp> {
 
   String? _getPassword() => _password;
 
+  int? _getAge() => _age;
+
   int? _getHeight() => _height;
 
   double? _getWeight() => _weight;
@@ -93,22 +101,24 @@ class _SignUpState extends State<SignUp> {
           ),
           SignUpBackgroundInfo(
             pageIndex: 1,
-            inputCallback: (height, weight) {
-              _setHeightCallback(height);
-              _setWeightCallback(weight);
-            },
+            inputCallbackAge: _setAgeCallback,
+            inputCallbackHeight: _setHeightCallback,
+            inputCallbackWeight: _setWeightCallback,
             switchPageCallback: _switchPage,
           ),
           SignUpEmail(
-            pageIndex: 1,
+            pageIndex: 2,
             inputCallback: _setEmailCallback,
             switchPageCallback: _switchPage,
           ),
           SignUpPassword(
-            pageIndex: 2,
+            pageIndex: 3,
             inputCallback: _setPasswordCallback,
             switchPageCallback: _switchPage,
             getUsernameCallback: _getUsername,
+            getAgeCallback: _getAge,
+            getHeightCallback: _getHeight,
+            getWeightCallback: _getWeight,
             getEmailCallback: _getEmail,
             getPasswordCallback: _getPassword,
           ),

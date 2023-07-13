@@ -4,15 +4,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/appuser_model.dart';
 
 class FirebaseService {
-  static Future<AppUser?> createUserOnSignup(
-      User user, String username, String email) async {
+  static Future<AppUser?> createUserOnSignup({
+    required User user,
+    required String username,
+    required int age,
+    required int height,
+    required double weight,
+    required String email,
+  }) async {
     try {
       // await FirebaseFirestore.instance.collection('user_items').doc(user.uid).set({"items": []});
       // await FirebaseFirestore.instance.collection('user_settings').doc(user.uid).set({"darkMode": false});
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'username': username,
-        'email': email,
-        'joinDate': user.metadata.creationTime,
+      await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+        "username": username,
+        "age": age,
+        "height": height,
+        "weight": weight,
+        "email": email,
+        "joinDate": user.metadata.creationTime,
       });
       return AppUser(
         email: email,
@@ -29,11 +38,11 @@ class FirebaseService {
   static Future<AppUser?> createUser(String uid) async {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userDocument = db.collection('users').doc(uid);
+      final DocumentReference userDocument = db.collection("users").doc(uid);
 
       var userDocumentSnapshot = await userDocument.get();
       var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
-      firestoreUser['uid'] = userDocumentSnapshot.id;
+      firestoreUser["uid"] = userDocumentSnapshot.id;
 
       return AppUser.fromJson(firestoreUser);
       // return AppUser(
