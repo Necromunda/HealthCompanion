@@ -75,18 +75,40 @@ class _SignUpPasswordState extends State<SignUpPassword>
           message,
           textAlign: TextAlign.center,
         ),
+        // alignment: Alignment.center,
         actions: <Widget>[
-          FilledButton(
-            onPressed: () {
-              Navigator.popUntil(context, ModalRoute.withName('/'));
-            },
-            child: const Text("Login"),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Cancel"),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(5.0), // Set borderRadius to 0
+                    ),
+                  ),
+                ),
+                child: const Text("Cancel"),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(5.0), // Set borderRadius to 0
+                    ),
+                  ),
+                ),
+                child: const Text("Login"),
+              ),
+            ],
           ),
         ],
       ),
