@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:intl/intl.dart';
 
+import '../models/component_model.dart';
+import 'add_component_screen.dart';
+
 class Overview extends StatefulWidget {
   const Overview({Key? key}) : super(key: key);
 
@@ -13,12 +16,10 @@ class Overview extends StatefulWidget {
   State<Overview> createState() => _OverviewState();
 }
 
-class _OverviewState extends State<Overview>
-    with AutomaticKeepAliveClientMixin<Overview> {
+class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<Overview> {
   final ScrollController _scrollController = ScrollController();
-
-  // final ExpandableController _expandableController = ExpandableController();
-  // final ExpansionTileController controller = ExpansionTileController();
+  final ScrollController _listScrollController = ScrollController();
+  List<Component> _consumedComponents = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -37,16 +38,27 @@ class _OverviewState extends State<Overview>
 
   @override
   void dispose() {
-    // _expandableController.dispose();
     super.dispose();
   }
 
-  void _addNewComponentButtonHandler() {}
+  void _addNewComponentButtonHandler() async {
+    Component? _component = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return const AddComponent();
+        },
+      ),
+    );
+    print(_component);
+  }
 
   void _addExistingComponentButtonHandler() {}
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: SingleChildScrollView(
@@ -87,14 +99,78 @@ class _OverviewState extends State<Overview>
                 ],
               ),
             ),
-            FilledButton(
-                onPressed: () {
-                  setState(() {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.of(context).popUntil(ModalRoute.withName("/"));
-                  });
-                },
-                child: const Text("Log out")),
+            SizedBox(
+              width: double.infinity,
+              child: Card(
+                elevation: 5,
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.0),
+                      child: Text(
+                        "What you've eaten today",
+                        style: TextStyle(fontSize: 22),
+                      ),
+                    ),
+                    ListView.builder(
+                      controller: _listScrollController,
+                      // itemCount: _consumedComponents.length,
+                      itemCount: 11,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return (_consumedComponents.isEmpty)
+                            ? ListTile(
+                                title: Text(
+                                  "Item $index",
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                subtitle: Text(
+                                  "Item $index description",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                trailing: const Icon(Icons.arrow_forward),
+                                onTap: null,
+                              )
+                            : ListTile(
+                                title: Text(
+                                  _consumedComponents[index].name!,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                subtitle: Text(
+                                  _consumedComponents[index].description!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                trailing: const Icon(Icons.arrow_forward),
+                                onTap: null,
+                              );
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                FilledButton(
+                  onPressed: () {
+                    setState(() {
+                      FirebaseAuth.instance.signOut().then((value) {
+                        Navigator.of(context).popUntil(ModalRoute.withName("/"));
+                      }).catchError((_) {
+                        print("Error logging out");
+                      });
+                    });
+                  },
+                  child: const Text("Log out"),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  child: const Text("Update"),
+                ),
+              ],
+            )
           ],
         ),
       ),

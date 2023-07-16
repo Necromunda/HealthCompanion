@@ -22,8 +22,24 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isEmailValid = false;
   bool _isPasswordValid = false;
-  final RegExp _passwordRegExp = RegExp(
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+  final RegExp _passwordRegExp =
+      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _emailController.text = "johannes.rantapaa@gmail.com";
+      _passwordController.text = "Johannes00!!";
+    });
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   void showAlertDialog(BuildContext context, String title, String message) {
     showDialog(
@@ -78,12 +94,13 @@ class _SignInState extends State<SignIn> {
       context,
       MaterialPageRoute(
         builder: (context) => FutureBuilder(
-          future: FirebaseAuth.instance
-              .signInWithEmailAndPassword(email: email, password: password),
+          future:
+              FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               print("ERROR : ${snapshot.error}");
               Navigator.of(context).popUntil(ModalRoute.withName("/"));
+              // () => showAlertDialog(context, "Invalid credentials", "Email or password was incorrect");
             }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
@@ -178,15 +195,12 @@ class _SignInState extends State<SignIn> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) => setState(() {
-                    _isEmailValid =
-                        EmailValidator.validate(value) ? true : false;
+                    _isEmailValid = EmailValidator.validate(value) ? true : false;
                   }),
                   decoration: InputDecoration(
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _emailController.text.isEmpty
-                            ? Colors.grey
-                            : Colors.red,
+                        color: _emailController.text.isEmpty ? Colors.grey : Colors.red,
                         width: 2.0,
                       ),
                     ),
@@ -233,9 +247,7 @@ class _SignInState extends State<SignIn> {
                   decoration: InputDecoration(
                     errorBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: _passwordController.text.isEmpty
-                            ? Colors.grey
-                            : Colors.red,
+                        color: _passwordController.text.isEmpty ? Colors.grey : Colors.red,
                         width: 2.0,
                       ),
                     ),

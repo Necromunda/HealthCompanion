@@ -51,7 +51,7 @@ class _PageContainerState extends State<PageContainer> {
             icon: Icon(Icons.menu),
           ),
           BottomNavigationBarItem(
-            label: "Food",
+            label: "Components",
             icon: Icon(Icons.emoji_food_beverage),
           ),
           BottomNavigationBarItem(
