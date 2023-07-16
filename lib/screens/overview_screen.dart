@@ -84,7 +84,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                       style: TextStyle(fontSize: 18),
                       // textAlign: TextAlign.center,
                     ),
-                    trailing: const Icon(Icons.arrow_forward),
+                    trailing: const Icon(Icons.launch),
                     onTap: _addNewComponentButtonHandler,
                   ),
                   ListTile(
@@ -93,7 +93,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                       style: TextStyle(fontSize: 18),
                       // textAlign: TextAlign.center,
                     ),
-                    trailing: const Icon(Icons.arrow_forward),
+                    trailing: const Icon(Icons.launch),
                     onTap: _addExistingComponentButtonHandler,
                   ),
                 ],
@@ -128,7 +128,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                                   "Item $index description",
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                trailing: const Icon(Icons.arrow_forward),
+                                trailing: const Icon(Icons.launch),
                                 onTap: null,
                               )
                             : ListTile(
@@ -140,7 +140,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                                   _consumedComponents[index].description!,
                                   style: const TextStyle(fontSize: 16),
                                 ),
-                                trailing: const Icon(Icons.arrow_forward),
+                                trailing: const Icon(Icons.launch),
                                 onTap: null,
                               );
                       },
