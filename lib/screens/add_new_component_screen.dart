@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_companion/screens/add_ingredient_to_component_screen.dart';
+import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
 import '../util.dart';
+import 'component_breakdown_screen.dart';
 
 enum Macros { individual, inherit, both }
 
-class AddComponent extends StatefulWidget {
+class AddNewComponent extends StatefulWidget {
   final List<Component> userComponents;
 
-  const AddComponent({Key? key, required this.userComponents}) : super(key: key);
+  const AddNewComponent({Key? key, required this.userComponents}) : super(key: key);
 
   @override
-  State<AddComponent> createState() => _AddComponentState();
+  State<AddNewComponent> createState() => _AddNewComponent();
 }
 
-class _AddComponentState extends State<AddComponent> {
+class _AddNewComponent extends State<AddNewComponent> {
   static final RegExp _noLeadingZeroRegex = RegExp(r'^(?!0)\d+$');
   static const List<String> _categories = ["Component", "Breakfast", "Lunch", "Dinner", "Snack"];
   static const double _kJMultiplier = 4.1855;
@@ -36,8 +37,9 @@ class _AddComponentState extends State<AddComponent> {
       _fatController;
   Macros? _macrosSelection;
   String? _name, _category;
-  List<Component>? _subComponents;
-  late final _userComponents;
+  // List<Component>? _subComponents;
+  late List<Component>? _subComponents, _selectedComponents;
+  late final List<Component> _userComponents;
   double? _salt,
       _energy,
       _energyKcal,
@@ -54,6 +56,8 @@ class _AddComponentState extends State<AddComponent> {
   @override
   void initState() {
     _userComponents = widget.userComponents;
+    _subComponents = <Component>[];
+    _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
     _nameController = TextEditingController();
     _energyKcalController = TextEditingController();
@@ -123,16 +127,43 @@ class _AddComponentState extends State<AddComponent> {
   }
 
   void _addIngredientHandler() async {
-    // final data = await Util.createComponents("omena");
-    // setState(() {
-    //   _subComponents = data;
-    // });
-    List<Component>? chosenComponents = await Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => AddIngredient(userComponents: _userComponents),
-    ));
+    final data = await Util.createComponents("omena");
+    _selectedComponents = await Navigator.of(context).push(
+      MaterialPageRoute(
+        // builder: (context) => AddIngredient(userComponents: _userComponents),
+        builder: (context) => AddExistingComponent(
+          userComponents: data!,
+        ),
+      ),
+    );
+    print(_selectedComponents);
     setState(() {
-      _subComponents = chosenComponents;
+      // _subComponents = List.from(_selectedComponents!.cast<Component>());
+      if (_selectedComponents != null) {
+        _subComponents?.addAll(_selectedComponents!.cast<Component>());
+      }
+      // _selectedComponents?.map((e) => _subComponents?.add(e)).toList();
     });
+    print(_subComponents);
+  }
+
+  void _removeIngredient(Component component) {
+    print(_subComponents);
+    setState(() {
+      _subComponents!.remove(component);
+    });
+  }
+
+  void _showComponentBreakdown(Component component) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return ComponentBreakdown(
+            component: component,
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -206,7 +237,7 @@ class _AddComponentState extends State<AddComponent> {
                 ),
               ),
               Card(
-                elevation: 0,
+                // elevation: 0,
                 child: ExpansionTile(
                   title: const Text(
                     "Category",
@@ -232,7 +263,7 @@ class _AddComponentState extends State<AddComponent> {
                 ),
               ),
               Card(
-                elevation: 0,
+                // elevation: 0,
                 child: ExpansionTile(
                   title: const Text(
                     "Macro type",
@@ -789,36 +820,61 @@ class _AddComponentState extends State<AddComponent> {
                     ),
                   ),
                 ),
-              ListTile(
-                title: const Text(
-                  "Add ingredient +",
-                  style: TextStyle(fontSize: 18),
-                  // textAlign: TextAlign.center,
+              Card(
+                child: ListTile(
+                  title: const Text(
+                    "Add ingredient +",
+                    style: TextStyle(fontSize: 22),
+                    // textAlign: TextAlign.center,
+                  ),
+                  trailing: const Icon(Icons.launch),
+                  onTap: _addIngredientHandler,
                 ),
-                // trailing: const Icon(Icons.launch),
-                onTap: _addIngredientHandler,
               ),
               if (_subComponents != null && _subComponents!.isNotEmpty)
-                ListView.builder(
-                  controller: _listScrollController,
-                  itemCount: _subComponents!.length,
-                  // itemCount: 11,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        _subComponents![index].name!,
-                        style: const TextStyle(fontSize: 18),
+                Card(
+                  child: Column(
+                    children: [
+                      const Text(
+                        "Your added ingredients",
+                        style: TextStyle(fontSize: 20),
                       ),
-                      subtitle: Text(
-                        _subComponents![index].description!,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      trailing: const Icon(Icons.launch),
-                      onTap: null,
-                    );
-                  },
-                )
+                      ListView.builder(
+                        controller: _listScrollController,
+                        itemCount: _subComponents!.length,
+                        // itemCount: 11,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              _subComponents![index].name!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              _subComponents![index].description!,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () => _removeIngredient(_subComponents![index]),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 32.0,
+                                  ),
+                                ),
+                                const Icon(Icons.launch)
+                              ],
+                            ),
+                            onTap: () => _showComponentBreakdown(_subComponents![index]),
+                          );
+                        },
+                      )
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

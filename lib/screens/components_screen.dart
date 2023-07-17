@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/screens/add_component_screen.dart';
+import 'package:health_companion/screens/add_new_component_screen.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
+import '../models/appuser_model.dart';
 import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
 class Components extends StatefulWidget {
-  const Components({Key? key}) : super(key: key);
+  final AppUser user;
+
+  const Components({Key? key, required this.user}) : super(key: key);
 
   @override
   State<Components> createState() => _ComponentsState();
@@ -14,10 +20,11 @@ class Components extends StatefulWidget {
 class _ComponentsState extends State<Components> {
   final ScrollController _listScrollController = ScrollController();
   List<Component> _userComponents = [];
+  late final AppUser _user;
 
   @override
   void initState() {
-    // TODO: implement initState
+    _user = widget.user;
     super.initState();
   }
 
@@ -38,12 +45,15 @@ class _ComponentsState extends State<Components> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const AddComponent(
+          return const AddNewComponent(
             userComponents: [],
           );
         },
       ),
     );
+    if (component != null) {
+      FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
+    }
     print(component);
   }
 

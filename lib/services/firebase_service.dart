@@ -14,8 +14,14 @@ class FirebaseService {
     required String email,
   }) async {
     try {
-      await FirebaseFirestore.instance.collection('user_components').doc(user.uid).set({"components": []});
-      await FirebaseFirestore.instance.collection('user_preferences').doc(user.uid).set({"kcalGoal": null, "darkMode": false});
+      await FirebaseFirestore.instance
+          .collection('user_components')
+          .doc(user.uid)
+          .set({"components": []});
+      await FirebaseFirestore.instance
+          .collection('user_preferences')
+          .doc(user.uid)
+          .set({"kcalGoal": null, "darkMode": false});
       await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
         "username": username,
         "age": age,
@@ -52,30 +58,56 @@ class FirebaseService {
     }
   }
 
-  static Future<Map<String, dynamic>?> getUserComponents(String uid) async {
+  static Future<bool> saveUserComponents(String? uid, Component component) async {
+    try {
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
+      List<Component>? userComponents = await getUserComponents(uid);
+      if (userComponents != null) {
+        List<Map<String, dynamic>> json = userComponents.map((item) => item.toJson()).toList();
+        json.add(component.toJson());
+        db.runTransaction((transaction) async {
+          transaction.update(userComponentsDocRef, {"components": json});
+          print("User items updated");
+          return true;
+        }).onError((error, stackTrace) {
+          print(error);
+          return false;
+        });
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<List<Component>?> getUserComponents(String? uid) async {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
 
       var userComponentsDocSnapshot = await userComponentsDocRef.get();
       var data = userComponentsDocSnapshot.data() as Map<String, dynamic>;
-      return data;
+      List<Component> components = (data["components"] as List)
+          .map((e) => Component.fromJson(e))
+          .toList();
+
+      return components;
     } catch (e) {
       print(e);
       return null;
     }
   }
 
-  static Future<List<Component>?> getUserPreferences(String uid) async {
+  static Future<Map<String, dynamic>?> getUserPreferences(String uid) async {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userPreferencesDocRef = db.collection("user_preferences").doc(uid);
 
       var userPreferencesDocSnapshot = await userPreferencesDocRef.get();
-      var data = userPreferencesDocSnapshot.data() as List<Map<String, dynamic>>;
-      List<Component> components = data.map((e) => Component.fromJson(e)).toList();
-
-      return components;
+      var data = userPreferencesDocSnapshot.data() as Map<String, dynamic>;
+      return data;
     } catch (e) {
       print(e);
       return null;

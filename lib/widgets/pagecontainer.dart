@@ -80,11 +80,11 @@ class _PageContainerState extends State<PageContainer> {
         child: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
-          children: const <Widget>[
+          children: <Widget>[
             Settings(),
             Search(),
             Overview(),
-            Components(),
+            Components(user: _user,),
             Profile()
           ],
           onPageChanged: (index) {

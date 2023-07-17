@@ -3,24 +3,24 @@ import 'package:flutter/material.dart';
 import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
-class AddIngredient extends StatefulWidget {
+class AddExistingComponent extends StatefulWidget {
   final List<Component> userComponents;
 
-  const AddIngredient({Key? key, required this.userComponents}) : super(key: key);
+  const AddExistingComponent({Key? key, required this.userComponents}) : super(key: key);
 
   @override
-  State<AddIngredient> createState() => _AddIngredientState();
+  State<AddExistingComponent> createState() => _AddExistingComponent();
 }
 
-class _AddIngredientState extends State<AddIngredient> {
-  late List<Component> _chosenComponents;
+class _AddExistingComponent extends State<AddExistingComponent> {
+  late List<Component> _selectedComponents;
   late final List<Component> _userComponents;
   late final ScrollController _listScrollController;
 
   @override
   void initState() {
     _userComponents = widget.userComponents;
-    _chosenComponents = <Component>[];
+    _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
     super.initState();
   }
@@ -33,7 +33,13 @@ class _AddIngredientState extends State<AddIngredient> {
 
   void _addSelection(Component component) {
     setState(() {
-      _chosenComponents.add(component);
+      _selectedComponents.add(component);
+    });
+  }
+
+  void _removeSelection(Component component) {
+    setState(() {
+      _selectedComponents.remove(component);
     });
   }
 
@@ -47,6 +53,10 @@ class _AddIngredientState extends State<AddIngredient> {
         },
       ),
     );
+  }
+
+  bool _isSelected(Component component) {
+    return _selectedComponents.contains(component);
   }
 
   @override
@@ -66,7 +76,7 @@ class _AddIngredientState extends State<AddIngredient> {
               Icons.check,
               color: Colors.black,
             ),
-            onPressed: () => Navigator.of(context).pop(_chosenComponents),
+            onPressed: () => Navigator.of(context).pop(_selectedComponents),
           )
         ],
       ),
@@ -80,14 +90,20 @@ class _AddIngredientState extends State<AddIngredient> {
             return ListTile(
               title: Text(
                 _userComponents[index].name!,
-                style: const TextStyle(fontSize: 18),
+                style: TextStyle(
+                    fontSize: 18,
+                    color: _isSelected(_userComponents[index])
+                        ? Theme.of(context).primaryColor
+                        : null),
               ),
               subtitle: Text(
                 _userComponents[index].description!,
                 style: const TextStyle(fontSize: 16),
               ),
               trailing: const Icon(Icons.launch),
-              onTap: () => _addSelection(_userComponents[index]),
+              onTap: () => _isSelected(_userComponents[index])
+                  ? _removeSelection(_userComponents[index])
+                  : _addSelection(_userComponents[index]),
               onLongPress: () => _showComponentBreakdown(_userComponents[index]),
             );
           },

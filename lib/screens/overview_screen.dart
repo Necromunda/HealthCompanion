@@ -7,7 +7,7 @@ import 'package:health_companion/widgets/chart.dart';
 import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
-import 'add_component_screen.dart';
+import 'add_new_component_screen.dart';
 
 class Overview extends StatefulWidget {
   const Overview({Key? key}) : super(key: key);
@@ -42,15 +42,15 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
   }
 
   void _addNewComponentButtonHandler() async {
-    Component? _component = await Navigator.push(
+    Component? component = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const AddComponent(userComponents: [],);
+          return const AddNewComponent(userComponents: [],);
         },
       ),
     );
-    print(_component);
+    print(component);
   }
 
   void _addExistingComponentButtonHandler() {}

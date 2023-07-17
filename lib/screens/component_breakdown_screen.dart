@@ -18,15 +18,15 @@ class ComponentBreakdown extends StatelessWidget {
           icon: const Icon(Icons.close),
           color: Colors.black,
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.check,
-              color: Colors.black,
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          )
-        ],
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: const Icon(
+        //       Icons.check,
+        //       color: Colors.black,
+        //     ),
+        //     onPressed: () => Navigator.of(context).pop(),
+        //   )
+        // ],
       ),
       body: const Placeholder(),
     );
