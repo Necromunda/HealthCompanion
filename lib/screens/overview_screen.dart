@@ -46,7 +46,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const AddComponent();
+          return const AddComponent(userComponents: [],);
         },
       ),
     );

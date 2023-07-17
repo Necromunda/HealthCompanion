@@ -21,7 +21,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   MyApp({super.key});
 
-  User? _firebaseUser = FirebaseAuth.instance.currentUser;
+  final User? _firebaseUser = FirebaseAuth.instance.currentUser;
 
   @override
   State<MyApp> createState() => _MyAppState();

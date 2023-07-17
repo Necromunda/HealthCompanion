@@ -17,9 +17,17 @@ class PageContainer extends StatefulWidget {
 }
 
 class _PageContainerState extends State<PageContainer> {
-  final PageController _pageController = PageController(initialPage: 2);
-  late final AppUser _user = widget.user;
-  int _selectedIndex = 2;
+  late final PageController _pageController;
+  late final AppUser _user;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    _pageController = PageController(initialPage: 2);
+    _user = widget.user;
+    _selectedIndex = 2;
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
