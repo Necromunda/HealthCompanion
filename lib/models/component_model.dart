@@ -33,26 +33,27 @@ class Component {
   });
 
   Component.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    description = json['description'];
+    name = json['name'] ?? "";
+    description = json['description'] ?? "";
+    // subComponents = json['subComponents'];
+    subComponents = <Component>[];
     if (json['subComponents'] != null) {
-      subComponents = <Component>[];
       json['subComponents'].forEach((v) {
-        subComponents!.add(Component.fromJson(v));
+        subComponents?.add(Component.fromJson(v));
       });
     }
-    salt = json['salt'].toDouble();
-    energy = json['energy'].toDouble();
-    energyKcal = json['energyKcal'].toDouble();
-    protein = json['protein'].toDouble();
-    carbohydrate = json['carbohydrate'].toDouble();
-    alcohol = json['alcohol'].toDouble();
-    organicAcids = json['organicAcids'].toDouble();
-    sugarAlcohol = json['sugarAlcohol'].toDouble();
-    saturatedFat = json['saturatedFat'].toDouble();
-    fiber = json['fiber'].toDouble();
-    sugar = json['sugar'].toDouble();
-    fat = json['fat'].toDouble();
+    salt = (json['salt'] ?? 0).toDouble();
+    energy = (json['energy'] ?? 0).toDouble();
+    energyKcal = (json['energyKcal'] ?? 0).toDouble();
+    protein = (json['protein'] ?? 0).toDouble();
+    carbohydrate = (json['carbohydrate'] ?? 0).toDouble();
+    alcohol = (json['alcohol'] ?? 0).toDouble();
+    organicAcids = (json['organicAcids'] ?? 0).toDouble();
+    sugarAlcohol = (json['sugarAlcohol'] ?? 0).toDouble();
+    saturatedFat = (json['saturatedFat'] ?? 0).toDouble();
+    fiber = (json['fiber'] ?? 0).toDouble();
+    sugar = (json['sugar'] ?? 0).toDouble();
+    fat = (json['fat'] ?? 0).toDouble();
   }
 
   Map<String, dynamic> toJson() {

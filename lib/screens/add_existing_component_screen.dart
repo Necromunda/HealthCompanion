@@ -9,10 +9,10 @@ class AddExistingComponent extends StatefulWidget {
   const AddExistingComponent({Key? key, required this.userComponents}) : super(key: key);
 
   @override
-  State<AddExistingComponent> createState() => _AddExistingComponent();
+  State<AddExistingComponent> createState() => _AddExistingComponentState();
 }
 
-class _AddExistingComponent extends State<AddExistingComponent> {
+class _AddExistingComponentState extends State<AddExistingComponent> {
   late List<Component> _selectedComponents;
   late final List<Component> _userComponents;
   late final ScrollController _listScrollController;

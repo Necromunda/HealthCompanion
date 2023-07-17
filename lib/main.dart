@@ -31,17 +31,17 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print("Logged out");
-        // setState(() {
-        //   widget._firebaseUser = user;
-        //   print(widget._firebaseUser);
-        // });
-      } else {
-        print('User is signed in!');
-      }
-    });
+    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    //   if (user == null) {
+    //     print("Logged out");
+    //     // setState(() {
+    //     //   widget._firebaseUser = user;
+    //     //   print(widget._firebaseUser);
+    //     // });
+    //   } else {
+    //     print('User is signed in!');
+    //   }
+    // });
   }
 
   @override
@@ -55,14 +55,13 @@ class _MyAppState extends State<MyApp> {
           ? const SignIn()
           : FutureBuilder(
               future: FirebaseService.createUser(widget._firebaseUser!.uid),
-              // future: null,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return PageContainer(user: snapshot.data!
-                      // user: AppUser.fromJson({})
-                      );
+                  return PageContainer(user: snapshot.data!);
                 }
-                return const LoadingScreen(message: "Logging in",);
+                return const LoadingScreen(
+                  message: "Logging in",
+                );
               },
             ),
     );

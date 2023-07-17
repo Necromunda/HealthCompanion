@@ -15,10 +15,10 @@ class AddNewComponent extends StatefulWidget {
   const AddNewComponent({Key? key, required this.userComponents}) : super(key: key);
 
   @override
-  State<AddNewComponent> createState() => _AddNewComponent();
+  State<AddNewComponent> createState() => _AddNewComponentState();
 }
 
-class _AddNewComponent extends State<AddNewComponent> {
+class _AddNewComponentState extends State<AddNewComponent> {
   static final RegExp _noLeadingZeroRegex = RegExp(r'^(?!0)\d+$');
   static const List<String> _categories = ["Component", "Breakfast", "Lunch", "Dinner", "Snack"];
   static const double _kJMultiplier = 4.1855;
@@ -37,6 +37,7 @@ class _AddNewComponent extends State<AddNewComponent> {
       _fatController;
   Macros? _macrosSelection;
   String? _name, _category;
+
   // List<Component>? _subComponents;
   late List<Component>? _subComponents, _selectedComponents;
   late final List<Component> _userComponents;
@@ -55,6 +56,7 @@ class _AddNewComponent extends State<AddNewComponent> {
 
   @override
   void initState() {
+    print(widget.userComponents);
     _userComponents = widget.userComponents;
     _subComponents = <Component>[];
     _selectedComponents = <Component>[];
@@ -122,33 +124,46 @@ class _AddNewComponent extends State<AddNewComponent> {
   }
 
   Component _createComponent() {
-    final data = {};
-    return Component();
+    _energy = (_energyKcal ?? 0.0) * _kJMultiplier;
+    final json = {
+      "name": _name,
+      "description": _category,
+      "subComponents": _subComponents?.map((e) => e.toJson()).toList(),
+      "salt": _salt,
+      "energy": _energy,
+      "energyKcal": _energyKcal,
+      "protein": _protein,
+      "carbohydrate": _carbohydrate,
+      "alcohol": _alcohol,
+      "organicAcids": _organicAcids,
+      "sugarAlcohol": _sugarAlcohol,
+      "saturatedFat": _saturatedFat,
+      "fiber": _fiber,
+      "sugar": _sugar,
+      "fat": _fat
+    };
+    return Component.fromJson(json);
   }
 
   void _addIngredientHandler() async {
-    final data = await Util.createComponents("omena");
+    // final data = await Util.createComponents("omena");
     _selectedComponents = await Navigator.of(context).push(
       MaterialPageRoute(
         // builder: (context) => AddIngredient(userComponents: _userComponents),
         builder: (context) => AddExistingComponent(
-          userComponents: data!,
+          // userComponents: data!,
+          userComponents: _userComponents,
         ),
       ),
     );
-    print(_selectedComponents);
     setState(() {
-      // _subComponents = List.from(_selectedComponents!.cast<Component>());
       if (_selectedComponents != null) {
         _subComponents?.addAll(_selectedComponents!.cast<Component>());
       }
-      // _selectedComponents?.map((e) => _subComponents?.add(e)).toList();
     });
-    print(_subComponents);
   }
 
   void _removeIngredient(Component component) {
-    print(_subComponents);
     setState(() {
       _subComponents!.remove(component);
     });

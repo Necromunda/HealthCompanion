@@ -6,23 +6,39 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:intl/intl.dart';
 
+import '../models/appuser_model.dart';
 import '../models/component_model.dart';
+import '../services/firebase_service.dart';
 import 'add_new_component_screen.dart';
 
 class Overview extends StatefulWidget {
-  const Overview({Key? key}) : super(key: key);
+  final AppUser user;
+  final List<Component> userComponents;
+
+  const Overview({Key? key, required this.user, required this.userComponents}) : super(key: key);
 
   @override
   State<Overview> createState() => _OverviewState();
 }
 
 class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<Overview> {
-  final ScrollController _scrollController = ScrollController();
-  final ScrollController _listScrollController = ScrollController();
-  List<Component> _consumedComponents = [];
+  late final ScrollController _scrollController, _listScrollController;
+  late List<Component> _consumedComponents, _userComponents;
+  late final AppUser _user;
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    print("Overview screen init");
+    _user = widget.user;
+    _scrollController = ScrollController();
+    _listScrollController = ScrollController();
+    _consumedComponents = <Component>[];
+    _userComponents = widget.userComponents;
+    super.initState();
+  }
 
   @override
   void setState(fn) {
@@ -38,18 +54,26 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
 
   @override
   void dispose() {
+    _scrollController.dispose();
+    _listScrollController.dispose();
     super.dispose();
   }
 
   void _addNewComponentButtonHandler() async {
+    print(_userComponents);
     Component? component = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const AddNewComponent(userComponents: [],);
+          return AddNewComponent(
+            userComponents: _userComponents,
+          );
         },
       ),
     );
+    if (component != null) {
+      FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
+    }
     print(component);
   }
 
@@ -69,20 +93,15 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
             Card(
               elevation: 5,
               child: ExpansionTile(
-                // trailing: SizedBox.shrink(),
-                // iconColor: Colors.green,
-                // controlAffinity: null,
                 title: const Text(
                   "Add component +",
                   style: TextStyle(fontSize: 22),
-                  // textAlign: TextAlign.center,
                 ),
                 children: [
                   ListTile(
                     title: const Text(
                       "Add new component",
                       style: TextStyle(fontSize: 18),
-                      // textAlign: TextAlign.center,
                     ),
                     trailing: const Icon(Icons.launch),
                     onTap: _addNewComponentButtonHandler,
@@ -91,7 +110,6 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                     title: const Text(
                       "Add existing component",
                       style: TextStyle(fontSize: 18),
-                      // textAlign: TextAlign.center,
                     ),
                     trailing: const Icon(Icons.launch),
                     onTap: _addExistingComponentButtonHandler,
@@ -99,56 +117,43 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                 ],
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: Card(
-                elevation: 5,
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.0),
-                      child: Text(
-                        "What you've eaten today",
-                        style: TextStyle(fontSize: 22),
+            if (_consumedComponents.isNotEmpty)
+              SizedBox(
+                width: double.infinity,
+                child: Card(
+                  elevation: 5,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(
+                          "What you've eaten today",
+                          style: TextStyle(fontSize: 22),
+                        ),
                       ),
-                    ),
-                    ListView.builder(
-                      controller: _listScrollController,
-                      // itemCount: _consumedComponents.length,
-                      itemCount: 11,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return (_consumedComponents.isEmpty)
-                            ? ListTile(
-                                title: Text(
-                                  "Item $index",
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                subtitle: Text(
-                                  "Item $index description",
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                trailing: const Icon(Icons.launch),
-                                onTap: null,
-                              )
-                            : ListTile(
-                                title: Text(
-                                  _consumedComponents[index].name!,
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                                subtitle: Text(
-                                  _consumedComponents[index].description!,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                trailing: const Icon(Icons.launch),
-                                onTap: null,
-                              );
-                      },
-                    )
-                  ],
+                      ListView.builder(
+                        controller: _listScrollController,
+                        itemCount: _consumedComponents.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                                  title: Text(
+                                    _consumedComponents[index].name!,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  subtitle: Text(
+                                    _consumedComponents[index].description!,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  trailing: const Icon(Icons.launch),
+                                  onTap: null,
+                                );
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
             Row(
               children: [
                 FilledButton(

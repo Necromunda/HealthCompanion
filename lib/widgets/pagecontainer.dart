@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/screens/components_screen.dart';
 import 'package:health_companion/screens/overview_screen.dart';
@@ -6,6 +10,7 @@ import 'package:health_companion/screens/search_screen.dart';
 import 'package:health_companion/screens/settings_screen.dart';
 
 import '../models/appuser_model.dart';
+import '../models/component_model.dart';
 
 class PageContainer extends StatefulWidget {
   final AppUser user;
@@ -20,13 +25,71 @@ class _PageContainerState extends State<PageContainer> {
   late final PageController _pageController;
   late final AppUser _user;
   late int _selectedIndex;
+  late final FirebaseFirestore _firestore;
+  late final DocumentReference _documentRef;
+  late List<Component> _userComponents;
+  late StreamSubscription<DocumentSnapshot> _documentSubscription;
+  late StreamSubscription<User?> _userSubscription;
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: 2);
-    _user = widget.user;
-    _selectedIndex = 2;
     super.initState();
+    _user = widget.user;
+    _firestore = FirebaseFirestore.instance;
+    _documentRef = _firestore.collection("user_components").doc(_user.uid);
+    _pageController = PageController(initialPage: 2);
+    _selectedIndex = 2;
+    _userComponents = [];
+    _subscribeToDocumentChanges();
+    // if (FirebaseAuth.instance.currentUser != null) {
+    //   _documentRef.snapshots().listen((event) {
+    //     print("Components were updated");
+    //     print(event);
+    //   }).onError((e, stackTrace) {
+    //     print("ERROR");
+    //   });
+    // }
+  }
+
+  void _subscribeToDocumentChanges() {
+    _userSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print("Logged out");
+        _documentSubscription.cancel();
+        _userSubscription.cancel();
+        // setState(() {
+        //   widget._firebaseUser = user;
+        //   print(widget._firebaseUser);
+        // });
+      } else {
+        print('User is signed in!');
+      }
+    });
+    _documentSubscription = _documentRef.snapshots().listen((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        print("Components updated");
+        setState(() {
+          _userComponents =
+              ((data as Map)["components"] as List).map((e) => Component.fromJson(e)).toList();
+          print(_userComponents.length);
+        });
+      }
+    }, onError: (e, stackTrace) {
+      print("ERROR: $e");
+    });
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _onItemTapped(int index) {
@@ -68,10 +131,8 @@ class _PageContainerState extends State<PageContainer> {
           ),
         ],
         currentIndex: _selectedIndex,
-        // selectedItemColor: const Color(0xFFE0C3FC),
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
-        // unselectedLabelStyle: TextStyle(color: Colors.black),
         backgroundColor: Colors.deepPurple.shade400,
         onTap: _onItemTapped,
       ),
@@ -81,10 +142,16 @@ class _PageContainerState extends State<PageContainer> {
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
           children: <Widget>[
-            Settings(),
+            SettingsScreen(),
             Search(),
-            Overview(),
-            Components(user: _user,),
+            Overview(
+              user: _user,
+              userComponents: _userComponents
+            ),
+            Components(
+              user: _user,
+                userComponents: _userComponents,
+            ),
             Profile()
           ],
           onPageChanged: (index) {

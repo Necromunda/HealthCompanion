@@ -66,20 +66,15 @@ class FirebaseService {
       if (userComponents != null) {
         List<Map<String, dynamic>> json = userComponents.map((item) => item.toJson()).toList();
         json.add(component.toJson());
-        db.runTransaction((transaction) async {
-          transaction.update(userComponentsDocRef, {"components": json});
-          print("User items updated");
-          return true;
-        }).onError((error, stackTrace) {
-          print(error);
-          return false;
-        });
+        await userComponentsDocRef.update({"components": json});
+        return true;
       }
-      return false;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print(e);
+      print(stackTrace);
       return false;
     }
+    return false;
   }
 
   static Future<List<Component>?> getUserComponents(String? uid) async {
@@ -89,9 +84,8 @@ class FirebaseService {
 
       var userComponentsDocSnapshot = await userComponentsDocRef.get();
       var data = userComponentsDocSnapshot.data() as Map<String, dynamic>;
-      List<Component> components = (data["components"] as List)
-          .map((e) => Component.fromJson(e))
-          .toList();
+      List<Component> components =
+          (data["components"] as List).map((e) => Component.fromJson(e)).toList();
 
       return components;
     } catch (e) {

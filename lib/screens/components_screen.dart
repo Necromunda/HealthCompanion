@@ -10,8 +10,9 @@ import 'component_breakdown_screen.dart';
 
 class Components extends StatefulWidget {
   final AppUser user;
+  final List<Component> userComponents;
 
-  const Components({Key? key, required this.user}) : super(key: key);
+  const Components({Key? key, required this.user, required this.userComponents}) : super(key: key);
 
   @override
   State<Components> createState() => _ComponentsState();
@@ -19,12 +20,14 @@ class Components extends StatefulWidget {
 
 class _ComponentsState extends State<Components> {
   final ScrollController _listScrollController = ScrollController();
-  List<Component> _userComponents = [];
+  late List<Component> _userComponents;
   late final AppUser _user;
 
   @override
   void initState() {
+    print("Components screen init");
     _user = widget.user;
+    _userComponents = widget.userComponents;
     super.initState();
   }
 
@@ -52,7 +55,11 @@ class _ComponentsState extends State<Components> {
       ),
     );
     if (component != null) {
-      FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
+      FirebaseService.saveUserComponents(_user.uid, component).then((value) {
+        setState(() {
+          print(value);
+        });
+      });
     }
     print(component);
   }
@@ -74,6 +81,7 @@ class _ComponentsState extends State<Components> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
+        // mainAxisSize: MainAxisSize.max,
         children: [
           SizedBox(
             width: double.infinity,
@@ -89,25 +97,31 @@ class _ComponentsState extends State<Components> {
               ),
             ),
           ),
-          ListView.builder(
-            controller: _listScrollController,
-            itemCount: _userComponents.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  _userComponents[index].name!,
-                  style: const TextStyle(fontSize: 18),
+          if (_userComponents.isNotEmpty)
+            Expanded(
+              child: Card(
+                elevation: 5,
+                child: ListView.builder(
+                  controller: _listScrollController,
+                  itemCount: _userComponents.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        _userComponents[index].name!,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text(
+                        _userComponents[index].description!,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      trailing: const Icon(Icons.launch),
+                      onTap: () => _showComponentBreakdown(_userComponents[index]),
+                    );
+                  },
                 ),
-                subtitle: Text(
-                  _userComponents[index].description!,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                trailing: const Icon(Icons.launch),
-                onTap: () => _showComponentBreakdown(_userComponents[index]),
-              );
-            },
-          ),
+              ),
+            ),
         ],
       ),
     );
