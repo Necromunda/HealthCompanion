@@ -31,17 +31,17 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    //   if (user == null) {
-    //     print("Logged out");
-    //     // setState(() {
-    //     //   widget._firebaseUser = user;
-    //     //   print(widget._firebaseUser);
-    //     // });
-    //   } else {
-    //     print('User is signed in!');
-    //   }
-    // });
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print("Logged out");
+        // setState(() {
+        //   widget._firebaseUser = user;
+        //   print(widget._firebaseUser);
+        // });
+      } else {
+        print('User is signed in!');
+      }
+    });
   }
 
   @override

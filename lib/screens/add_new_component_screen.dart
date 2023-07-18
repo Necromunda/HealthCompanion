@@ -19,9 +19,13 @@ class AddNewComponent extends StatefulWidget {
 }
 
 class _AddNewComponentState extends State<AddNewComponent> {
-  static final RegExp _noLeadingZeroRegex = RegExp(r'^(?!0)\d+$');
+  static final RegExp _noLeadingZeroRegex = RegExp(r'^0[0-9]+');
   static const List<String> _categories = ["Component", "Breakfast", "Lunch", "Dinner", "Snack"];
   static const double _kJMultiplier = 4.1855;
+  Macros? _macrosSelection;
+  String? _name, _category;
+  late final String? _uid;
+  late List<Component>? _subComponents, _selectedComponents;
   late final ScrollController _listScrollController;
   late final TextEditingController _nameController,
       _energyKcalController,
@@ -35,13 +39,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
       _fiberController,
       _sugarController,
       _fatController;
-  Macros? _macrosSelection;
-  String? _name, _category;
-  late final String? _uid;
-
-  // List<Component>? _subComponents;
-  late List<Component>? _subComponents, _selectedComponents;
-  late final List<Component> _userComponents;
   double? _salt,
       _energy,
       _energyKcal,
@@ -146,10 +143,8 @@ class _AddNewComponentState extends State<AddNewComponent> {
   }
 
   void _addIngredientHandler() async {
-    // final data = await Util.createComponents("omena");
     _selectedComponents = await Navigator.of(context).push(
       MaterialPageRoute(
-        // builder: (context) => AddIngredient(userComponents: _userComponents),
         builder: (context) => AddExistingComponent(uid: _uid),
       ),
     );
@@ -174,6 +169,42 @@ class _AddNewComponentState extends State<AddNewComponent> {
             component: component,
           );
         },
+      ),
+    );
+  }
+
+  InputDecoration _textfieldInputDecoration(String hintText) {
+    return InputDecoration(
+      suffix: const Text("g"),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Theme.of(context).primaryColor,
+          width: 2.0,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Theme.of(context).primaryColor,
+          width: 2.0,
+        ),
+      ),
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.grey,
+          width: 2.0,
+        ),
+      ),
+      prefixIcon: Icon(
+        Icons.title,
+        color: Theme.of(context).primaryColor,
+      ),
+      hintText: hintText,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5.0),
+        borderSide: const BorderSide(
+          width: 2.0,
+          style: BorderStyle.none,
+        ),
       ),
     );
   }
@@ -347,486 +378,145 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         ),
                         TextField(
                           controller: _energyKcalController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _energyKcalController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _energyKcal = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Kcal",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Kcal"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _proteinController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _proteinController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _protein = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Protein",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Protein"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _carbohydrateController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _carbohydrateController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _carbohydrate = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Carbohydrates",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Carbohydrates"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _saltController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _saltController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _salt = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Salt",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Salt"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _sugarController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _sugarController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _sugar = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Sugar",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Sugar"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _fatController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _fatController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _fat = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Fat",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Fat"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _saturatedFatController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _saturatedFatController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _saturatedFat = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Saturated fat",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Saturated fat"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _fiberController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _fiberController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _fiber = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Fiber",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Fiber"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _organicAcidsController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _organicAcidsController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _organicAcids = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Organic acids",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Organic acids"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _alcoholController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _alcoholController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _alcohol = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Alcohol",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Alcohol"),
                         ),
                         const SizedBox(height: 10.0),
                         TextField(
                           controller: _sugarAlcoholController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
-                            FilteringTextInputFormatter.allow(_noLeadingZeroRegex)
+                            FilteringTextInputFormatter.deny(_noLeadingZeroRegex, replacementString: _sugarAlcoholController.text),
                           ],
                           onChanged: (value) => setState(() {
                             _sugarAlcohol = double.tryParse(value);
                           }),
-                          decoration: InputDecoration(
-                            errorBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                                width: 2.0,
-                              ),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.grey,
-                                width: 2.0,
-                              ),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.title,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                            hintText: "Sugar alcohol",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 2.0,
-                                style: BorderStyle.none,
-                              ),
-                            ),
-                          ),
+                          decoration: _textfieldInputDecoration("Sugar alcohol"),
                         ),
                       ],
                     ),

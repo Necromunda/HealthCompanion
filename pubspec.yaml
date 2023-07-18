@@ -43,6 +43,7 @@ dependencies:
   intl: ^0.18.1
   font_awesome_flutter: ^10.4.0
   expandable: ^5.0.1
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:

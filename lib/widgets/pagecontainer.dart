@@ -26,52 +26,52 @@ class _PageContainerState extends State<PageContainer> {
   late final AppUser _user;
   late int _selectedIndex;
   late final FirebaseFirestore _firestore;
-  late final DocumentReference _documentRef;
-  late List<Component> _userComponents;
-  late StreamSubscription<DocumentSnapshot> _documentSubscription;
-  late StreamSubscription<User?> _userSubscription;
+  // late final DocumentReference _documentRef;
+  // late List<Component> _userComponents;
+  // late StreamSubscription<DocumentSnapshot> _documentSubscription;
+  // late StreamSubscription<User?> _userSubscription;
 
   @override
   void initState() {
     print("Pagcontainer init");
     _user = widget.user;
-    _firestore = FirebaseFirestore.instance;
-    _documentRef = _firestore.collection("user_components").doc(_user.uid);
+    // _firestore = FirebaseFirestore.instance;
+    // _documentRef = _firestore.collection("user_components").doc(_user.uid);
     _pageController = PageController(initialPage: 2);
     _selectedIndex = 2;
-    _userComponents = [];
-    _subscribeToDocumentChanges();
+    // _userComponents = [];
+    // _subscribeToDocumentChanges();
     super.initState();
   }
 
-  void _subscribeToDocumentChanges() {
-    _userSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print("Logged out");
-        _documentSubscription.cancel();
-        _userSubscription.cancel();
-        // setState(() {
-        //   widget._firebaseUser = user;
-        //   print(widget._firebaseUser);
-        // });
-      } else {
-        print('User is signed in!');
-      }
-    });
-    _documentSubscription = _documentRef.snapshots().listen((DocumentSnapshot snapshot) {
-      if (snapshot.exists) {
-        final data = snapshot.data();
-        print("Components updated");
-        setState(() {
-          _userComponents =
-              ((data as Map)["components"] as List).map((e) => Component.fromJson(e)).toList();
-          print(_userComponents.length);
-        });
-      }
-    }, onError: (e, stackTrace) {
-      print("ERROR: $e");
-    });
-  }
+  // void _subscribeToDocumentChanges() {
+  //   _userSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  //     if (user == null) {
+  //       print("Logged out");
+  //       _documentSubscription.cancel();
+  //       _userSubscription.cancel();
+  //       // setState(() {
+  //       //   widget._firebaseUser = user;
+  //       //   print(widget._firebaseUser);
+  //       // });
+  //     } else {
+  //       print('User is signed in!');
+  //     }
+  //   });
+  //   _documentSubscription = _documentRef.snapshots().listen((DocumentSnapshot snapshot) {
+  //     if (snapshot.exists) {
+  //       final data = snapshot.data();
+  //       print("Components updated");
+  //       setState(() {
+  //         _userComponents =
+  //             ((data as Map)["components"] as List).map((e) => Component.fromJson(e)).toList();
+  //         print(_userComponents.length);
+  //       });
+  //     }
+  //   }, onError: (e, stackTrace) {
+  //     print("ERROR: $e");
+  //   });
+  // }
 
   @override
   void setState(fn) {
@@ -137,7 +137,7 @@ class _PageContainerState extends State<PageContainer> {
           children: <Widget>[
             SettingsScreen(),
             Search(),
-            Overview(user: _user, userComponents: _userComponents),
+            Overview(user: _user,),
             Components(
               user: _user,
             ),

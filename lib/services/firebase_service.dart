@@ -62,6 +62,7 @@ class FirebaseService {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
+
       List<Component>? userComponents = await getUserComponents(uid);
       if (userComponents != null) {
         List<Map<String, dynamic>> json = userComponents.map((item) => item.toJson()).toList();
@@ -70,11 +71,24 @@ class FirebaseService {
         return true;
       }
     } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
+      print("Error saving user components: $e, $stackTrace");
       return false;
     }
     return false;
+  }
+
+  static Future<bool> deleteUserComponent(String? uid, List<Component> components) async {
+    try {
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
+
+      List<Map<String, dynamic>> json = components.map((item) => item.toJson()).toList();
+      await userComponentsDocRef.update({"components": json});
+      return true;
+    } catch (e, stackTrace) {
+      print("Error deleting user components: $e, $stackTrace");
+      return false;
+    }
   }
 
   static Future<List<Component>?> getUserComponents(String? uid) async {

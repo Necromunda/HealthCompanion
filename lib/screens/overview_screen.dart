@@ -13,9 +13,8 @@ import 'add_new_component_screen.dart';
 
 class Overview extends StatefulWidget {
   final AppUser user;
-  final List<Component> userComponents;
 
-  const Overview({Key? key, required this.user, required this.userComponents}) : super(key: key);
+  const Overview({Key? key, required this.user}) : super(key: key);
 
   @override
   State<Overview> createState() => _OverviewState();
@@ -24,7 +23,7 @@ class Overview extends StatefulWidget {
 class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMixin<Overview>
 {
   late final ScrollController _scrollController, _listScrollController;
-  late List<Component> _consumedComponents, _userComponents;
+  late List<Component> _consumedComponents;
   late final AppUser _user;
 
   // @override
@@ -37,7 +36,6 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
     _consumedComponents = <Component>[];
-    _userComponents = widget.userComponents;
     super.initState();
   }
 
@@ -61,7 +59,6 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
   }
 
   void _addNewComponentButtonHandler() async {
-    print(_userComponents);
     Component? component = await Navigator.push(
       context,
       MaterialPageRoute(

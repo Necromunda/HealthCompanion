@@ -60,7 +60,10 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   }
 
   bool _isSelected(Component component) {
-    return _selectedComponents.contains(component);
+    for (var e in _selectedComponents) {
+      if (e == component) return true;
+    }
+    return false;
   }
 
   @override

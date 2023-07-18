@@ -62,6 +62,11 @@ class _ComponentsState extends State<Components> {
     print(component);
   }
 
+  void _deleteComponent(List<Component> components, Component componentToRemove) async {
+    components.removeWhere((element) => element == componentToRemove);
+    FirebaseService.deleteUserComponent(_user.uid, components).then((value) => print("Deleted items?: $value"));
+  }
+
   void _showComponentBreakdown(Component component) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -90,7 +95,7 @@ class _ComponentsState extends State<Components> {
                   "Add component +",
                   style: TextStyle(fontSize: 22),
                 ),
-                trailing: const Icon(Icons.arrow_forward),
+                trailing: const Icon(Icons.launch),
                 onTap: _addComponent,
               ),
             ),
@@ -113,25 +118,42 @@ class _ComponentsState extends State<Components> {
                   return Expanded(
                     child: Card(
                       elevation: 5,
-                      child: ListView.builder(
-                        controller: _listScrollController,
-                        itemCount: components.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              components[index].name!,
-                              style: const TextStyle(fontSize: 18),
+                      child: components.isEmpty
+                          ? const Center(
+                              child: Text("You have no components", style: TextStyle(fontSize: 22),),
+                            )
+                          : ListView.builder(
+                              controller: _listScrollController,
+                              itemCount: components.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(
+                                    components[index].name!,
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
+                                  subtitle: Text(
+                                    components[index].description!,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () => _deleteComponent(components, components[index]),
+                                        icon: const Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                          size: 32.0,
+                                        ),
+                                      ),
+                                      const Icon(Icons.launch)
+                                    ],
+                                  ),
+                                  onTap: () => _showComponentBreakdown(components[index]),
+                                );
+                              },
                             ),
-                            subtitle: Text(
-                              components[index].description!,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            trailing: const Icon(Icons.launch),
-                            onTap: () => _showComponentBreakdown(components[index]),
-                          );
-                        },
-                      ),
                     ),
                   );
                 } else if (snapshot.hasError) {

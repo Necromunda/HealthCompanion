@@ -1,4 +1,6 @@
-class Component {
+import 'package:equatable/equatable.dart';
+
+class Component extends Equatable {
   String? name, description;
   List<Component>? subComponents;
   double? salt,
@@ -77,4 +79,7 @@ class Component {
     data['fat'] = fat;
     return data;
   }
+
+  @override
+  List<Object?> get props => [name, description, energyKcal];
 }
