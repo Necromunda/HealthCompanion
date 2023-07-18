@@ -51,8 +51,9 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       // theme: ThemeData.dark(),
       darkTheme: ThemeData.dark(),
+      // home: SignIn(user: widget._firebaseUser)
       home: widget._firebaseUser == null
-          ? const SignIn()
+          ? SignIn(user: widget._firebaseUser)
           : FutureBuilder(
               future: FirebaseService.createUser(widget._firebaseUser!.uid),
               builder: (context, snapshot) {

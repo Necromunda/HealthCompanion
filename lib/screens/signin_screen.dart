@@ -11,7 +11,9 @@ import '../widgets/pagecontainer.dart';
 import 'loading_screen.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+  final User? user;
+
+  const SignIn({Key? key, required this.user}) : super(key: key);
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -24,14 +26,16 @@ class _SignInState extends State<SignIn> {
   bool _isPasswordValid = false;
   final RegExp _passwordRegExp =
       RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+  late final User? _user;
 
   @override
   void initState() {
-    super.initState();
+    _user = widget.user;
     setState(() {
       _emailController.text = "johannes.rantapaa@gmail.com";
       _passwordController.text = "Johannes00!!";
     });
+    super.initState();
   }
 
   @override
@@ -179,7 +183,21 @@ class _SignInState extends State<SignIn> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body: Center(
+      body:
+          // _user != null
+          //     ? FutureBuilder(
+          //         future: FirebaseService.createUser(_user!.uid),
+          //         builder: (context, snapshot) {
+          //           if (snapshot.hasData) {
+          //             return PageContainer(user: snapshot.data!);
+          //           }
+          //           return const LoadingScreen(
+          //             message: "Logging in",
+          //           );
+          //         },
+          //       )
+          //     :
+          Center(
         child: Padding(
           // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
