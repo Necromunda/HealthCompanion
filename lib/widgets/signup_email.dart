@@ -63,7 +63,7 @@ class _SignUpEmailState extends State<SignUpEmail>
           ),
           TextField(
             controller: _emailController,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.emailAddress,
             onChanged: (value) {
               setState(() {
                 if (EmailValidator.validate(value)) {
