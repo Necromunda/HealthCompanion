@@ -10,9 +10,8 @@ import 'component_breakdown_screen.dart';
 
 class Components extends StatefulWidget {
   final AppUser user;
-  final List<Component> userComponents;
 
-  const Components({Key? key, required this.user, required this.userComponents}) : super(key: key);
+  const Components({Key? key, required this.user}) : super(key: key);
 
   @override
   State<Components> createState() => _ComponentsState();
@@ -20,14 +19,15 @@ class Components extends StatefulWidget {
 
 class _ComponentsState extends State<Components> {
   final ScrollController _listScrollController = ScrollController();
-  late List<Component> _userComponents;
   late final AppUser _user;
+  late final Stream _userComponentsDocStream;
 
   @override
   void initState() {
     print("Components screen init");
     _user = widget.user;
-    _userComponents = widget.userComponents;
+    _userComponentsDocStream =
+        FirebaseFirestore.instance.collection("user_components").doc(_user.uid).snapshots();
     super.initState();
   }
 
@@ -48,9 +48,7 @@ class _ComponentsState extends State<Components> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return const AddNewComponent(
-            userComponents: [],
-          );
+          return AddNewComponent(uid: _user.uid);
         },
       ),
     );
@@ -97,30 +95,52 @@ class _ComponentsState extends State<Components> {
               ),
             ),
           ),
-          if (_userComponents.isNotEmpty)
-            Expanded(
-              child: Card(
-                elevation: 5,
-                child: ListView.builder(
-                  controller: _listScrollController,
-                  itemCount: _userComponents.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        _userComponents[index].name!,
-                        style: const TextStyle(fontSize: 18),
+          if (_user.uid == null)
+            const Text("uid error")
+          else
+            StreamBuilder(
+              stream: _userComponentsDocStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Map<String, dynamic>> json =
+                      snapshot.data["components"].cast<Map<String, dynamic>>();
+                  List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+                  // setState(() {
+                  //   _userComponents = json.map((e) => Component.fromJson(e)).toList();
+                  // });
+                  // print(snapshot.data["components"]);
+                  // if (_userComponents.isNotEmpty) {
+                  return Expanded(
+                    child: Card(
+                      elevation: 5,
+                      child: ListView.builder(
+                        controller: _listScrollController,
+                        itemCount: components.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              components[index].name!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              components[index].description!,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: const Icon(Icons.launch),
+                            onTap: () => _showComponentBreakdown(components[index]),
+                          );
+                        },
                       ),
-                      subtitle: Text(
-                        _userComponents[index].description!,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      trailing: const Icon(Icons.launch),
-                      onTap: () => _showComponentBreakdown(_userComponents[index]),
-                    );
-                  },
-                ),
-              ),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Error getting your components"),
+                  );
+                }
+                return const SizedBox();
+              },
             ),
         ],
       ),

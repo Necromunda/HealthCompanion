@@ -21,13 +21,14 @@ class Overview extends StatefulWidget {
   State<Overview> createState() => _OverviewState();
 }
 
-class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<Overview> {
+class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMixin<Overview>
+{
   late final ScrollController _scrollController, _listScrollController;
   late List<Component> _consumedComponents, _userComponents;
   late final AppUser _user;
 
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -47,10 +48,10 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
     }
   }
 
-  @override
-  void didUpdateWidget(covariant Overview oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant Overview oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   void dispose() {
@@ -65,14 +66,14 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
       context,
       MaterialPageRoute(
         builder: (context) {
-          return AddNewComponent(
-            userComponents: _userComponents,
-          );
+          return AddNewComponent(uid: _user.uid);
         },
       ),
     );
     if (component != null) {
-      FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
+      setState(() {
+        FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
+      });
     }
     print(component);
   }
@@ -81,7 +82,7 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -137,17 +138,17 @@ class _OverviewState extends State<Overview> with AutomaticKeepAliveClientMixin<
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return ListTile(
-                                  title: Text(
-                                    _consumedComponents[index].name!,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                  subtitle: Text(
-                                    _consumedComponents[index].description!,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  trailing: const Icon(Icons.launch),
-                                  onTap: null,
-                                );
+                            title: Text(
+                              _consumedComponents[index].name!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              _consumedComponents[index].description!,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: const Icon(Icons.launch),
+                            onTap: null,
+                          );
                         },
                       )
                     ],

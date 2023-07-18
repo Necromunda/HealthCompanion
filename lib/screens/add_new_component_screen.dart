@@ -10,9 +10,9 @@ import 'component_breakdown_screen.dart';
 enum Macros { individual, inherit, both }
 
 class AddNewComponent extends StatefulWidget {
-  final List<Component> userComponents;
+  final String? uid;
 
-  const AddNewComponent({Key? key, required this.userComponents}) : super(key: key);
+  const AddNewComponent({Key? key, this.uid}) : super(key: key);
 
   @override
   State<AddNewComponent> createState() => _AddNewComponentState();
@@ -37,6 +37,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
       _fatController;
   Macros? _macrosSelection;
   String? _name, _category;
+  late final String? _uid;
 
   // List<Component>? _subComponents;
   late List<Component>? _subComponents, _selectedComponents;
@@ -56,8 +57,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
 
   @override
   void initState() {
-    print(widget.userComponents);
-    _userComponents = widget.userComponents;
+    _uid = widget.uid;
     _subComponents = <Component>[];
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
@@ -150,10 +150,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _selectedComponents = await Navigator.of(context).push(
       MaterialPageRoute(
         // builder: (context) => AddIngredient(userComponents: _userComponents),
-        builder: (context) => AddExistingComponent(
-          // userComponents: data!,
-          userComponents: _userComponents,
-        ),
+        builder: (context) => AddExistingComponent(uid: _uid),
       ),
     );
     setState(() {

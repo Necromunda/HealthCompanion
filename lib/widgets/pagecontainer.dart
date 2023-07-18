@@ -33,7 +33,7 @@ class _PageContainerState extends State<PageContainer> {
 
   @override
   void initState() {
-    super.initState();
+    print("Pagcontainer init");
     _user = widget.user;
     _firestore = FirebaseFirestore.instance;
     _documentRef = _firestore.collection("user_components").doc(_user.uid);
@@ -41,14 +41,7 @@ class _PageContainerState extends State<PageContainer> {
     _selectedIndex = 2;
     _userComponents = [];
     _subscribeToDocumentChanges();
-    // if (FirebaseAuth.instance.currentUser != null) {
-    //   _documentRef.snapshots().listen((event) {
-    //     print("Components were updated");
-    //     print(event);
-    //   }).onError((e, stackTrace) {
-    //     print("ERROR");
-    //   });
-    // }
+    super.initState();
   }
 
   void _subscribeToDocumentChanges() {
@@ -144,13 +137,9 @@ class _PageContainerState extends State<PageContainer> {
           children: <Widget>[
             SettingsScreen(),
             Search(),
-            Overview(
-              user: _user,
-              userComponents: _userComponents
-            ),
+            Overview(user: _user, userComponents: _userComponents),
             Components(
               user: _user,
-                userComponents: _userComponents,
             ),
             Profile()
           ],

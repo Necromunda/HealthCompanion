@@ -1,12 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
 class AddExistingComponent extends StatefulWidget {
-  final List<Component> userComponents;
+  final String? uid;
 
-  const AddExistingComponent({Key? key, required this.userComponents}) : super(key: key);
+  const AddExistingComponent({Key? key, this.uid}) : super(key: key);
 
   @override
   State<AddExistingComponent> createState() => _AddExistingComponentState();
@@ -14,14 +15,17 @@ class AddExistingComponent extends StatefulWidget {
 
 class _AddExistingComponentState extends State<AddExistingComponent> {
   late List<Component> _selectedComponents;
-  late final List<Component> _userComponents;
   late final ScrollController _listScrollController;
+  late final Stream _userComponentsDocStream;
+  late final String? _uid;
 
   @override
   void initState() {
-    _userComponents = widget.userComponents;
+    _uid = widget.uid;
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
+    _userComponentsDocStream =
+        FirebaseFirestore.instance.collection("user_components").doc(_uid).snapshots();
     super.initState();
   }
 
@@ -82,32 +86,83 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: ListView.builder(
-          controller: _listScrollController,
-          itemCount: _userComponents.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(
-                _userComponents[index].name!,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: _isSelected(_userComponents[index])
-                        ? Theme.of(context).primaryColor
-                        : null),
-              ),
-              subtitle: Text(
-                _userComponents[index].description!,
-                style: const TextStyle(fontSize: 16),
-              ),
-              trailing: const Icon(Icons.launch),
-              onTap: () => _isSelected(_userComponents[index])
-                  ? _removeSelection(_userComponents[index])
-                  : _addSelection(_userComponents[index]),
-              onLongPress: () => _showComponentBreakdown(_userComponents[index]),
-            );
-          },
-        ),
+
+        child: _uid == null
+            ? const Text("uid error")
+            : Column(children: [
+                StreamBuilder(
+                  stream: _userComponentsDocStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Map<String, dynamic>> json =
+                          snapshot.data["components"].cast<Map<String, dynamic>>();
+                      List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+                      return Expanded(
+                        child: Card(
+                          elevation: 5,
+                          child: ListView.builder(
+                            controller: _listScrollController,
+                            itemCount: components.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(
+                                  components[index].name!,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: _isSelected(components[index])
+                                          ? Theme.of(context).primaryColor
+                                          : null),
+                                ),
+                                subtitle: Text(
+                                  components[index].description!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                trailing: const Icon(Icons.launch),
+                                onTap: () => _isSelected(components[index])
+                                    ? _removeSelection(components[index])
+                                    : _addSelection(components[index]),
+                                onLongPress: () => _showComponentBreakdown(components[index]),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Error getting your components"),
+                      );
+                    }
+                    return const SizedBox();
+                  },
+                ),
+              ]),
+        // child: ListView.builder(
+        //   controller: _listScrollController,
+        //   itemCount: _userComponents.length,
+        //   shrinkWrap: true,
+        //   itemBuilder: (context, index) {
+        //     return ListTile(
+        //       title: Text(
+        //         _userComponents[index].name!,
+        //         style: TextStyle(
+        //             fontSize: 18,
+        //             color: _isSelected(_userComponents[index])
+        //                 ? Theme.of(context).primaryColor
+        //                 : null),
+        //       ),
+        //       subtitle: Text(
+        //         _userComponents[index].description!,
+        //         style: const TextStyle(fontSize: 16),
+        //       ),
+        //       trailing: const Icon(Icons.launch),
+        //       onTap: () => _isSelected(_userComponents[index])
+        //           ? _removeSelection(_userComponents[index])
+        //           : _addSelection(_userComponents[index]),
+        //       onLongPress: () => _showComponentBreakdown(_userComponents[index]),
+        //     );
+        //   },
+        // ),
       ),
     );
   }
