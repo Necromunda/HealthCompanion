@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:health_companion/models/component_model.dart';
@@ -46,32 +44,15 @@ class FirebaseService {
 
   static Future<AppUser?> createUser(String uid) async {
     try {
-      // final FirebaseFirestore db = FirebaseFirestore.instance;
-      // final DocumentReference userDocument = db.collection("users").doc(uid);
-      late final StreamSubscription<DocumentSnapshot> stream;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userDocument = db.collection("users").doc(uid);
 
-      // var userDocumentSnapshot = await userDocument.get();
-      FirebaseAuth.instance.authStateChanges().listen((User? user) {
-        if (user != null) {
-          stream = FirebaseFirestore.instance
-              .collection('users')
-              .doc(FirebaseAuth.instance.currentUser!.uid)
-              .snapshots()
-              .listen((doc) {
-            while (!doc.exists) {}
-            print("DOC EXISTS");
-            // var userDocumentSnapshot = doc;
-            var firestoreUser = doc.data();
-            firestoreUser!["uid"] = doc.id;
-            return AppUser.fromJson(firestoreUser);
-          });
-        } else {
-          stream.cancel();
-        }
-      });
-      // print(userDocumentSnapshot.data());
-      // var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
-      // firestoreUser["uid"] = userDocumentSnapshot.id;
+      var userDocumentSnapshot = await userDocument.get();
+      if (userDocumentSnapshot.data() == null) {
+        // do something
+      }
+      var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
+      firestoreUser["uid"] = userDocumentSnapshot.id;
 
       return AppUser.fromJson(firestoreUser);
     } catch (e, stackTrace) {
