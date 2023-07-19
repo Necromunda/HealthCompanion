@@ -28,34 +28,65 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final User? _user;
+
   @override
   void initState() {
+    // super.initState();
+    _user = widget._firebaseUser;
+    // FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    //   if (user == null) {
+    //     print("Logged out");
+    //     // setState(() {
+    //     // _user == null;
+    //     // });
+    //   } else {
+    //     print('User is signed in!');
+    //   }
+    // });
     super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print("Logged out");
-        // setState(() {
-        //   widget._firebaseUser = user;
-        //   print(widget._firebaseUser);
-        // });
-      } else {
-        print('User is signed in!');
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("user $_user");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       // theme: ThemeData.dark(),
       darkTheme: ThemeData.dark(),
-      // home: SignIn(user: widget._firebaseUser)
-      home: widget._firebaseUser == null
-          ? SignIn(user: widget._firebaseUser)
-          : FutureBuilder(
-              future: FirebaseService.createUser(widget._firebaseUser!.uid),
+      //   home: const SignIn(),
+      //   routes: {
+      //     '/loggedIn': (BuildContext context) => PageContainer(user: AppUser()),
+      //   },
+      // );
+      // home: _user == null
+      //     ? const SignIn()
+      //     : FutureBuilder(
+      //         future: FirebaseService.createUser(_user!.uid),
+      //         builder: (context, snapshot) {
+      //           if (snapshot.hasData) {
+      //             return PageContainer(user: snapshot.data!);
+      //           }
+      //           return const LoadingScreen(
+      //             message: "Logging in",
+      //           );
+      //         },
+      //       ),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print("Snapshot has error");
+            return const SignIn();
+          }
+          if (snapshot.data == null) {
+            print("User is logged out");
+            return const SignIn();
+          } else {
+            print('User is logged in!');
+            return FutureBuilder(
+              future: FirebaseService.createUser(snapshot.data!.uid),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return PageContainer(user: snapshot.data!);
@@ -64,7 +95,10 @@ class _MyAppState extends State<MyApp> {
                   message: "Logging in",
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

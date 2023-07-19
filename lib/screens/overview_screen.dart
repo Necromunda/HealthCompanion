@@ -77,10 +77,16 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
 
   void _addExistingComponentButtonHandler() {}
 
+  void _logout() async {
+    FirebaseAuth.instance.signOut().then((value) {
+      Navigator.of(context).popUntil(ModalRoute.withName("/"));
+    }).catchError((_) {
+      print("Error logging out");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // super.build(context);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: SingleChildScrollView(
@@ -155,15 +161,7 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
             Row(
               children: [
                 FilledButton(
-                  onPressed: () {
-                    setState(() {
-                      FirebaseAuth.instance.signOut().then((value) {
-                        Navigator.of(context).popUntil(ModalRoute.withName("/"));
-                      }).catchError((_) {
-                        print("Error logging out");
-                      });
-                    });
-                  },
+                  onPressed: _logout,
                   child: const Text("Log out"),
                 ),
                 FilledButton(

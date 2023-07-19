@@ -11,26 +11,26 @@ import '../widgets/pagecontainer.dart';
 import 'loading_screen.dart';
 
 class SignIn extends StatefulWidget {
-  final User? user;
-
-  const SignIn({Key? key, required this.user}) : super(key: key);
+  const SignIn({Key? key}) : super(key: key);
 
   @override
   State<SignIn> createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isEmailValid = false;
-  bool _isPasswordValid = false;
-  final RegExp _passwordRegExp =
-      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
-  late final User? _user;
+  late final TextEditingController _emailController, _passwordController;
+  late bool _isEmailValid, _isPasswordValid;
+  late final RegExp _passwordRegExp;
 
   @override
   void initState() {
-    _user = widget.user;
+    print("Signin init");
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _isEmailValid = false;
+    _isPasswordValid = false;
+    _passwordRegExp =
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
     setState(() {
       _emailController.text = "johannes.rantapaa@gmail.com";
       _passwordController.text = "Johannes00!!";
@@ -43,6 +43,13 @@ class _SignInState extends State<SignIn> {
     if (mounted) {
       super.setState(fn);
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   void showAlertDialog(BuildContext context, String title, String message) {
@@ -183,21 +190,7 @@ class _SignInState extends State<SignIn> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body:
-          // _user != null
-          //     ? FutureBuilder(
-          //         future: FirebaseService.createUser(_user!.uid),
-          //         builder: (context, snapshot) {
-          //           if (snapshot.hasData) {
-          //             return PageContainer(user: snapshot.data!);
-          //           }
-          //           return const LoadingScreen(
-          //             message: "Logging in",
-          //           );
-          //         },
-          //       )
-          //     :
-          Center(
+      body: Center(
         child: Padding(
           // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
