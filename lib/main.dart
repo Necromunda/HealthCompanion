@@ -32,6 +32,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    // FirebaseAuth.instance.signOut();
     // super.initState();
     _user = widget._firebaseUser;
     // FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -55,11 +56,6 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       // theme: ThemeData.dark(),
       darkTheme: ThemeData.dark(),
-      //   home: const SignIn(),
-      //   routes: {
-      //     '/loggedIn': (BuildContext context) => PageContainer(user: AppUser()),
-      //   },
-      // );
       // home: _user == null
       //     ? const SignIn()
       //     : FutureBuilder(
@@ -73,30 +69,82 @@ class _MyAppState extends State<MyApp> {
       //           );
       //         },
       //       ),
+      // home: StreamBuilder(
+      //   stream: FirebaseAuth.instance.authStateChanges(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasError) {
+      //       print("Snapshot has error");
+      //       return const SignIn();
+      //     }
+      //     if (snapshot.data == null) {
+      //       print("User is logged out");
+      //       return const SignIn();
+      //     } else {
+      //       print('User is logged in!');
+      //       print("SNAPSHOT DATA ${snapshot.data!.uid}");
+      //       return FutureBuilder(
+      //         future: FirebaseService.createUser(snapshot.data!.uid),
+      //         builder: (context, snapshot) {
+      //           if (snapshot.hasData) {
+      //             return PageContainer(user: snapshot.data!);
+      //           }
+      //           return const LoadingScreen(
+      //             message: "Logging in",
+      //           );
+      //         },
+      //       );
+      //     }
+      //   },
+      // ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print("Snapshot has error");
+          if (!snapshot.hasData) {
+            print("Direct log in");
             return const SignIn();
           }
-          if (snapshot.data == null) {
-            print("User is logged out");
-            return const SignIn();
-          } else {
-            print('User is logged in!');
-            return FutureBuilder(
-              future: FirebaseService.createUser(snapshot.data!.uid),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return PageContainer(user: snapshot.data!);
-                }
-                return const LoadingScreen(
-                  message: "Logging in",
-                );
-              },
-            );
-          }
+          print('User is logged in!');
+          return FutureBuilder(
+            future: FirebaseService.createUser(snapshot.data!.uid),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return PageContainer(user: snapshot.data!);
+              }
+              return const LoadingScreen(
+                message: "Logging in",
+              );
+            },
+          );
+          // return StreamBuilder(
+          //   stream: FirebaseFirestore.instance
+          //       .collection('users')
+          //       .doc(FirebaseAuth.instance.currentUser!.uid)
+          //       .snapshots(),
+          //   builder: (context, doc) {
+          //     if (!doc.hasData) {
+          //       return const LoadingScreen(
+          //         message: "Creating account",
+          //       );
+          //     } else {
+          //       if (doc.data == null) {
+          //         return const LoadingScreen(
+          //           message: "Logging in",
+          //         );
+          //       }
+          //       return FutureBuilder(
+          //         future: FirebaseService.createUser(snapshot.data!.uid),
+          //         builder: (context, snapshot) {
+          //           if (snapshot.hasData) {
+          //             return PageContainer(user: snapshot.data!);
+          //           }
+          //           return const LoadingScreen(
+          //             message: "Logging in",
+          //           );
+          //         },
+          //       );
+          //     }
+          //   },
+          // );
         },
       ),
     );

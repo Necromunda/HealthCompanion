@@ -149,16 +149,17 @@ class _SignInState extends State<SignIn> {
   void _createAccountButtonHandler() async {
     _clearInput();
 
-    Map<String, dynamic>? obj = await Navigator.push(
+    // Map<String, dynamic>? obj = await Navigator.push(
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SignUp(),
       ),
     );
-    print(obj);
-    if (obj != null) {
-      _login(obj['email'], obj['password']);
-    }
+    // print(obj);
+    // if (obj != null) {
+    //   _login(obj['email'], obj['password']);
+    // }
   }
 
   void _clearInput() {
