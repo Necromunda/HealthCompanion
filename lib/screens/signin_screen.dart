@@ -52,8 +52,8 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  void showAlertDialog(BuildContext context, String title, String message) {
-    showDialog(
+  Future<void> _showAlertDialog(BuildContext context, String title, String message) {
+    return showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
@@ -115,16 +115,17 @@ class _SignInState extends State<SignIn> {
             }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
-              FirebaseService.createUser(snapshot.data!.user!.uid).then(
-                (appUser) => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PageContainer(
-                      user: appUser!,
-                    ),
-                  ),
-                ),
-              );
+              return const PageContainer();
+              // FirebaseService.createUser(snapshot.data!.user!.uid).then(
+              //   (appUser) => Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => const PageContainer(
+              //           // user: appUser!,
+              //           ),
+              //     ),
+              //   ),
+              // );
             }
             return const LoadingScreen(message: "Logging in");
           },

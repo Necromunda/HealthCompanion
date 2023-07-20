@@ -12,9 +12,10 @@ import '../services/firebase_service.dart';
 import 'add_new_component_screen.dart';
 
 class Overview extends StatefulWidget {
-  final AppUser user;
+  // final AppUser user;
 
-  const Overview({Key? key, required this.user}) : super(key: key);
+  // const Overview({Key? key, required this.user}) : super(key: key);
+  const Overview({Key? key}) : super(key: key);
 
   @override
   State<Overview> createState() => _OverviewState();
@@ -24,7 +25,8 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
 {
   late final ScrollController _scrollController, _listScrollController;
   late List<Component> _consumedComponents;
-  late final AppUser _user;
+  // late final AppUser _user;
+  late final User _user;
 
   // @override
   // bool get wantKeepAlive => true;
@@ -32,7 +34,8 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
   @override
   void initState() {
     print("Overview screen init");
-    _user = widget.user;
+    // _user = widget.user;
+    _user = FirebaseAuth.instance.currentUser!;
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
     _consumedComponents = <Component>[];

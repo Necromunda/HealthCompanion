@@ -104,45 +104,18 @@ class _MyAppState extends State<MyApp> {
             return const SignIn();
           }
           print('User is logged in!');
-          return FutureBuilder(
-            future: FirebaseService.createUser(snapshot.data!.uid),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return PageContainer(user: snapshot.data!);
-              }
-              return const LoadingScreen(
-                message: "Logging in",
-              );
-            },
-          );
-          // return StreamBuilder(
-          //   stream: FirebaseFirestore.instance
-          //       .collection('users')
-          //       .doc(FirebaseAuth.instance.currentUser!.uid)
-          //       .snapshots(),
-          //   builder: (context, doc) {
-          //     if (!doc.hasData) {
-          //       return const LoadingScreen(
-          //         message: "Creating account",
-          //       );
-          //     } else {
-          //       if (doc.data == null) {
-          //         return const LoadingScreen(
-          //           message: "Logging in",
-          //         );
-          //       }
-          //       return FutureBuilder(
-          //         future: FirebaseService.createUser(snapshot.data!.uid),
-          //         builder: (context, snapshot) {
-          //           if (snapshot.hasData) {
-          //             return PageContainer(user: snapshot.data!);
-          //           }
-          //           return const LoadingScreen(
-          //             message: "Logging in",
-          //           );
-          //         },
-          //       );
+          // return PageContainer(user: snapshot.data!);
+          return const PageContainer();
+
+          // return FutureBuilder(
+          //   future: FirebaseService.createUser(snapshot.data!.uid),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.hasData) {
+          //       return PageContainer(user: snapshot.data!);
           //     }
+          //     return const LoadingScreen(
+          //       message: "Logging in",
+          //     );
           //   },
           // );
         },

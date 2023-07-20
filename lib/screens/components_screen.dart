@@ -9,9 +9,10 @@ import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
 class Components extends StatefulWidget {
-  final AppUser user;
+  // final AppUser user;
 
-  const Components({Key? key, required this.user}) : super(key: key);
+  // const Components({Key? key, required this.user}) : super(key: key);
+  const Components({Key? key}) : super(key: key);
 
   @override
   State<Components> createState() => _ComponentsState();
@@ -19,13 +20,15 @@ class Components extends StatefulWidget {
 
 class _ComponentsState extends State<Components> {
   final ScrollController _listScrollController = ScrollController();
-  late final AppUser _user;
+  // late final AppUser _user;
+  late final User _user;
   late final Stream _userComponentsDocStream;
 
   @override
   void initState() {
     print("Components screen init");
-    _user = widget.user;
+    // _user = widget.user;
+    _user = FirebaseAuth.instance.currentUser!;
     _userComponentsDocStream =
         FirebaseFirestore.instance.collection("user_components").doc(_user.uid).snapshots();
     super.initState();

@@ -13,9 +13,10 @@ import '../models/appuser_model.dart';
 import '../models/component_model.dart';
 
 class PageContainer extends StatefulWidget {
-  final AppUser user;
+  // final AppUser user;
 
-  const PageContainer({Key? key, required this.user}) : super(key: key);
+  // const PageContainer({Key? key, required this.user}) : super(key: key);
+  const PageContainer({Key? key}) : super(key: key);
 
   @override
   State<PageContainer> createState() => _PageContainerState();
@@ -23,7 +24,7 @@ class PageContainer extends StatefulWidget {
 
 class _PageContainerState extends State<PageContainer> {
   late final PageController _pageController;
-  late final AppUser _user;
+  // late final AppUser _user;
   late int _selectedIndex;
   late final FirebaseFirestore _firestore;
   // late final DocumentReference _documentRef;
@@ -34,7 +35,7 @@ class _PageContainerState extends State<PageContainer> {
   @override
   void initState() {
     print("Pagcontainer init");
-    _user = widget.user;
+    // _user = widget.user;
     // _firestore = FirebaseFirestore.instance;
     // _documentRef = _firestore.collection("user_components").doc(_user.uid);
     _pageController = PageController(initialPage: 2);
@@ -134,13 +135,13 @@ class _PageContainerState extends State<PageContainer> {
         child: PageView(
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
-          children: <Widget>[
+          children: const <Widget>[
             SettingsScreen(),
             Search(),
-            Overview(user: _user,),
-            Components(
-              user: _user,
-            ),
+            // Overview(user: _user,),
+            Overview(),
+            // Components(user: _user,
+            Components(),
             Profile()
           ],
           onPageChanged: (index) {
