@@ -125,4 +125,31 @@ class FirebaseService {
       return null;
     }
   }
+
+  static Future<bool> reauthenticateWithCredential(AuthCredential credential) async {
+    try {
+      await FirebaseAuth.instance.currentUser?.reauthenticateWithCredential(credential);
+      return true;
+    } catch (e, stackTrace) {
+      print("Error reauthenticating user: $e, $stackTrace");
+      return false;
+    }
+  }
+
+  static Future<void> deleteAccount(String uid) async {
+    try {
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userDocRef = db.collection("users").doc(uid);
+      final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
+      final DocumentReference userPreferencesDocRef = db.collection("user_preferences").doc(uid);
+
+      await userDocRef.delete();
+      await userComponentsDocRef.delete();
+      await userPreferencesDocRef.delete();
+
+      await FirebaseAuth.instance.currentUser?.delete();
+    } catch (e, stackTrace) {
+      print("Error deleting user: $e, $stackTrace");
+    }
+  }
 }

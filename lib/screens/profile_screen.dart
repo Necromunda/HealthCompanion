@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/screens/achievements_screen.dart';
+import 'package:health_companion/screens/delete_account_screen.dart';
 import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/screens/stats_screen.dart';
 import 'package:intl/intl.dart';
@@ -62,7 +63,54 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  void _deleteAccountButtonHandler() {}
+  void _deleteAccountButtonHandler() async {
+    // bool? res = await _showDeleteAccountConfirm();
+    // print("Delete account: $res");
+    // if (res is bool && res) {
+    //   FirebaseAuth.instance.currentUser!.reauthenticateWithCredential()
+    //   print("deleting account");
+    // }
+    bool? res = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const DeleteAccount(),
+      ),
+    );
+  }
+
+  Future<bool?> _showDeleteAccountConfirm() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Delete account",
+          textAlign: TextAlign.center,
+        ),
+        content: const Text(
+          "Are you sure you want to delete your account?\nAccount deletion is permanent.",
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+                child: const Text("Cancel"),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: const Text("Delete"),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +183,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   trailing: const Icon(Icons.launch),
                   // onTap: _statsButtonHandler,
-                  onTap: () {},
+                  onTap: _statsButtonHandler,
                   minVerticalPadding: 0.0,
                   shape: const Border(bottom: BorderSide()),
                 ),
@@ -146,7 +194,7 @@ class _ProfileState extends State<Profile> {
                   ),
                   trailing: const Icon(Icons.launch),
                   // onTap: _statsButtonHandler,
-                  onTap: () {},
+                  onTap: _achievementsButtonHandler,
                   minVerticalPadding: 0.0,
                   shape: const Border(bottom: BorderSide()),
                 ),
@@ -157,14 +205,10 @@ class _ProfileState extends State<Profile> {
                   ),
                   trailing: const Icon(Icons.launch),
                   // onTap: _statsButtonHandler,
-                  onTap: () {},
+                  onTap: _deleteAccountButtonHandler,
                   minVerticalPadding: 0.0,
                   shape: const Border(bottom: BorderSide()),
                 ),
-                // const Divider(
-                //   thickness: 1.0, // You can adjust the thickness as needed
-                //   color: Colors.grey, // You can change the color of the border
-                // ),
                 Expanded(child: Container(color: Colors.red)),
                 Align(
                   alignment: Alignment.bottomCenter,
