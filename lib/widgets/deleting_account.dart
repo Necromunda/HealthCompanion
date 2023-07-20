@@ -15,10 +15,12 @@ class DeletingAccount extends StatefulWidget {
 
 class _DeletingAccountState extends State<DeletingAccount> {
   late final _authCredential;
+  late bool _authSuccessful;
 
   @override
   void initState() {
     _authCredential = widget.authCredential;
+    _authSuccessful = false;
     super.initState();
   }
 
@@ -46,92 +48,104 @@ class _DeletingAccountState extends State<DeletingAccount> {
     );
   }
 
-  Widget _showProgress({required bool authCheck, required bool deleteCheck}) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 15.0),
-              child: CircularProgressIndicator(),
-            ),
-            if (authCheck)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Authenticated"),
-                  if (authCheck)
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                ],
-              )
-            else
-              const Text("Authenticating"),
-            if (deleteCheck)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Account deleted"),
-                  if (authCheck)
-                    const Icon(
-                      Icons.check,
-                      color: Colors.green,
-                    )
-                ],
-              )
-            else
-              const Text("Deleting account"),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: FirebaseService.reauthenticateWithCredential(_authCredential),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          Future(() => Navigator.of(context).pop());
-        }
-        if (snapshot.hasData) {
-          if (snapshot.data!) {
-            Future(() => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FutureBuilder(
-                      // future: Future.delayed(const Duration(seconds: 2), () => true),
-                      future: FirebaseService.deleteAccount(FirebaseAuth.instance.currentUser!.uid),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          Future(() => Navigator.of(context).pop());
-                        }
-                        if (snapshot.hasData) {
-                          print("Account deleted");
-                          Future.delayed(const Duration(seconds: 2), () {
-                            _showProgress(authCheck: true, deleteCheck: false);
-                            Navigator.of(context).pop();
-                          });
-                          // Future(() => Navigator.of(context).pop());
-                        }
-                        return _showProgress(authCheck: true, deleteCheck: false);
-                      },
-                    ),
+    return Scaffold(
+      body: _authSuccessful
+          ? FutureBuilder(
+              future: FirebaseService.deleteAccount(FirebaseAuth.instance.currentUser!.uid)
+                  .then((value) {
+                print("Account deleted");
+                Future(() => Navigator.of(context).popUntil(ModalRoute.withName("/")));
+              }),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  Future(() => Navigator.of(context).pop());
+                }
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Authenticated",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 15.0),
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.green,
+                              size: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Deleting account",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 15.0),
+                            child:
+                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ));
-          } else {
-            Future(() {
-              Navigator.of(context).pop();
-              _showDialog("Authentication failed", "Password is incorrect");
-            });
-          }
-        }
-        return _showProgress(authCheck: false, deleteCheck: false);
-      },
+                );
+              },
+            )
+          : FutureBuilder(
+              future: FirebaseService.reauthenticateWithCredential(_authCredential),
+              // future: Future.delayed(const Duration(seconds: 4), () => false),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  Future(() => Navigator.of(context).pop());
+                }
+                if (snapshot.hasData) {
+                  if (snapshot.data!) {
+                    Future(() {
+                      setState(() {
+                        _authSuccessful = true;
+                      });
+                    });
+                  } else {
+                    Future(() {
+                      Navigator.of(context).pop();
+                      _showDialog("Authentication failed", "Password is incorrect");
+                    });
+                  }
+                }
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Authenticating",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 15.0),
+                            child:
+                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }

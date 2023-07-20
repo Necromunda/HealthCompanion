@@ -16,10 +16,12 @@ class _DeleteAccountState extends State<DeleteAccount> {
   late bool _deleteConfirm, _isPasswordValid;
   late final RegExp _passwordRegExp;
   late final User _currentUser;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser!;
+    _focusNode = FocusNode();
     _deleteConfirm = false;
     _isPasswordValid = false;
     _passwordController = TextEditingController();
@@ -106,7 +108,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (_focusNode.hasFocus) _focusNode.unfocus();
+            Navigator.of(context).pop();
+          },
           icon: const Icon(Icons.close),
           color: Colors.black,
         ),
@@ -118,6 +123,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextField(
+                    focusNode: _focusNode,
                     controller: _passwordController,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
