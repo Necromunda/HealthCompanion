@@ -83,11 +83,11 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              _component.name!,
+              _component.name ?? "No name",
               style: const TextStyle(fontSize: 24),
             ),
             Text(
-              _component.description!,
+              _component.description ?? "No description",
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(
@@ -222,7 +222,10 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
             const SizedBox(
               height: 25.0,
             ),
-            if (_component.subComponents!.isNotEmpty)
+            if (_component.subComponents == null || _component.subComponents!.isEmpty)
+              const Text("No sub components")
+            // if (_component.subComponents!.isNotEmpty)
+            else
               Card(
                 // width: double.infinity,
                 // height: double.infinity,

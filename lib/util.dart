@@ -8,4 +8,16 @@ class Util {
     final data = await FineliService.getFoodItem(food);
     return data?.map((element) => FineliModel.fromJson(element).toComponent()).toList();
   }
+
+  static bool isNextDay({required DateTime now, required DateTime compareTo}) {
+    // Convert both DateTime objects to have the same time (00:00:00) to compare the date only
+    // DateTime date1 = DateTime(now.year, now.month, now.day);
+    // DateTime date2 = DateTime(compareTo.year, compareTo.month, compareTo.day);
+
+    // Calculate the difference in days between the two dates
+    Duration difference = now.difference(compareTo);
+
+    // If the difference is exactly one day, then it's the next day
+    return difference.inDays >= 1;
+  }
 }

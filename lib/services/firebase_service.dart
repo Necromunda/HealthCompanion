@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/models/daily_data_model.dart';
+import 'package:health_companion/util.dart';
+import 'package:intl/intl.dart';
 
 import '../models/appuser_model.dart';
 
@@ -151,6 +154,51 @@ class FirebaseService {
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (e, stackTrace) {
       print("Error deleting user: $e, $stackTrace");
+    }
+  }
+
+  static Future<void> updateDailyData(List<Map<String, dynamic>> currentData, List<Map<String, dynamic>> components) async {
+    try {
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      final DocumentReference userDailyDataDocRef = db.collection("user_daily_data").doc(uid);
+      DailyData dailyData = DailyData.fromJson({
+        "creationDate": DateTime.now().millisecondsSinceEpoch,
+        "lastEdited": DateTime.now().millisecondsSinceEpoch,
+        "components": components,
+      });
+
+      if (currentData.isEmpty) {
+        currentData.add(dailyData.toJson());
+        await userDailyDataDocRef.update({"data": currentData});
+      } else {
+        final DailyData latestDailyData = DailyData.fromJson(currentData.last);
+        final DateTime latestDailyDataCreationDate = DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+        // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
+
+        bool isNextDay = Util.isNextDay(now: DateTime.now(), compareTo: latestDailyDataCreationDate);
+        // print(isNextDay);
+        if (isNextDay) {
+          // final DailyData dailyData = DailyData.fromJson({
+          //   "creationDate": DateTime.now().millisecondsSinceEpoch,
+          //   "lastEdited": DateTime.now().millisecondsSinceEpoch,
+          //   "components": components,
+          // });
+          currentData.add(dailyData.toJson());
+          await userDailyDataDocRef.update({"data": currentData});
+        } else {
+          latestDailyData.components?.addAll(components.map((e) => Component.fromJson(e)));
+          // latestDailyData.creationDate = DateTime.now().add(const Duration(hours: -25)).millisecondsSinceEpoch;
+          currentData.removeLast();
+          currentData.add(latestDailyData.toJson());
+          await userDailyDataDocRef.update({"data": currentData});
+        }
+      }
+      // print(data);
+
+      // return components;
+    } catch (e, stackTrace) {
+      print("Error adding daily data: $e, $stackTrace");
     }
   }
 }

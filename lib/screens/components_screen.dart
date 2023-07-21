@@ -9,9 +9,6 @@ import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
 class Components extends StatefulWidget {
-  // final AppUser user;
-
-  // const Components({Key? key, required this.user}) : super(key: key);
   const Components({Key? key}) : super(key: key);
 
   @override
@@ -20,17 +17,15 @@ class Components extends StatefulWidget {
 
 class _ComponentsState extends State<Components> {
   final ScrollController _listScrollController = ScrollController();
-  // late final AppUser _user;
-  late final User _user;
+  late final User _currentUser;
   late final Stream _userComponentsDocStream;
 
   @override
   void initState() {
     print("Components screen init");
-    // _user = widget.user;
-    _user = FirebaseAuth.instance.currentUser!;
+    _currentUser = FirebaseAuth.instance.currentUser!;
     _userComponentsDocStream =
-        FirebaseFirestore.instance.collection("user_components").doc(_user.uid).snapshots();
+        FirebaseFirestore.instance.collection("user_components").doc(_currentUser.uid).snapshots();
     super.initState();
   }
 
@@ -51,12 +46,12 @@ class _ComponentsState extends State<Components> {
       context,
       MaterialPageRoute(
         builder: (context) {
-          return AddNewComponent(uid: _user.uid);
+          return const AddNewComponent();
         },
       ),
     );
     if (component != null) {
-      FirebaseService.saveUserComponents(_user.uid, component).then((value) {
+      FirebaseService.saveUserComponents(_currentUser.uid, component).then((value) {
         setState(() {
           print(value);
         });
@@ -67,7 +62,8 @@ class _ComponentsState extends State<Components> {
 
   void _deleteComponent(List<Component> components, Component componentToRemove) async {
     components.removeWhere((element) => element == componentToRemove);
-    FirebaseService.deleteUserComponent(_user.uid, components).then((value) => print("Deleted items?: $value"));
+    FirebaseService.deleteUserComponent(_currentUser.uid, components)
+        .then((value) => print("Deleted items?: $value"));
   }
 
   void _showComponentBreakdown(Component component) {
@@ -103,70 +99,76 @@ class _ComponentsState extends State<Components> {
               ),
             ),
           ),
-          if (_user.uid == null)
-            const Text("uid error")
-          else
-            StreamBuilder(
-              stream: _userComponentsDocStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<Map<String, dynamic>> json =
-                      snapshot.data["components"].cast<Map<String, dynamic>>();
-                  List<Component> components = json.map((e) => Component.fromJson(e)).toList();
-                  // setState(() {
-                  //   _userComponents = json.map((e) => Component.fromJson(e)).toList();
-                  // });
-                  // print(snapshot.data["components"]);
-                  // if (_userComponents.isNotEmpty) {
-                  return Expanded(
-                    child: Card(
-                      elevation: 5,
-                      child: components.isEmpty
-                          ? const Center(
-                              child: Text("You have no components", style: TextStyle(fontSize: 22),),
-                            )
-                          : ListView.builder(
-                              controller: _listScrollController,
-                              itemCount: components.length,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                    components[index].name!,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                  subtitle: Text(
-                                    components[index].description!,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => _deleteComponent(components, components[index]),
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 32.0,
-                                        ),
-                                      ),
-                                      const Icon(Icons.launch)
-                                    ],
-                                  ),
-                                  onTap: () => _showComponentBreakdown(components[index]),
-                                );
-                              },
+          StreamBuilder(
+            stream: _userComponentsDocStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text("Your components could not be displayed"),
+                );
+              }
+              if (snapshot.hasData) {
+                List<Map<String, dynamic>> json =
+                    snapshot.data["components"].cast<Map<String, dynamic>>();
+                List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+                // setState(() {
+                //   _userComponents = json.map((e) => Component.fromJson(e)).toList();
+                // });
+                // print(snapshot.data["components"]);
+                // if (_userComponents.isNotEmpty) {
+                return Expanded(
+                  child: Card(
+                    elevation: 5,
+                    child: components.isEmpty
+                        ? const Center(
+                            child: Text(
+                              "You have no components",
+                              style: TextStyle(fontSize: 22),
                             ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("Error getting your components"),
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
+                          )
+                        : ListView.builder(
+                            controller: _listScrollController,
+                            itemCount: components.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(
+                                  components[index].name!,
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                                subtitle: Text(
+                                  components[index].description!,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          _deleteComponent(components, components[index]),
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 32.0,
+                                      ),
+                                    ),
+                                    const Icon(Icons.launch)
+                                  ],
+                                ),
+                                onTap: () => _showComponentBreakdown(components[index]),
+                              );
+                            },
+                          ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text("Error getting your components"),
+                );
+              }
+              return const SizedBox();
+            },
+          ),
         ],
       ),
     );

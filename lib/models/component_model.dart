@@ -82,4 +82,6 @@ class Component extends Equatable {
 
   @override
   List<Object?> get props => [name, description, energyKcal];
+
+
 }

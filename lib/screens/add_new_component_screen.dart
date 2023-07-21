@@ -10,9 +10,7 @@ import 'component_breakdown_screen.dart';
 enum Macros { individual, inherit, both }
 
 class AddNewComponent extends StatefulWidget {
-  final String? uid;
-
-  const AddNewComponent({Key? key, this.uid}) : super(key: key);
+  const AddNewComponent({Key? key}) : super(key: key);
 
   @override
   State<AddNewComponent> createState() => _AddNewComponentState();
@@ -24,7 +22,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
   static const double _kJMultiplier = 4.1855;
   Macros? _macrosSelection;
   String? _name, _category;
-  late final String? _uid;
   late List<Component>? _subComponents, _selectedComponents;
   late final ScrollController _listScrollController;
   late final TextEditingController _nameController,
@@ -54,7 +51,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
 
   @override
   void initState() {
-    _uid = widget.uid;
     _subComponents = <Component>[];
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
@@ -121,7 +117,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   }
 
   Component _createComponent() {
-    _energy = double.tryParse((_energyKcal ?? 0.0) * _kJMultiplier).toStringAsFixed(2));
+    _energy = double.tryParse(((_energyKcal ?? 0.0) * _kJMultiplier).toStringAsFixed(2));
     final json = {
       "name": _name,
       "description": _category,

@@ -50,45 +50,45 @@ class _ChartState extends State<Chart> {
                   child: Column(
                     children: [
                       Row(
-                        children: [
-                          const ChartBar(
+                        children: const [
+                          ChartBar(
                             label: "Carbs",
                             value: 75,
                             totalValuePct: 75 / 300,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Fat",
                             value: 35,
                             totalValuePct: 35 / 80,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Fat, sat.",
                             value: 15,
                             totalValuePct: 15 / 25,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Fiber",
                             value: 15,
                             totalValuePct: 15 / 35,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Protein",
                             value: 77,
                             totalValuePct: 77 / 136.5,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Salt",
                             value: 7,
                             totalValuePct: 7 / 10,
                           ),
-                          const ChartBar(
+                          ChartBar(
                             label: "Sugar",
                             value: 10,
                             totalValuePct: 10 / 50,
                           ),
                         ],
                       ),
-                      ChartBarHorizontal(label: "Energy (kcal)", value: 750, totalValuePct: 850 / 1500)
+                      const ChartBarHorizontal(label: "Energy (kcal)", value: 750, totalValuePct: 850 / 1500)
                     ],
                   ),
                 ),
