@@ -16,12 +16,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
   late bool _deleteConfirm, _isPasswordValid;
   late final RegExp _passwordRegExp;
   late final User _currentUser;
-  late FocusNode _focusNode;
 
   @override
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser!;
-    _focusNode = FocusNode();
     _deleteConfirm = false;
     _isPasswordValid = false;
     _passwordController = TextEditingController();
@@ -64,31 +62,6 @@ class _DeleteAccountState extends State<DeleteAccount> {
           builder: (context) => DeletingAccount(authCredential: credential)
         ),
       );
-      // FirebaseService.reauthenticateWithCredential(credential).then(
-      //   (authenticated) {
-      //     if (authenticated) {
-      //       Navigator.of(context).push(
-      //         MaterialPageRoute(
-      //           builder: (context) => FutureBuilder(
-      //             future: FirebaseService.reauthenticateWithCredential(credential),
-      //             builder: (context, snapshot) {
-      //               if (snapshot.hasError) {
-      //                 Navigator.of(context).pop();
-      //               }
-      //               if (snapshot.hasData) {
-      //                 // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ,))
-      //               }
-      //               return const LoadingScreen(message: "Authenticating");
-      //             },
-      //           ),
-      //         ),
-      //       );
-      //     } else {
-      //       _showDialog();
-      //       print(authenticated);
-      //     }
-      //   },
-      // );
     } catch (e, stackTrace) {
       print("Error deleting user: $e, $stackTrace");
     }
@@ -109,7 +82,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
         elevation: 0.0,
         leading: IconButton(
           onPressed: () {
-            if (_focusNode.hasFocus) _focusNode.unfocus();
+            FocusManager.instance.primaryFocus?.unfocus();
             Navigator.of(context).pop();
           },
           icon: const Icon(Icons.close),
@@ -123,7 +96,6 @@ class _DeleteAccountState extends State<DeleteAccount> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextField(
-                    focusNode: _focusNode,
                     controller: _passwordController,
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,

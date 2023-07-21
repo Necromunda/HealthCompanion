@@ -139,6 +139,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   }
 
   void _addIngredientHandler() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     _selectedComponents = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const AddExistingComponent(),
@@ -158,6 +159,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   }
 
   void _showComponentBreakdown(Component component) {
+    FocusManager.instance.primaryFocus?.unfocus();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
@@ -278,6 +280,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
               Card(
                 // elevation: 0,
                 child: ExpansionTile(
+                  onExpansionChanged: (value) => FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
                     "Category",
                     style: TextStyle(fontSize: 22),
@@ -304,6 +307,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
               Card(
                 // elevation: 0,
                 child: ExpansionTile(
+                  onExpansionChanged: (value) => FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
                     "Macro type",
                     style: TextStyle(fontSize: 22),

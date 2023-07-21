@@ -209,7 +209,7 @@ class _ProfileState extends State<Profile> {
                   minVerticalPadding: 0.0,
                   shape: const Border(bottom: BorderSide()),
                 ),
-                Expanded(child: Container(color: Colors.red)),
+                const Expanded(child: SizedBox()),
                 Align(
                   alignment: Alignment.bottomCenter,
                   // alignment: ,

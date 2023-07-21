@@ -110,6 +110,13 @@ class _OverviewState extends State<Overview> {
     );
   }
 
+  void _deleteComponent(List<Component> components, Component componentToRemove) async {
+    print(components);
+    components.removeWhere((element) => element == componentToRemove);
+    print(components);
+    _updateDailyData(_currentData, components);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -147,90 +154,113 @@ class _OverviewState extends State<Overview> {
             ),
           ),
           Expanded(
-            child: Card(
-              elevation: 3,
-              child: StreamBuilder(
-                stream: _userDailyDataDocStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Center(
-                      child: Text("Your components could not be displayed"),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    List<Map<String, dynamic>> data =
-                        snapshot.data["data"].cast<Map<String, dynamic>>();
-                    _currentData = data;
-                    if (data.isEmpty || !_isLatestDataCurrentDaysData) {
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Center(
-                          child: Text(
-                            "No data found for $_today",
-                            style: const TextStyle(fontSize: 22),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                    } else {
-                      Map<String, dynamic> latestData = data.last;
-                      DailyData latestDailyData = DailyData.fromJson(latestData);
-                      final DateTime latestDailyDataCreationDate = DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-                      // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
-
-                      bool isNextDay = Util.isNextDay(now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-                      if (isNextDay) {
-                        Future(() => setState(() {
-                          _isLatestDataCurrentDaysData = false;
-                        }));
-                      }
-
-                      return SizedBox(
-                        width: double.infinity,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Text(
-                                "What you have eaten today",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                controller: _listScrollController,
-                                itemCount: latestDailyData.components!.length,
-                                // itemCount: 10,
-                                // shrinkWrap: true,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(
-                                      latestDailyData.components![index].name ?? "No name",
-                                      // "Item $index",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      latestDailyData.components![index].description ?? "No description",
-                                      // "Item $index description",
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                    trailing: const Icon(Icons.launch),
-                                    onTap: () => _showComponentBreakdown(latestDailyData.components![index]),
-                                    // shape: const Border(top: BorderSide()),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Card(
+                elevation: 3,
+                child: StreamBuilder(
+                  stream: _userDailyDataDocStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Your components could not be displayed"),
                       );
                     }
-                  }
-                  return const CircularProgressIndicator();
-                },
+                    if (snapshot.hasData) {
+                      List<Map<String, dynamic>> data =
+                          snapshot.data["data"].cast<Map<String, dynamic>>();
+                      _currentData = data;
+                      if (data.isEmpty || !_isLatestDataCurrentDaysData) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: Center(
+                            child: Text(
+                              "No data found for $_today",
+                              style: const TextStyle(fontSize: 22),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      } else {
+                        Map<String, dynamic> latestData = data.last;
+                        DailyData latestDailyData = DailyData.fromJson(latestData);
+                        final DateTime latestDailyDataCreationDate =
+                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+                        // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
+
+                        bool isNextDay = Util.isNextDay(
+                            now: DateTime.now(), compareTo: latestDailyDataCreationDate);
+                        if (isNextDay) {
+                          Future(() => setState(() {
+                                _isLatestDataCurrentDaysData = false;
+                              }));
+                        }
+
+                        return SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.0),
+                                child: Text(
+                                  "What you have eaten today",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  controller: _listScrollController,
+                                  itemCount: latestDailyData.components!.length,
+                                  // itemCount: 10,
+                                  // shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                        latestDailyData.components![index].name ?? "No name",
+                                        // "Item $index",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        latestDailyData.components![index].description ??
+                                            "No description",
+                                        // "Item $index description",
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                      trailing: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () =>
+                                                _deleteComponent(latestDailyData.components!, latestDailyData.components![index]),
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 32.0,
+                                            ),
+                                          ),
+                                          const Icon(Icons.launch)
+                                        ],
+                                      ),
+                                      onTap: () => _showComponentBreakdown(
+                                          latestDailyData.components![index]),
+                                      // shape: const Border(top: BorderSide()),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
               ),
             ),
           ),
