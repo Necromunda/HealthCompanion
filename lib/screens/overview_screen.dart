@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:intl/intl.dart';
 
@@ -25,6 +26,7 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
 {
   late final ScrollController _scrollController, _listScrollController;
   late List<Component> _consumedComponents;
+
   // late final AppUser _user;
   late final User _user;
 
@@ -70,22 +72,17 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
         },
       ),
     );
-    if (component != null) {
-      setState(() {
-        FirebaseService.saveUserComponents(_user.uid, component).then((value) => print(value));
-      });
-    }
+    if (component != null) await FirebaseService.saveUserComponents(_user.uid, component);
     print(component);
   }
 
-  void _addExistingComponentButtonHandler() {}
-
-  void _logout() async {
-    FirebaseAuth.instance.signOut().then((value) {
-      Navigator.of(context).popUntil(ModalRoute.withName("/"));
-    }).catchError((_) {
-      print("Error logging out");
-    });
+  void _addExistingComponentButtonHandler() async {
+    final List<Component>? selected = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const AddExistingComponent(),
+      ),
+    );
+    print("Selected components: $selected");
   }
 
   @override
@@ -124,57 +121,44 @@ class _OverviewState extends State<Overview> // with AutomaticKeepAliveClientMix
                 ],
               ),
             ),
-            if (_consumedComponents.isNotEmpty)
-              SizedBox(
-                width: double.infinity,
-                child: Card(
-                  elevation: 5,
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(
-                          "What you've eaten today",
-                          style: TextStyle(fontSize: 22),
-                        ),
-                      ),
-                      ListView.builder(
-                        controller: _listScrollController,
-                        itemCount: _consumedComponents.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              _consumedComponents[index].name!,
-                              style: const TextStyle(fontSize: 18),
-                            ),
-                            subtitle: Text(
-                              _consumedComponents[index].description!,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            trailing: const Icon(Icons.launch),
-                            onTap: null,
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            Row(
-              children: [
-                FilledButton(
-                  onPressed: _logout,
-                  child: const Text("Log out"),
-                ),
-                FilledButton(
-                  onPressed: () {
-                    setState(() {});
-                  },
-                  child: const Text("Update"),
-                ),
-              ],
-            )
+
+            // if (_consumedComponents.isNotEmpty)
+            //   SizedBox(
+            //     width: double.infinity,
+            //     child: Card(
+            //       elevation: 5,
+            //       child: Column(
+            //         children: [
+            //           const Padding(
+            //             padding: EdgeInsets.symmetric(vertical: 5.0),
+            //             child: Text(
+            //               "What you've eaten today",
+            //               style: TextStyle(fontSize: 22),
+            //             ),
+            //           ),
+            //           ListView.builder(
+            //             controller: _listScrollController,
+            //             itemCount: _consumedComponents.length,
+            //             shrinkWrap: true,
+            //             itemBuilder: (context, index) {
+            //               return ListTile(
+            //                 title: Text(
+            //                   _consumedComponents[index].name!,
+            //                   style: const TextStyle(fontSize: 18),
+            //                 ),
+            //                 subtitle: Text(
+            //                   _consumedComponents[index].description!,
+            //                   style: const TextStyle(fontSize: 16),
+            //                 ),
+            //                 trailing: const Icon(Icons.launch),
+            //                 onTap: null,
+            //               );
+            //             },
+            //           )
+            //         ],
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ),

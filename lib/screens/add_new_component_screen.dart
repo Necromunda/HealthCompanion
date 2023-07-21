@@ -121,7 +121,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   }
 
   Component _createComponent() {
-    _energy = (_energyKcal ?? 0.0) * _kJMultiplier;
+    _energy = double.tryParse((_energyKcal ?? 0.0) * _kJMultiplier).toStringAsFixed(2));
     final json = {
       "name": _name,
       "description": _category,
@@ -145,7 +145,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   void _addIngredientHandler() async {
     _selectedComponents = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddExistingComponent(uid: _uid),
+        builder: (context) => const AddExistingComponent(),
       ),
     );
     setState(() {

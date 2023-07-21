@@ -19,6 +19,10 @@ class FirebaseService {
           .doc(user.uid)
           .set({"components": []});
       await FirebaseFirestore.instance
+          .collection('user_daily_data')
+          .doc(user.uid)
+          .set({"data": []});
+      await FirebaseFirestore.instance
           .collection('user_preferences')
           .doc(user.uid)
           .set({"kcalGoal": null, "darkMode": false});
@@ -48,9 +52,6 @@ class FirebaseService {
       final DocumentReference userDocument = db.collection("users").doc(uid);
 
       var userDocumentSnapshot = await userDocument.get();
-      if (userDocumentSnapshot.data() == null) {
-        // do something
-      }
       var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
       firestoreUser["uid"] = userDocumentSnapshot.id;
 

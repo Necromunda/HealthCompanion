@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/component_model.dart';
 import 'component_breakdown_screen.dart';
 
 class AddExistingComponent extends StatefulWidget {
-  final String? uid;
-
-  const AddExistingComponent({Key? key, this.uid}) : super(key: key);
+  const AddExistingComponent({Key? key}) : super(key: key);
 
   @override
   State<AddExistingComponent> createState() => _AddExistingComponentState();
@@ -17,15 +16,15 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   late List<Component> _selectedComponents;
   late final ScrollController _listScrollController;
   late final Stream _userComponentsDocStream;
-  late final String? _uid;
+  late final User? _currentUser;
 
   @override
   void initState() {
-    _uid = widget.uid;
+    _currentUser = FirebaseAuth.instance.currentUser;
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
     _userComponentsDocStream =
-        FirebaseFirestore.instance.collection("user_components").doc(_uid).snapshots();
+        FirebaseFirestore.instance.collection("user_components").doc(_currentUser?.uid).snapshots();
     super.initState();
   }
 
@@ -90,12 +89,13 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
 
-        child: _uid == null
-            ? const Text("uid error")
-            : Column(children: [
+        child: Column(children: [
                 StreamBuilder(
                   stream: _userComponentsDocStream,
                   builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(child: Text("Your components coul not be displayed"),);
+                    }
                     if (snapshot.hasData) {
                       List<Map<String, dynamic>> json =
                           snapshot.data["components"].cast<Map<String, dynamic>>();
