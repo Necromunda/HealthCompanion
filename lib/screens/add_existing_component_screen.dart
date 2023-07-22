@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/component_model.dart';
+import '../widgets/no_components_found.dart';
 import 'component_breakdown_screen.dart';
 
 class AddExistingComponent extends StatefulWidget {
@@ -88,8 +89,8 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-
         child: Column(
+          // mainAxisSize: MainAxisSize.max,
           children: [
             StreamBuilder(
               stream: _userComponentsDocStream,
@@ -103,8 +104,13 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                   List<Map<String, dynamic>> json =
                       snapshot.data["components"].cast<Map<String, dynamic>>();
                   List<Component> components = json.map((e) => Component.fromJson(e)).toList();
-                  return Expanded(
-                    child: Card(
+
+                  if (components.isEmpty) {
+                    return const Expanded(
+                      child: NoComponentsFound()
+                    );
+                  } else {
+                    return Card(
                       elevation: 5,
                       child: ListView.builder(
                         controller: _listScrollController,
@@ -132,44 +138,22 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                           );
                         },
                       ),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("Error getting your components"),
-                  );
+                    );
+                  }
                 }
-                return const SizedBox();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      CircularProgressIndicator(),
+                      Text("Loading your components"),
+                    ],
+                  ),
+                );
               },
             ),
           ],
         ),
-        // child: ListView.builder(
-        //   controller: _listScrollController,
-        //   itemCount: _userComponents.length,
-        //   shrinkWrap: true,
-        //   itemBuilder: (context, index) {
-        //     return ListTile(
-        //       title: Text(
-        //         _userComponents[index].name!,
-        //         style: TextStyle(
-        //             fontSize: 18,
-        //             color: _isSelected(_userComponents[index])
-        //                 ? Theme.of(context).primaryColor
-        //                 : null),
-        //       ),
-        //       subtitle: Text(
-        //         _userComponents[index].description!,
-        //         style: const TextStyle(fontSize: 16),
-        //       ),
-        //       trailing: const Icon(Icons.launch),
-        //       onTap: () => _isSelected(_userComponents[index])
-        //           ? _removeSelection(_userComponents[index])
-        //           : _addSelection(_userComponents[index]),
-        //       onLongPress: () => _showComponentBreakdown(_userComponents[index]),
-        //     );
-        //   },
-        // ),
       ),
     );
   }

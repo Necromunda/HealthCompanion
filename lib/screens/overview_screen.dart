@@ -254,6 +254,7 @@ class _OverviewState extends State<Overview> {
                                 ),
                                 Expanded(
                                   child: ListView.builder(
+                                    padding: EdgeInsets.zero,
                                     controller: _listScrollController,
                                     itemCount: latestDailyData.components!.length,
                                     // itemCount: 10,
@@ -290,7 +291,9 @@ class _OverviewState extends State<Overview> {
                                         ),
                                         onTap: () => _showComponentBreakdown(
                                             latestDailyData.components![index]),
-                                        // shape: const Border(top: BorderSide()),
+                                        shape: latestDailyData.components?.indexOf(latestDailyData.components!.last) == index
+                                            ? null
+                                            : const Border(bottom: BorderSide()),
                                       );
                                     },
                                   ),

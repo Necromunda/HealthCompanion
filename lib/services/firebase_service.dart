@@ -29,6 +29,10 @@ class FirebaseService {
           .collection('user_preferences')
           .doc(user.uid)
           .set({"kcalGoal": null, "darkMode": false});
+      await FirebaseFirestore.instance
+          .collection('user_stats')
+          .doc(user.uid)
+          .set({});
       await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
         "username": username,
         "age": age,
@@ -146,10 +150,14 @@ class FirebaseService {
       final DocumentReference userDocRef = db.collection("users").doc(uid);
       final DocumentReference userComponentsDocRef = db.collection("user_components").doc(uid);
       final DocumentReference userPreferencesDocRef = db.collection("user_preferences").doc(uid);
+      final DocumentReference userStatsDocRef = db.collection("user_stats").doc(uid);
+      final DocumentReference userDailyDataDocRef = db.collection("user_daily_data").doc(uid);
 
       await userDocRef.delete();
       await userComponentsDocRef.delete();
       await userPreferencesDocRef.delete();
+      await userStatsDocRef.delete();
+      await userDailyDataDocRef.delete();
 
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (e, stackTrace) {
