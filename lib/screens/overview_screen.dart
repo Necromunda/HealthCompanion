@@ -31,7 +31,9 @@ class _OverviewState extends State<Overview> {
   late final User _currentUser;
   late final Stream _userDailyDataDocStream;
   late String _today;
-  late List<Map<String, dynamic>> _currentData;
+
+  // late List<Map<String, dynamic>> _currentData;
+  late List<DailyData> _currentData;
   late bool _isLatestDataCurrentDaysData;
 
   @override
@@ -76,7 +78,8 @@ class _OverviewState extends State<Overview> {
         },
       ),
     );
-    if (component != null) await FirebaseService.saveUserComponents(_currentUser.uid, component);
+    // if (component != null) await FirebaseService.saveUserComponents(_currentUser.uid, component);
+    if (component != null) _addComponentToDailyData(<Component>[component]);
     print(component);
   }
 
@@ -87,15 +90,45 @@ class _OverviewState extends State<Overview> {
       ),
     );
     if (selectedComponents != null) {
-      _updateDailyData(_currentData, selectedComponents); //Add components to user_daily_data
+      _addComponentToDailyData(selectedComponents);
     }
     print("Current data is $_currentData");
     print("Selected components: $selectedComponents");
   }
 
-  void _updateDailyData(List<Map<String, dynamic>> currentData, List<Component> components) async {
-    final jsonList = components.map((e) => e.toJson()).toList();
-    await FirebaseService.updateDailyData(currentData, jsonList);
+  void _addComponentToDailyData(List<Component> components) async {
+    DailyData newDailyData = DailyData.fromJson({
+      "creationDate": DateTime.now().millisecondsSinceEpoch,
+      "lastEdited": DateTime.now().millisecondsSinceEpoch,
+      "components": components.map((e) => e.toJson()).toList(),
+      // "components": components,
+    });
+    List<DailyData> updatedDailyData = [];
+
+    if (_currentData.isEmpty) {
+      updatedDailyData.add(newDailyData);
+
+    } else {
+      final DailyData latestDailyData = _currentData.last;
+      final DateTime latestDailyDataCreationDate =
+          DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+
+      bool isNextDay = Util.isNextDay(now: DateTime.now(), compareTo: latestDailyDataCreationDate);
+
+      if (isNextDay) {
+        updatedDailyData.add(newDailyData);
+
+      } else {
+        latestDailyData.components?.addAll(components);
+        latestDailyData.lastEdited = DateTime.now().millisecondsSinceEpoch;
+        _currentData.removeLast();
+        _currentData.add(latestDailyData);
+        updatedDailyData = _currentData;
+
+      }
+    }
+    // await userDailyDataDocRef.update({"data": updatedDailyData});
+    await FirebaseService.updateDailyData(updatedDailyData);
   }
 
   void _showComponentBreakdown(Component component) {
@@ -110,11 +143,13 @@ class _OverviewState extends State<Overview> {
     );
   }
 
-  void _deleteComponent(List<Component> components, Component componentToRemove) async {
-    print(components);
-    components.removeWhere((element) => element == componentToRemove);
-    print(components);
-    _updateDailyData(_currentData, components);
+  void _deleteComponentFromDailyData(DailyData todaysData, int componentIndex) async {
+    todaysData.lastEdited = DateTime.now().millisecondsSinceEpoch;
+    Component? retVal = todaysData.components?.removeAt(componentIndex);
+    _currentData.removeLast();
+    _currentData.add(todaysData);
+    print("Removed component: $retVal");
+    await FirebaseService.updateDailyData(_currentData);
   }
 
   @override
@@ -161,103 +196,116 @@ class _OverviewState extends State<Overview> {
                 child: StreamBuilder(
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return const Center(
-                        child: Text("Your components could not be displayed"),
-                      );
-                    }
-                    if (snapshot.hasData) {
-                      List<Map<String, dynamic>> data =
-                          snapshot.data["data"].cast<Map<String, dynamic>>();
-                      _currentData = data;
-                      if (data.isEmpty || !_isLatestDataCurrentDaysData) {
-                        return SizedBox(
-                          width: double.infinity,
-                          child: Center(
-                            child: Text(
-                              "No data found for $_today",
-                              style: const TextStyle(fontSize: 22),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      } else {
-                        Map<String, dynamic> latestData = data.last;
-                        DailyData latestDailyData = DailyData.fromJson(latestData);
-                        final DateTime latestDailyDataCreationDate =
-                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-                        // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
-
-                        bool isNextDay = Util.isNextDay(
-                            now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-                        if (isNextDay) {
-                          Future(() => setState(() {
-                                _isLatestDataCurrentDaysData = false;
-                              }));
-                        }
-
-                        return SizedBox(
-                          width: double.infinity,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5.0),
-                                child: Text(
-                                  "What you have eaten today",
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                              Expanded(
-                                child: ListView.builder(
-                                  controller: _listScrollController,
-                                  itemCount: latestDailyData.components!.length,
-                                  // itemCount: 10,
-                                  // shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      title: Text(
-                                        latestDailyData.components![index].name ?? "No name",
-                                        // "Item $index",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        latestDailyData.components![index].description ??
-                                            "No description",
-                                        // "Item $index description",
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () =>
-                                                _deleteComponent(latestDailyData.components!, latestDailyData.components![index]),
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                              size: 32.0,
-                                            ),
-                                          ),
-                                          const Icon(Icons.launch)
-                                        ],
-                                      ),
-                                      onTap: () => _showComponentBreakdown(
-                                          latestDailyData.components![index]),
-                                      // shape: const Border(top: BorderSide()),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                    if (snapshot.data?.data() != null) {
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text("Your components could not be displayed"),
                         );
                       }
+                      if (snapshot.hasData) {
+                        List<Map<String, dynamic>> data =
+                        snapshot.data["data"].cast<Map<String, dynamic>>();
+                        _currentData = data.map((e) => DailyData.fromJson(e)).toList();
+                        if (_currentData.isEmpty || _currentData.last.components!.isEmpty || !_isLatestDataCurrentDaysData) {
+                          return SizedBox(
+                            width: double.infinity,
+                            child: Center(
+                              child: Text(
+                                "No data found for ${_today.toLowerCase()}",
+                                style: const TextStyle(fontSize: 22),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Map<String, dynamic> latestData = data.last;
+                          DailyData latestDailyData = _currentData.last;
+                          // DailyData latestDailyData = DailyData.fromJson(latestData);
+                          final DateTime latestDailyDataCreationDate =
+                          DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+                          // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
+
+                          print("LATEST DATA CREATED: $latestDailyDataCreationDate");
+                          print("LATEST DATA EDITED: ${DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!)}");
+
+                          bool isNextDay = Util.isNextDay(
+                              now: DateTime.now(), compareTo: latestDailyDataCreationDate);
+                          if (isNextDay) {
+                            Future(
+                                  () => setState(
+                                    () {
+                                  _isLatestDataCurrentDaysData = false;
+                                },
+                              ),
+                            );
+                          }
+
+                          return SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5.0),
+                                  child: Text(
+                                    "What you have eaten today",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.builder(
+                                    controller: _listScrollController,
+                                    itemCount: latestDailyData.components!.length,
+                                    // itemCount: 10,
+                                    // shrinkWrap: true,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Text(
+                                          latestDailyData.components![index].name ?? "No name",
+                                          // "Item $index",
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          latestDailyData.components![index].description ??
+                                              "No description",
+                                          // "Item $index description",
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _deleteComponentFromDailyData(latestDailyData, index),
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                                size: 32.0,
+                                              ),
+                                            ),
+                                            const Icon(Icons.launch)
+                                          ],
+                                        ),
+                                        onTap: () => _showComponentBreakdown(
+                                            latestDailyData.components![index]),
+                                        // shape: const Border(top: BorderSide()),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: Text("Loading your data"),
                     );
                   },
                 ),

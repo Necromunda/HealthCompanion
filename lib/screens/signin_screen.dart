@@ -76,30 +76,6 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  // void _login(String email, String password) {
-  //   FirebaseAuth.instance
-  //       .signInWithEmailAndPassword(email: email, password: password)
-  //       .then(
-  //     (responseData) {
-  //       print("VALUE : $responseData");
-  //       FirebaseService.createUser(responseData.user!.uid).then(
-  //         (appUser) => Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) => PageContainer(
-  //               user: appUser ?? AppUser(),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   ).catchError(
-  //     (error) {
-  //       print(error);
-  //     },
-  //   );
-  // }
-
   void _login(String email, String password) {
     Navigator.push(
       context,

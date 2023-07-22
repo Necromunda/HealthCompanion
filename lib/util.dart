@@ -1,5 +1,6 @@
 import 'package:health_companion/models/fineli_model.dart';
 import 'package:health_companion/services/fineli_service.dart';
+import 'package:flutter/material.dart';
 
 import 'models/component_model.dart';
 
@@ -19,5 +20,29 @@ class Util {
 
     // If the difference is exactly one day, then it's the next day
     return difference.inDays >= 1;
+  }
+
+  static Future<void> showNotification({required BuildContext context, String? title, String? message}) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: title == null ? null : Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+        content: message == null ? null : Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
   }
 }

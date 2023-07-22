@@ -157,46 +157,14 @@ class FirebaseService {
     }
   }
 
-  static Future<void> updateDailyData(List<Map<String, dynamic>> currentData, List<Map<String, dynamic>> components) async {
+  static Future<void> updateDailyData(List<DailyData> updatedData) async {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
       String uid = FirebaseAuth.instance.currentUser!.uid;
       final DocumentReference userDailyDataDocRef = db.collection("user_daily_data").doc(uid);
-      DailyData dailyData = DailyData.fromJson({
-        "creationDate": DateTime.now().millisecondsSinceEpoch,
-        "lastEdited": DateTime.now().millisecondsSinceEpoch,
-        "components": components,
-      });
+      List<Map<String, dynamic>> updatedDataJson = updatedData.map((e) => e.toJson()).toList();
 
-      if (currentData.isEmpty) {
-        currentData.add(dailyData.toJson());
-        await userDailyDataDocRef.update({"data": currentData});
-      } else {
-        final DailyData latestDailyData = DailyData.fromJson(currentData.last);
-        final DateTime latestDailyDataCreationDate = DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-        // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
-
-        bool isNextDay = Util.isNextDay(now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-        // print(isNextDay);
-        if (isNextDay) {
-          // final DailyData dailyData = DailyData.fromJson({
-          //   "creationDate": DateTime.now().millisecondsSinceEpoch,
-          //   "lastEdited": DateTime.now().millisecondsSinceEpoch,
-          //   "components": components,
-          // });
-          currentData.add(dailyData.toJson());
-          await userDailyDataDocRef.update({"data": currentData});
-        } else {
-          latestDailyData.components?.addAll(components.map((e) => Component.fromJson(e)));
-          // latestDailyData.creationDate = DateTime.now().add(const Duration(hours: -25)).millisecondsSinceEpoch;
-          currentData.removeLast();
-          currentData.add(latestDailyData.toJson());
-          await userDailyDataDocRef.update({"data": currentData});
-        }
-      }
-      // print(data);
-
-      // return components;
+      await userDailyDataDocRef.update({"data": updatedDataJson});
     } catch (e, stackTrace) {
       print("Error adding daily data: $e, $stackTrace");
     }

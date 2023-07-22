@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class Component extends Equatable {
-  String? name, description;
+  String? name, description, category, macroSelection;
   List<Component>? subComponents;
   double? salt,
       energy,
@@ -16,34 +16,37 @@ class Component extends Equatable {
       sugar,
       fat;
 
-  Component({
-    this.name,
-    this.description,
-    this.subComponents,
-    this.salt,
-    this.energy,
-    this.energyKcal,
-    this.protein,
-    this.carbohydrate,
-    this.alcohol,
-    this.organicAcids,
-    this.sugarAlcohol,
-    this.saturatedFat,
-    this.fiber,
-    this.sugar,
-    this.fat,
-  });
+  // Component({
+  //   this.name,
+  //   this.description,
+  //   this.subComponents,
+  //   this.salt,
+  //   this.energy,
+  //   this.energyKcal,
+  //   this.protein,
+  //   this.carbohydrate,
+  //   this.alcohol,
+  //   this.organicAcids,
+  //   this.sugarAlcohol,
+  //   this.saturatedFat,
+  //   this.fiber,
+  //   this.sugar,
+  //   this.fat,
+  // });
 
   Component.fromJson(Map<String, dynamic> json) {
-    name = json['name'] ?? "";
+    name = json['name'];
     description = json['description'] ?? "";
+    category = json['category'];
+    macroSelection = json['macroSelection'];
     // subComponents = json['subComponents'];
-    subComponents = <Component>[];
-    if (json['subComponents'] != null) {
-      json['subComponents'].forEach((v) {
-        subComponents?.add(Component.fromJson(v));
-      });
-    }
+    // subComponents = <Component>[];
+    // if (json['subComponents'] != null) {
+    //   json['subComponents'].forEach((v) {
+    //     subComponents?.add(Component.fromJson(v));
+    //   });
+    // }
+    subComponents = (json['subComponents'] as List).map((e) => Component.fromJson(e)).toList();
     salt = (json['salt'] ?? 0).toDouble();
     energy = (json['energy'] ?? 0).toDouble();
     energyKcal = (json['energyKcal'] ?? 0).toDouble();
@@ -62,9 +65,12 @@ class Component extends Equatable {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['description'] = description;
-    if (subComponents != null) {
-      data['subComponents'] = subComponents!.map((v) => v.toJson()).toList();
-    }
+    data['category'] = category;
+    data['macroSelection'] = macroSelection;
+    // if (subComponents != null) {
+    //   data['subComponents'] = subComponents!.map((v) => v.toJson()).toList();
+    // }
+    data['subComponents'] = subComponents?.map((v) => v.toJson()).toList();
     data['salt'] = salt;
     data['energy'] = energy;
     data['energyKcal'] = energyKcal;
@@ -81,7 +87,6 @@ class Component extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, description, energyKcal];
-
+  List<Object?> get props => [name, description, category, macroSelection, subComponents?.length];
 
 }

@@ -38,6 +38,7 @@ class DailyData {
     creationDate = json["creationDate"];
     lastEdited = json["lastEdited"];
     components = (json["components"] as List).map((e) => Component.fromJson(e)).toList();
+    // components = json["components"];
     // sumComponents();
   }
 

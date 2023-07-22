@@ -82,13 +82,26 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              _component.name ?? "No name",
-              style: const TextStyle(fontSize: 24),
-            ),
-            Text(
-              _component.description ?? "No description",
-              style: const TextStyle(fontSize: 18),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _component.name!,
+                  style: const TextStyle(fontSize: 24),
+                  textAlign: TextAlign.center,
+                ),
+                if (_component.description!.isNotEmpty)
+                  Text(
+                    _component.description!,
+                    style: const TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                Text(
+                  _component.category!,
+                  style: const TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
             const SizedBox(
               height: 50,
@@ -96,9 +109,9 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Macros",
-                  style: TextStyle(fontSize: 22),
+                Text(
+                  "Macros (${_component.macroSelection!.toLowerCase()})",
+                  style: const TextStyle(fontSize: 22),
                 ),
                 const SizedBox(
                   height: 10.0,
@@ -223,7 +236,16 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
               height: 25.0,
             ),
             if (_component.subComponents == null || _component.subComponents!.isEmpty)
-              const Text("No sub components")
+              const Expanded(
+                child: SizedBox(
+                  child: Center(
+                    child: Text(
+                      "No sub components",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+              )
             // if (_component.subComponents!.isNotEmpty)
             else
               Card(
@@ -256,227 +278,3 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
     );
   }
 }
-
-// class ComponentBreakdown extends StatelessWidget {
-//   final Component component;
-//
-//   ComponentBreakdown({Key? key, required this.component}) : super(key: key);
-//
-//   final ScrollController _scrollController = ScrollController();
-//   final ScrollController _listScrollController = ScrollController();
-//
-//   static const List<String> _labels = [
-//     "EnergyKJ",
-//     "EnegyKcal",
-//     "Alcohol",
-//     "Carbohydrates",
-//     "Fat",
-//     "Fiber",
-//     "Organic acids",
-//     "Protein",
-//     "Salt",
-//     "Saturated fat",
-//     "Sugar",
-//     "Sugar alcohol"
-//   ];
-//
-//   void _showComponentBreakdown(Component component) {
-//     Navigator.of(context).push(
-//       MaterialPageRoute(
-//         builder: (context) {
-//           return ComponentBreakdown(
-//             component: component,
-//           );
-//         },
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Colors.transparent,
-//         elevation: 0.0,
-//         leading: IconButton(
-//           onPressed: () => Navigator.of(context).pop(),
-//           icon: const Icon(Icons.close),
-//           color: Colors.black,
-//         ),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.symmetric(horizontal: 20.0),
-//         child: SingleChildScrollView(
-//           controller: _scrollController,
-//           child: Column(
-//             mainAxisSize: MainAxisSize.max,
-//             children: [
-//               Text(
-//                 _component.name!,
-//                 style: const TextStyle(fontSize: 24),
-//               ),
-//               Text(
-//                 _component.description!,
-//                 style: const TextStyle(fontSize: 18),
-//               ),
-//               const SizedBox(
-//                 height: 50,
-//               ),
-//               Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   const Text(
-//                     "Macros",
-//                     style: TextStyle(fontSize: 22),
-//                   ),
-//                   const SizedBox(
-//                     height: 10.0,
-//                   ),
-//                   Row(
-//                     // mainAxisSize: MainAxisSize.max,
-//                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                     children: [
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           ..._labels.map((e) {
-//                             return Column(
-//                               children: [
-//                                 Text(
-//                                   e,
-//                                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//                                 ),
-//                                 const SizedBox(
-//                                   height: 5.0,
-//                                 ),
-//                               ],
-//                             );
-//                           }),
-//                         ],
-//                       ),
-//                       const SizedBox(
-//                         width: 50.0,
-//                       ),
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.start,
-//                         children: [
-//                           Text(
-//                             "${_component.energy?.toStringAsFixed(0)} kJ",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.energyKcal?.toStringAsFixed(0)} kcal",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.alcohol?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.carbohydrate?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.fat?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.fiber?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.organicAcids?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.protein?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.salt?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.saturatedFat?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.sugar?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                           Text(
-//                             "${_component.sugarAlcohol?.toStringAsFixed(0)} g",
-//                             style: const TextStyle(fontSize: 20),
-//                           ),
-//                           const SizedBox(
-//                             height: 5.0,
-//                           ),
-//                         ],
-//                       ),
-//                       if (_component.subComponents!.isNotEmpty)
-//                         SizedBox(
-//                           width: double.infinity,
-//                           child: ListView.builder(
-//                             controller: _listScrollController,
-//                             itemCount: _component.subComponents!.length,
-//                             shrinkWrap: true,
-//                             itemBuilder: (context, index) {
-//                               return ListTile(
-//                                 title: Text(
-//                                   _component.subComponents![index].name!,
-//                                   style: const TextStyle(fontSize: 18),
-//                                 ),
-//                                 subtitle: Text(
-//                                   _component.subComponents![index].description!,
-//                                   style: const TextStyle(fontSize: 16),
-//                                 ),
-//                                 trailing: const Icon(Icons.launch),
-//                                 onTap: () => _showComponentBreakdown(_component.subComponents![index]),
-//                               );
-//                             },
-//                           ),
-//                         ),
-//                     ],
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
