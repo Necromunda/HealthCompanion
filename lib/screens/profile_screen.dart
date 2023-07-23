@@ -125,7 +125,7 @@ class _ProfileState extends State<Profile> {
           Map<String, dynamic> json = snapshot.data.data();
           AppUser appUser = AppUser.fromJson(json);
           String joinDate = DateFormat('d.M.yyyy').format(appUser.joinDate!);
-          // return const Center(child: Text("Profile loaded."),);
+
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(

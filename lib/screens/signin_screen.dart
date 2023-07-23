@@ -6,6 +6,7 @@ import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/screens/forgot_password_screen.dart';
 import 'package:health_companion/screens/signup_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/util.dart';
 
 import '../widgets/pagecontainer.dart';
 import 'loading_screen.dart';
@@ -85,23 +86,33 @@ class _SignInState extends State<SignIn> {
               FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              print("ERROR : ${snapshot.error}");
-              Navigator.of(context).popUntil(ModalRoute.withName("/"));
-              // () => showAlertDialog(context, "Invalid credentials", "Email or password was incorrect");
+              Future(() => Navigator.of(context).pop());
+              if (snapshot.error is FirebaseAuthException) {
+                FirebaseAuthException firebaseError = snapshot.error as FirebaseAuthException;
+                switch (firebaseError.code) {
+                  case "wrong-password":
+                    Future(
+                      () => Util.showNotification(context: context, message: "Incorrect email and/or password."),
+                    );
+                    break;
+                  case "invalid-email":
+                    Future(
+                      () => Util.showNotification(context: context, message: "Email is not valid"),
+                    );
+                    break;
+                  case "user-not-found":
+                    Future(
+                      () => Util.showNotification(
+                          context: context,
+                          message: "Could not find a user with that email address."),
+                    );
+                    break;
+                }
+              }
             }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
               return const PageContainer();
-              // FirebaseService.createUser(snapshot.data!.user!.uid).then(
-              //   (appUser) => Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => const PageContainer(
-              //           // user: appUser!,
-              //           ),
-              //     ),
-              //   ),
-              // );
             }
             return const LoadingScreen(message: "Logging in");
           },

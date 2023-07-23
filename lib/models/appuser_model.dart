@@ -17,9 +17,9 @@ class AppUser {
   AppUser.fromJson(Map<String, dynamic> json) {
     uid = json["uid"];
     username = json["username"];
-    age = json["age"];
-    height = json["height"];
-    weight = json["weight"];
+    age = (json["age"] as num).toInt();
+    height = (json["height"] as num).toDouble();
+    weight = (json["weight"] as num).toDouble();
     email = json["email"];
     joinDate = json["joinDate"].toDate();
   }

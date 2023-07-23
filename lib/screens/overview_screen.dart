@@ -6,7 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/daily_data_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
+import 'package:health_companion/widgets/bundle_button_bar.dart';
 import 'package:health_companion/widgets/chart.dart';
+import 'package:health_companion/widgets/custom_button.dart';
 import 'package:health_companion/widgets/loading_components.dart';
 import 'package:intl/intl.dart';
 
@@ -32,10 +34,10 @@ class _OverviewState extends State<Overview> {
   late final User _currentUser;
   late final Stream _userDailyDataDocStream;
   late String _today;
-
-  // late List<Map<String, dynamic>> _currentData;
   late List<DailyData> _currentData;
   late bool _isLatestDataCurrentDaysData;
+  late int _currentBundleIndex;
+  late final PageController _bundlePageViewController;
 
   @override
   void initState() {
@@ -48,6 +50,8 @@ class _OverviewState extends State<Overview> {
     _today = DateFormat('EEEE').format(DateTime.now());
     _currentData = [];
     _isLatestDataCurrentDaysData = true;
+    _bundlePageViewController = PageController();
+    _currentBundleIndex = 0;
     super.initState();
   }
 
@@ -67,6 +71,7 @@ class _OverviewState extends State<Overview> {
   void dispose() {
     _scrollController.dispose();
     _listScrollController.dispose();
+    _bundlePageViewController.dispose();
     super.dispose();
   }
 
@@ -79,7 +84,6 @@ class _OverviewState extends State<Overview> {
         },
       ),
     );
-    // if (component != null) await FirebaseService.saveUserComponents(_currentUser.uid, component);
     if (component != null) _addComponentToDailyData(<Component>[component]);
     print(component);
   }
@@ -95,6 +99,32 @@ class _OverviewState extends State<Overview> {
     }
     print("Current data is $_currentData");
     print("Selected components: $selectedComponents");
+  }
+
+  void _addNewBundle() async {
+    DailyData newBundle = DailyData.fromJson({
+      "creationDate": DateTime.now().millisecondsSinceEpoch,
+      "lastEdited": DateTime.now().millisecondsSinceEpoch,
+      "components": [],
+    });
+    _currentData.add(newBundle);
+    await FirebaseService.updateDailyData(_currentData);
+  }
+
+  void _showPreviousBundle() {
+    if (_currentBundleIndex > 0) {
+      setState(() {
+        _currentBundleIndex -= 1;
+      });
+    }
+  }
+
+  void _showNextBundle() {
+    if (_currentBundleIndex < _currentData.length ) {
+      setState(() {
+        _currentBundleIndex += 1;
+      });
+    }
   }
 
   void _addComponentToDailyData(List<Component> components) async {
@@ -125,7 +155,6 @@ class _OverviewState extends State<Overview> {
         updatedDailyData = _currentData;
       }
     }
-    // await userDailyDataDocRef.update({"data": updatedDailyData});
     await FirebaseService.updateDailyData(updatedDailyData);
   }
 
@@ -192,127 +221,135 @@ class _OverviewState extends State<Overview> {
                 child: StreamBuilder(
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
-                    if (snapshot.data?.data() != null) {
-                      if (snapshot.hasError) {
-                        return const Center(
-                          child: Text("Your components could not be displayed"),
-                        );
-                      }
-                      if (snapshot.hasData) {
-                        List<Map<String, dynamic>> data =
-                            snapshot.data["data"].cast<Map<String, dynamic>>();
-                        _currentData = data.map((e) => DailyData.fromJson(e)).toList();
-                        if (_currentData.isEmpty ||
-                            _currentData.last.components!.isEmpty ||
-                            !_isLatestDataCurrentDaysData) {
+                    if (snapshot.data?.data() == null) {
+                      return const LoadingComponents(
+                        message: "Loading your data",
+                      );
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(
+                        child: Text("Your components could not be displayed"),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      List<Map<String, dynamic>> data =
+                          snapshot.data["data"].cast<Map<String, dynamic>>();
+                      _currentData = data.map((e) => DailyData.fromJson(e)).toList();
+
+                      if (_currentData.isEmpty) {
+                        _addNewBundle();
+                      } else {
+                        _currentBundleIndex = _currentData.indexOf(_currentData.last);
+                        DailyData latestDailyData = _currentData.last;
+                        final DateTime latestDailyDataCreationDate =
+                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+                        final DateTime latestDailyDataEditedDate =
+                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!);
+                        final String formattedCreatedDate =
+                            DateFormat('d.M H:mm').format(latestDailyDataCreationDate);
+                        final String formattedEditedDate =
+                            DateFormat('d.M H:mm').format(latestDailyDataEditedDate);
+
+                        print("LATEST DATA CREATED: $latestDailyDataCreationDate");
+                        print("LATEST DATA EDITED: $latestDailyDataEditedDate");
+
+                        // if (_currentData.last.components!.isEmpty) {
+                        if (false) {
                           return SizedBox(
                             width: double.infinity,
                             child: Center(
                               child: Text(
-                                "No data found for ${_today.toLowerCase()}",
+                                "No data in this bundle\nCreated $formattedCreatedDate",
                                 style: const TextStyle(fontSize: 22),
                                 textAlign: TextAlign.center,
                               ),
                             ),
                           );
-                        } else {
-                          // Map<String, dynamic> latestData = data.last;
-                          DailyData latestDailyData = _currentData.last;
-                          // DailyData latestDailyData = DailyData.fromJson(latestData);
-                          final DateTime latestDailyDataCreationDate =
-                              DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-                          // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
-
-                          print("LATEST DATA CREATED: $latestDailyDataCreationDate");
-                          print(
-                              "LATEST DATA EDITED: ${DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!)}");
-
-                          bool isNextDay = Util.isNextDay(
-                              now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-                          if (isNextDay) {
-                            Future(
-                              () => setState(
-                                () {
-                                  _isLatestDataCurrentDaysData = false;
-                                },
-                              ),
-                            );
-                          }
-
-                          return SizedBox(
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5.0),
-                                  child: Text(
-                                    "What you have eaten today",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    controller: _listScrollController,
-                                    itemCount: latestDailyData.components!.length,
-                                    // itemCount: 10,
-                                    // shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(
-                                          latestDailyData.components![index].name ?? "No name",
-                                          // "Item $index",
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        subtitle: Text(
-                                          latestDailyData.components![index].description ??
-                                              "No description",
-                                          // "Item $index description",
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () => _deleteComponentFromDailyData(
-                                                  latestDailyData, index),
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                                size: 32.0,
-                                              ),
-                                            ),
-                                            const Icon(Icons.launch)
-                                          ],
-                                        ),
-                                        onTap: () => _showComponentBreakdown(
-                                            latestDailyData.components![index]),
-                                        shape: latestDailyData.components
-                                                    ?.indexOf(latestDailyData.components!.last) ==
-                                                index
-                                            ? null
-                                            : const Border(bottom: BorderSide()),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
                         }
+
+                        return SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5.0),
+                                child: Text(
+                                  "What you have eaten today",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              PageView(
+                                scrollDirection: Axis.horizontal,
+
+                                children: [
+                                  for (int i=0; i<6; i++)
+                                    Text("Bundle $i")
+                                ],
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    _currentBundleIndex = index;
+                                  });
+                                },
+                              )
+                              // Expanded(
+                              //   child: ListView.builder(
+                              //     padding: EdgeInsets.zero,
+                              //     controller: _listScrollController,
+                              //     itemCount: latestDailyData.components!.length,
+                              //     // itemCount: 10,
+                              //     // shrinkWrap: true,
+                              //     itemBuilder: (context, index) {
+                              //       return ListTile(
+                              //         title: Text(
+                              //           latestDailyData.components![index].name ?? "No name",
+                              //           // "Item $index",
+                              //           style: const TextStyle(
+                              //             fontSize: 18,
+                              //           ),
+                              //         ),
+                              //         subtitle: Text(
+                              //           latestDailyData.components![index].description ??
+                              //               "No description",
+                              //           // "Item $index description",
+                              //           style: const TextStyle(fontSize: 16),
+                              //         ),
+                              //         trailing: Row(
+                              //           mainAxisSize: MainAxisSize.min,
+                              //           children: [
+                              //             IconButton(
+                              //               onPressed: () => _deleteComponentFromDailyData(
+                              //                   latestDailyData, index),
+                              //               icon: const Icon(
+                              //                 Icons.delete,
+                              //                 color: Colors.red,
+                              //                 size: 32.0,
+                              //               ),
+                              //             ),
+                              //             const Icon(Icons.launch)
+                              //           ],
+                              //         ),
+                              //         onTap: () => _showComponentBreakdown(
+                              //             latestDailyData.components![index]),
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        );
                       }
-                      return const LoadingComponents();
                     }
-                    return const LoadingComponents(
-                      message: "Loading your data",
-                    );
+                    return const LoadingComponents();
                   },
                 ),
               ),
             ),
+          ),
+          BundleButtonBar(
+            onPressedLeft: _showPreviousBundle,
+            onPressedCenter: _addNewBundle,
+            onPressedRight: _showNextBundle,
           ),
         ],
       ),

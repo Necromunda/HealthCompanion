@@ -22,27 +22,33 @@ class Util {
     return difference.inDays >= 1;
   }
 
-  static Future<void> showNotification({required BuildContext context, String? title, String? message}) {
+  static Future<void> showNotification(
+      {required BuildContext context, String? title, String? message}) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: title == null ? null : Text(
-          title,
-          textAlign: TextAlign.center,
+          title: title == null
+              ? null
+              : Text(
+                  title,
+                  // textAlign: TextAlign.center,
+                ),
+          content: message == null
+              ? null
+              : Text(
+                  message,
+                  // textAlign: TextAlign.center,
+                ),
+          contentPadding: const EdgeInsets.only(top: 20, left: 24, right: 24, bottom: 0),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Ok"),
+            ),
+          ],
         ),
-        content: message == null ? null : Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Cancel"),
-          ),
-        ],
-      ),
     );
   }
 }
