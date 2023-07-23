@@ -36,8 +36,8 @@ class _OverviewState extends State<Overview> {
   late String _today;
   late List<DailyData> _currentData;
   late bool _isLatestDataCurrentDaysData;
-  late int _currentBundleIndex;
-  late final PageController _bundlePageViewController;
+  late int _currentBundleIndex, _lastBundleIndex;
+  late PageController _bundlePageViewController;
 
   @override
   void initState() {
@@ -45,13 +45,14 @@ class _OverviewState extends State<Overview> {
     _currentUser = FirebaseAuth.instance.currentUser!;
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
+    _bundlePageViewController = PageController();
+    _currentBundleIndex = 0;
+    _lastBundleIndex = 0;
     _userDailyDataDocStream =
         FirebaseFirestore.instance.collection("user_daily_data").doc(_currentUser.uid).snapshots();
     _today = DateFormat('EEEE').format(DateTime.now());
     _currentData = [];
-    _isLatestDataCurrentDaysData = true;
-    _bundlePageViewController = PageController();
-    _currentBundleIndex = 0;
+    // _isLatestDataCurrentDaysData = true;
     super.initState();
   }
 
@@ -102,6 +103,7 @@ class _OverviewState extends State<Overview> {
   }
 
   void _addNewBundle() async {
+    print(_currentBundleIndex);
     DailyData newBundle = DailyData.fromJson({
       "creationDate": DateTime.now().millisecondsSinceEpoch,
       "lastEdited": DateTime.now().millisecondsSinceEpoch,
@@ -109,22 +111,40 @@ class _OverviewState extends State<Overview> {
     });
     _currentData.add(newBundle);
     await FirebaseService.updateDailyData(_currentData);
+    _scrollBundles(_lastBundleIndex);
   }
 
   void _showPreviousBundle() {
     if (_currentBundleIndex > 0) {
-      setState(() {
-        _currentBundleIndex -= 1;
-      });
+      // setState(() {
+      _currentBundleIndex -= 1;
+      _scrollBundles(_currentBundleIndex);
+      // });
     }
+    // print(
+    //     "CURRENT INDEX: $_currentBundleIndex\nLAST BUNDLE INDEX: $_lastBundleIndex\nNUMBER OF BUNDLES: ${_currentData.length}");
   }
 
   void _showNextBundle() {
-    if (_currentBundleIndex < _currentData.length ) {
-      setState(() {
-        _currentBundleIndex += 1;
-      });
+
+    if (_currentBundleIndex < _lastBundleIndex) {
+      // setState(() {
+      _currentBundleIndex += 1;
+      _scrollBundles(_currentBundleIndex);
+      // });
     }
+    // print(
+    //     "CURRENT INDEX: $_currentBundleIndex\nLAST BUNDLE INDEX: $_lastBundleIndex\nNUMBER OF BUNDLES: ${_currentData.length}");
+  }
+
+  void _scrollBundles(int index) {
+    // print("Scroll to $index");
+    // print("Current data length ${_currentData.length}");
+    _bundlePageViewController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _addComponentToDailyData(List<Component> components) async {
@@ -213,6 +233,9 @@ class _OverviewState extends State<Overview> {
               ],
             ),
           ),
+
+          // Bug in pageview: When deleting bundle from db, pageview doesnt update so current index is wrong.
+
           Expanded(
             child: SizedBox(
               width: double.infinity,
@@ -235,11 +258,17 @@ class _OverviewState extends State<Overview> {
                       List<Map<String, dynamic>> data =
                           snapshot.data["data"].cast<Map<String, dynamic>>();
                       _currentData = data.map((e) => DailyData.fromJson(e)).toList();
-
+                      print(_currentData);
                       if (_currentData.isEmpty) {
                         _addNewBundle();
                       } else {
-                        _currentBundleIndex = _currentData.indexOf(_currentData.last);
+                        _lastBundleIndex = _currentData.length - 1;
+                        print("LASTBUNDLEINDEX: $_lastBundleIndex");
+                        _bundlePageViewController = PageController(initialPage: _lastBundleIndex);
+                        print("INIT PAGE: ${_bundlePageViewController.initialPage}");
+                        _currentBundleIndex = _lastBundleIndex;
+                        print("CURRENTBUNDLEINDEX: $_lastBundleIndex");
+
                         DailyData latestDailyData = _currentData.last;
                         final DateTime latestDailyDataCreationDate =
                             DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
@@ -252,7 +281,6 @@ class _OverviewState extends State<Overview> {
 
                         print("LATEST DATA CREATED: $latestDailyDataCreationDate");
                         print("LATEST DATA EDITED: $latestDailyDataEditedDate");
-
                         // if (_currentData.last.components!.isEmpty) {
                         if (false) {
                           return SizedBox(
@@ -275,22 +303,24 @@ class _OverviewState extends State<Overview> {
                               const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5.0),
                                 child: Text(
-                                  "What you have eaten today",
+                                  "What you have eaten",
                                   style: TextStyle(fontSize: 20),
                                 ),
                               ),
-                              PageView(
-                                scrollDirection: Axis.horizontal,
-
-                                children: [
-                                  for (int i=0; i<6; i++)
-                                    Text("Bundle $i")
-                                ],
-                                onPageChanged: (index) {
-                                  setState(() {
+                              Expanded(
+                                child: PageView.builder(
+                                  controller: _bundlePageViewController,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _currentData.length,
+                                  onPageChanged: (index) {
                                     _currentBundleIndex = index;
-                                  });
-                                },
+                                  },
+                                  itemBuilder: (context, index) {
+                                    return Center(
+                                      child: Text("Bundle $index"),
+                                    );
+                                  },
+                                ),
                               )
                               // Expanded(
                               //   child: ListView.builder(
