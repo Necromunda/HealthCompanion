@@ -6,6 +6,7 @@ import 'package:health_companion/services/firebase_service.dart';
 
 import '../models/appuser_model.dart';
 import '../models/component_model.dart';
+import '../widgets/loading_components.dart';
 import '../widgets/no_components_found.dart';
 import 'component_breakdown_screen.dart';
 
@@ -88,7 +89,7 @@ class _ComponentsState extends State<Components> {
           SizedBox(
             width: double.infinity,
             child: Card(
-              elevation: 5,
+              elevation: 3,
               child: ListTile(
                 title: const Text(
                   "Add component +",
@@ -99,74 +100,71 @@ class _ComponentsState extends State<Components> {
               ),
             ),
           ),
-          Expanded(child: StreamBuilder(
-            stream: _userComponentsDocStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Your components could not be displayed"),
-                );
-              }
-              if (snapshot.hasData) {
-                List<Map<String, dynamic>> json =
-                    snapshot.data["components"].cast<Map<String, dynamic>>();
-                List<Component> components = json.map((e) => Component.fromJson(e)).toList();
-
-                if (components.isEmpty) {
-                  return const Expanded(child: NoComponentsFound());
-                } else {
-                  return Card(
-                    elevation: 5,
-                    child: ListView.builder(
+          Expanded(
+            child: StreamBuilder(
+              stream: _userComponentsDocStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Your components could not be displayed"),
+                  );
+                }
+                if (snapshot.hasData) {
+                  List<Map<String, dynamic>> json =
+                      snapshot.data["components"].cast<Map<String, dynamic>>();
+                  List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+                  // components.removeLast();
+                  // components.removeLast();
+                  // components.removeLast();
+                  // components.removeLast();
+                  // components.removeLast();
+                  if (components.isEmpty) {
+                    return const NoComponentsFound();
+                  } else {
+                    return ListView.builder(
                       padding: EdgeInsets.zero,
                       controller: _listScrollController,
                       itemCount: components.length,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            components[index].name!,
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          subtitle: Text(
-                            components[index].description!,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () => _deleteComponent(components, components[index]),
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                  size: 32.0,
+                        return Card(
+                          child: ListTile(
+                            title: Text(
+                              components[index].name!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              components[index].description!,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () => _deleteComponent(components, components[index]),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 32.0,
+                                  ),
                                 ),
-                              ),
-                              const Icon(Icons.launch)
-                            ],
+                                const Icon(Icons.launch)
+                              ],
+                            ),
+                            onTap: () => _showComponentBreakdown(components[index]),
+                            // shape: components.indexOf(components.last) == index
+                            //     ? null
+                            //     : const Border(bottom: BorderSide()),
                           ),
-                          onTap: () => _showComponentBreakdown(components[index]),
-                          shape: components.indexOf(components.last) == index
-                              ? null
-                              : const Border(bottom: BorderSide()),
                         );
                       },
-                    ),
-                  );
+                    );
+                  }
                 }
-              }
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Text("Loading your components"),
-                  ],
-                ),
-              );
-            },
-          ),
+                // return const Expanded(child: LoadingComponents());
+                return const LoadingComponents();
+              },
+            ),
           ),
         ],
       ),

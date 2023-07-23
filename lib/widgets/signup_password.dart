@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/appuser_model.dart';
 import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/widgets/creating_user.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
 
 import '../screens/signin_screen.dart';
+import 'custom_button.dart';
 
 class SignUpPassword extends StatefulWidget {
   final int pageIndex;
@@ -40,7 +42,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordValid = false;
   final RegExp _passwordRegExp =
-  RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
   late final _pageIndex = widget.pageIndex;
   late final _inputCallback = widget.inputCallback;
   late final _switchPageCallback = widget.switchPageCallback;
@@ -74,97 +76,104 @@ class _SignUpPasswordState extends State<SignUpPassword>
   void showAlertDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
-      builder: (context) =>
-          AlertDialog(
-            title: Text(
-              title,
-              textAlign: TextAlign.center,
-            ),
-            content: Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
-            // alignment: Alignment.center,
-            actions: <Widget>[
-              ButtonBar(
-                alignment: MainAxisAlignment.center,
-                children: [
-                  FilledButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
-                        ),
-                      ),
+      builder: (context) => AlertDialog(
+        title: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+        // alignment: Alignment.center,
+        actions: <Widget>[
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
                     ),
-                    child: const Text("Cancel"),
                   ),
-                  FilledButton(
-                    onPressed: () {
-                      Navigator.popUntil(context, ModalRoute.withName('/'));
-                    },
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
-                        ),
-                      ),
+                ),
+                child: const Text("Cancel"),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                },
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
                     ),
-                    child: const Text("Login"),
                   ),
-                ],
+                ),
+                child: const Text("Login"),
               ),
             ],
           ),
+        ],
+      ),
     );
   }
 
   void _createUser() {
-    FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: _getEmailCallback()!, password: _getPasswordCallback()!)
-        .then(
-      (responseData) async {
-        // await FirebaseAuth.instance.signOut();
-        // Navigator.of(context).popUntil(ModalRoute.withName("/"));
-        FirebaseService.createUserOnSignup(
-          user: responseData.user!,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CreatingUser(
+          email: _getEmailCallback(),
+          password: _getPasswordCallback(),
           username: _getUsernameCallback(),
           age: _getAgeCallback(),
           height: _getHeightCallback(),
           weight: _getWeightCallback(),
-          email: _getEmailCallback(),
-        ).then((_) {
-          // FirebaseAuth.instance.currentUser!.reload();
-          FocusScope.of(context).unfocus();
-          Navigator.of(context).popUntil(ModalRoute.withName("/"));
-          // Navigator.of(context).pop({
-          //   'email': _getEmailCallback(),
-          //   'password': _getPasswordCallback()
-          // });
-        });
-      },
-    ).onError(
-      (error, stackTrace) {
-        if (error is FirebaseAuthException) {
-          if (error.code == 'email-already-in-use') {
-            showAlertDialog(
-                context,
-                "There is already an account with this email address",
-                "${_getEmailCallback()} is already in use. Login to continue using HealthCompanion.");
-          }
-        }
-      },
+        ),
+      ),
     );
+    // FirebaseAuth.instance
+    //     .createUserWithEmailAndPassword(
+    //         email: _getEmailCallback()!, password: _getPasswordCallback()!)
+    //     .then(
+    //   (responseData) async {
+    //     // await FirebaseAuth.instance.signOut();
+    //     // Navigator.of(context).popUntil(ModalRoute.withName("/"));
+    //     FirebaseService.createUserOnSignup(
+    //       user: responseData.user!,
+    //       username: _getUsernameCallback(),
+    //       age: _getAgeCallback(),
+    //       height: _getHeightCallback(),
+    //       weight: _getWeightCallback(),
+    //       email: _getEmailCallback(),
+    //     ).then((_) {
+    //       FocusManager.instance.primaryFocus?.unfocus();
+    //       Navigator.of(context).popUntil(ModalRoute.withName("/"));
+    //       // Navigator.of(context).pop({
+    //       //   'email': _getEmailCallback(),
+    //       //   'password': _getPasswordCallback()
+    //       // });
+    //     });
+    //   },
+    // ).onError(
+    //   (error, stackTrace) {
+    //     if (error is FirebaseAuthException) {
+    //       if (error.code == 'email-already-in-use') {
+    //         showAlertDialog(context, "There is already an account with this email address",
+    //             "${_getEmailCallback()} is already in use. Login to continue using HealthCompanion.");
+    //       }
+    //     }
+    //   },
+    // );
   }
 
-  Color get _passwordColor =>
-      _passwordController.text.isEmpty
-          ? Colors.grey
-          : _isPasswordValid
+  Color get _passwordColor => _passwordController.text.isEmpty
+      ? Colors.grey
+      : _isPasswordValid
           ? Colors.green
           : Colors.red;
 
@@ -175,12 +184,15 @@ class _SignUpPasswordState extends State<SignUpPassword>
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 125.0),
-            child: Text(
-              "Page ${_pageIndex + 1} / 4",
-              textAlign: TextAlign.center,
-            ),
+          // Padding(
+          //   padding: const EdgeInsets.only(bottom: 125.0),
+          //   child: Text(
+          //     "Page ${_pageIndex + 1} / 4",
+          //     textAlign: TextAlign.center,
+          //   ),
+          // ),
+          const SizedBox(
+            height: 50,
           ),
           TextField(
             controller: _passwordController,
@@ -199,7 +211,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
             },
             decoration: InputDecoration(
               errorText:
-              _isPasswordValid || _passwordController.text.isEmpty ? null : 'Invalid password',
+                  _isPasswordValid || _passwordController.text.isEmpty ? null : 'Invalid password',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: _passwordController.text.isEmpty ? Colors.grey : Colors.red,
@@ -225,14 +237,14 @@ class _SignUpPasswordState extends State<SignUpPassword>
               suffixIcon: _passwordController.text.isEmpty
                   ? null
                   : _isPasswordValid
-                  ? const Icon(
-                Icons.check,
-                color: Colors.green,
-              )
-                  : const Icon(
-                Icons.close,
-                color: Colors.red,
-              ),
+                      ? const Icon(
+                          Icons.check,
+                          color: Colors.green,
+                        )
+                      : const Icon(
+                          Icons.close,
+                          color: Colors.red,
+                        ),
               hintText: "Password",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
@@ -243,45 +255,72 @@ class _SignUpPasswordState extends State<SignUpPassword>
               ),
             ),
           ),
+          const SizedBox(
+            height: 10,
+          ),
           const SignUpInfoCard(
             hint:
-            "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8-64 characters long.",
+                "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8-64 characters long.",
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        if (FocusScope
-                            .of(context)
-                            .hasFocus) {
-                          FocusScope.of(context).unfocus();
-                        }
-                        _switchPageCallback(_pageIndex - 1);
-                      },
-                      icon: Icon(
-                        Icons.arrow_circle_left,
-                        size: 48,
-                        color: Theme
-                            .of(context)
-                            .primaryColor,
-                      ),
+          const Expanded(
+            child: SizedBox(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    onPressed: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      _switchPageCallback(_pageIndex - 1);
+                    },
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 26,
                     ),
-                    IconButton(
-                      onPressed: _isPasswordValid ? _createUser : null,
-                      icon: Icon(
-                        Icons.create,
-                        size: 48,
-                        color: _isPasswordValid ? Colors.green : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  CustomButton(
+                    color: _isPasswordValid ? Colors.green : Colors.grey,
+                    onPressed: _isPasswordValid
+                        ? () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _createUser();
+                          }
+                        : null,
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     if (FocusScope.of(context).hasFocus) {
+                  //       FocusScope.of(context).unfocus();
+                  //     }
+                  //     _switchPageCallback(_pageIndex - 1);
+                  //   },
+                  //   icon: Icon(
+                  //     Icons.arrow_circle_left,
+                  //     size: 48,
+                  //     color: Theme.of(context).primaryColor,
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   onPressed: _isPasswordValid ? _createUser : null,
+                  //   icon: Icon(
+                  //     Icons.create,
+                  //     size: 48,
+                  //     color: _isPasswordValid ? Colors.green : Colors.grey,
+                  //   ),
+                  // )
+                ],
               ),
             ),
           ),

@@ -12,7 +12,7 @@ class FirebaseService {
     required User user,
     required String username,
     required int age,
-    required int height,
+    required double height,
     required double weight,
     required String email,
   }) async {
@@ -47,8 +47,9 @@ class FirebaseService {
         username: username,
         joinDate: user.metadata.creationTime,
       );
-    } catch (e) {
-      print(e);
+    } catch (e, stackTrace) {
+      print("error creating user");
+      print("$e, $stackTrace");
       return null;
     }
   }

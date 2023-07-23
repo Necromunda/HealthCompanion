@@ -14,7 +14,7 @@ class DeletingAccount extends StatefulWidget {
 }
 
 class _DeletingAccountState extends State<DeletingAccount> {
-  late final _authCredential;
+  late final AuthCredential _authCredential;
   late bool _authSuccessful;
 
   @override

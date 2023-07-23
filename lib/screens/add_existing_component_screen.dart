@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/widgets/loading_components.dart';
 
 import '../models/component_model.dart';
 import '../widgets/no_components_found.dart';
@@ -90,67 +91,57 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Column(
-          // mainAxisSize: MainAxisSize.max,
           children: [
-            StreamBuilder(
-              stream: _userComponentsDocStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("Your components could not be displayed"),
-                  );
-                }
-                if (snapshot.hasData) {
-                  List<Map<String, dynamic>> json =
-                      snapshot.data["components"].cast<Map<String, dynamic>>();
-                  List<Component> components = json.map((e) => Component.fromJson(e)).toList();
-
-                  if (components.isEmpty) {
-                    return const Expanded(
-                      child: NoComponentsFound()
+            Expanded(
+              child: StreamBuilder(
+                stream: _userComponentsDocStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text("Your components could not be displayed"),
                     );
-                  } else {
-                    return Card(
-                      elevation: 5,
-                      child: ListView.builder(
+                  }
+                  if (snapshot.hasData) {
+                    List<Map<String, dynamic>> json =
+                        snapshot.data["components"].cast<Map<String, dynamic>>();
+                    List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+
+                    if (components.isEmpty) {
+                      return const NoComponentsFound();
+                    } else {
+                      return ListView.builder(
                         controller: _listScrollController,
                         itemCount: components.length,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              components[index].name!,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: _isSelected(components[index])
-                                      ? Theme.of(context).primaryColor
-                                      : null),
+                          return Card(
+                            child: ListTile(
+                              title: Text(
+                                components[index].name!,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: _isSelected(components[index])
+                                        ? Theme.of(context).primaryColor
+                                        : null),
+                              ),
+                              subtitle: Text(
+                                components[index].description!,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              trailing: const Icon(Icons.launch),
+                              onTap: () => _isSelected(components[index])
+                                  ? _removeSelection(components[index])
+                                  : _addSelection(components[index]),
+                              onLongPress: () => _showComponentBreakdown(components[index]),
                             ),
-                            subtitle: Text(
-                              components[index].description!,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            trailing: const Icon(Icons.launch),
-                            onTap: () => _isSelected(components[index])
-                                ? _removeSelection(components[index])
-                                : _addSelection(components[index]),
-                            onLongPress: () => _showComponentBreakdown(components[index]),
                           );
                         },
-                      ),
-                    );
+                      );
+                    }
                   }
-                }
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      CircularProgressIndicator(),
-                      Text("Loading your components"),
-                    ],
-                  ),
-                );
-              },
+                  return const LoadingComponents();
+                },
+              ),
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 class AppUser {
   String? uid, username, email;
-  int? age, height;
-  double? weight;
+  int? age;
+  double? height, weight;
   DateTime? joinDate;
 
   AppUser({

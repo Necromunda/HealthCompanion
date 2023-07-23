@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/daily_data_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:health_companion/widgets/chart.dart';
+import 'package:health_companion/widgets/loading_components.dart';
 import 'package:intl/intl.dart';
 
 import '../models/appuser_model.dart';
@@ -107,7 +108,6 @@ class _OverviewState extends State<Overview> {
 
     if (_currentData.isEmpty) {
       updatedDailyData.add(newDailyData);
-
     } else {
       final DailyData latestDailyData = _currentData.last;
       final DateTime latestDailyDataCreationDate =
@@ -117,14 +117,12 @@ class _OverviewState extends State<Overview> {
 
       if (isNextDay) {
         updatedDailyData.add(newDailyData);
-
       } else {
         latestDailyData.components?.addAll(components);
         latestDailyData.lastEdited = DateTime.now().millisecondsSinceEpoch;
         _currentData.removeLast();
         _currentData.add(latestDailyData);
         updatedDailyData = _currentData;
-
       }
     }
     // await userDailyDataDocRef.update({"data": updatedDailyData});
@@ -156,8 +154,6 @@ class _OverviewState extends State<Overview> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      // child: SingleChildScrollView(
-      //   controller: _scrollController,
       child: Column(
         children: [
           const Chart(),
@@ -204,9 +200,11 @@ class _OverviewState extends State<Overview> {
                       }
                       if (snapshot.hasData) {
                         List<Map<String, dynamic>> data =
-                        snapshot.data["data"].cast<Map<String, dynamic>>();
+                            snapshot.data["data"].cast<Map<String, dynamic>>();
                         _currentData = data.map((e) => DailyData.fromJson(e)).toList();
-                        if (_currentData.isEmpty || _currentData.last.components!.isEmpty || !_isLatestDataCurrentDaysData) {
+                        if (_currentData.isEmpty ||
+                            _currentData.last.components!.isEmpty ||
+                            !_isLatestDataCurrentDaysData) {
                           return SizedBox(
                             width: double.infinity,
                             child: Center(
@@ -222,18 +220,19 @@ class _OverviewState extends State<Overview> {
                           DailyData latestDailyData = _currentData.last;
                           // DailyData latestDailyData = DailyData.fromJson(latestData);
                           final DateTime latestDailyDataCreationDate =
-                          DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+                              DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
                           // final DateTime latestDailyDataCreationDate = DateTime.now().add(const Duration(hours: -25));
 
                           print("LATEST DATA CREATED: $latestDailyDataCreationDate");
-                          print("LATEST DATA EDITED: ${DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!)}");
+                          print(
+                              "LATEST DATA EDITED: ${DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!)}");
 
                           bool isNextDay = Util.isNextDay(
                               now: DateTime.now(), compareTo: latestDailyDataCreationDate);
                           if (isNextDay) {
                             Future(
-                                  () => setState(
-                                    () {
+                              () => setState(
+                                () {
                                   _isLatestDataCurrentDaysData = false;
                                 },
                               ),
@@ -278,8 +277,8 @@ class _OverviewState extends State<Overview> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             IconButton(
-                                              onPressed: () =>
-                                                  _deleteComponentFromDailyData(latestDailyData, index),
+                                              onPressed: () => _deleteComponentFromDailyData(
+                                                  latestDailyData, index),
                                               icon: const Icon(
                                                 Icons.delete,
                                                 color: Colors.red,
@@ -291,7 +290,9 @@ class _OverviewState extends State<Overview> {
                                         ),
                                         onTap: () => _showComponentBreakdown(
                                             latestDailyData.components![index]),
-                                        shape: latestDailyData.components?.indexOf(latestDailyData.components!.last) == index
+                                        shape: latestDailyData.components
+                                                    ?.indexOf(latestDailyData.components!.last) ==
+                                                index
                                             ? null
                                             : const Border(bottom: BorderSide()),
                                       );
@@ -303,12 +304,10 @@ class _OverviewState extends State<Overview> {
                           );
                         }
                       }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      return const LoadingComponents();
                     }
-                    return const Center(
-                      child: Text("Loading your data"),
+                    return const LoadingComponents(
+                      message: "Loading your data",
                     );
                   },
                 ),

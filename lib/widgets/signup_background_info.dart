@@ -3,12 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
 
+import 'custom_button.dart';
+
 class SignUpBackgroundInfo extends StatefulWidget {
   final int pageIndex;
-  final Function switchPageCallback,
-      inputCallbackAge,
-      inputCallbackHeight,
-      inputCallbackWeight;
+  final Function switchPageCallback, inputCallbackAge, inputCallbackHeight, inputCallbackWeight;
 
   const SignUpBackgroundInfo({
     Key? key,
@@ -36,8 +35,7 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
   bool _isAgeValid = false;
   bool _isHeightValid = false;
   bool _isWeightValid = false;
-  final _weightRegexp =
-      RegExp(r'^(?!^0[,.0])(?!^[,.])(?!^0+$)(?!^[,.0]+$)\d+(?:[,.]\d*)?$');
+  final _weightRegexp = RegExp(r'^(?!^0[,.0])(?!^[,.])(?!^0+$)(?!^[,.0]+$)\d+(?:[,.]\d*)?$');
 
   @override
   bool get wantKeepAlive => true;
@@ -79,12 +77,15 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 125.0),
-            child: Text(
-              "Page ${_pageIndex + 1} / 4",
-              textAlign: TextAlign.center,
-            ),
+          // Padding(
+          //   padding: const EdgeInsets.only(bottom: 50.0),
+          //   child: Text(
+          //     "Page ${_pageIndex + 1} / 4",
+          //     textAlign: TextAlign.center,
+          //   ),
+          // ),
+          const SizedBox(
+            height: 50.0,
           ),
           TextField(
             controller: _ageController,
@@ -103,9 +104,7 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               });
             },
             decoration: InputDecoration(
-              errorText: _isAgeValid || _ageController.text.isEmpty
-                  ? null
-                  : 'Invalid age',
+              errorText: _isAgeValid || _ageController.text.isEmpty ? null : 'Invalid age',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: _ageController.text.isEmpty ? Colors.grey : Colors.red,
@@ -143,8 +142,7 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               hintText: "Age",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide:
-                    const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
           ),
@@ -158,20 +156,17 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                 if (value.isNotEmpty && !value.startsWith('0')) {
                   print(value);
                   _isHeightValid = true;
-                  _inputCallbackHeight(int.tryParse(value));
+                  _inputCallbackHeight(double.tryParse(value));
                 } else {
                   _isHeightValid = false;
                 }
               });
             },
             decoration: InputDecoration(
-              errorText: _isHeightValid || _heightController.text.isEmpty
-                  ? null
-                  : 'Invalid height',
+              errorText: _isHeightValid || _heightController.text.isEmpty ? null : 'Invalid height',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color:
-                      _heightController.text.isEmpty ? Colors.grey : Colors.red,
+                  color: _heightController.text.isEmpty ? Colors.grey : Colors.red,
                   width: 2.0,
                 ),
               ),
@@ -206,8 +201,7 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               hintText: "Height",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide:
-                    const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
           ),
@@ -230,13 +224,10 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               });
             },
             decoration: InputDecoration(
-              errorText: _isWeightValid || _weightController.text.isEmpty
-                  ? null
-                  : 'Invalid weight',
+              errorText: _isWeightValid || _weightController.text.isEmpty ? null : 'Invalid weight',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color:
-                      _weightController.text.isEmpty ? Colors.grey : Colors.red,
+                  color: _weightController.text.isEmpty ? Colors.grey : Colors.red,
                   width: 2.0,
                 ),
               ),
@@ -271,55 +262,84 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               hintText: "Weight",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide:
-                    const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
+          ),
+          const SizedBox(
+            height: 10.0,
           ),
           const SignUpInfoCard(
             hint:
                 "Age, height and weight are needed in order to accurately calculate daily nutrition intake values",
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        if (FocusScope.of(context).hasFocus) {
-                          FocusScope.of(context).unfocus();
-                        }
-                        _switchPageCallback(_pageIndex - 1);
-                      },
-                      icon: Icon(
-                        Icons.arrow_circle_left,
-                        size: 48,
-                        color: Theme.of(context).primaryColor,
-                      ),
+          const Expanded(
+            child: SizedBox(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    onPressed: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      _switchPageCallback(_pageIndex - 1);
+                    },
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 26,
                     ),
-                    IconButton(
-                      onPressed: _isAgeValid && _isHeightValid && _isWeightValid
-                          ? () {
-                              if (FocusScope.of(context).hasFocus) {
-                                FocusScope.of(context).unfocus();
-                              }
-                              _switchPageCallback(_pageIndex + 1);
-                            }
-                          : null,
-                      icon: Icon(
-                        Icons.arrow_circle_right,
-                        size: 48,
-                        color: _isAgeValid && _isHeightValid && _isWeightValid
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  CustomButton(
+                    onPressed: _isAgeValid && _isHeightValid && _isWeightValid
+                        ? () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _switchPageCallback(_pageIndex + 1);
+                          }
+                        : null,
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     if (FocusScope.of(context).hasFocus) {
+                  //       FocusScope.of(context).unfocus();
+                  //     }
+                  //     _switchPageCallback(_pageIndex - 1);
+                  //   },
+                  //   icon: Icon(
+                  //     Icons.arrow_circle_left,
+                  //     size: 48,
+                  //     color: Theme.of(context).primaryColor,
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   onPressed: _isAgeValid && _isHeightValid && _isWeightValid
+                  //       ? () {
+                  //           if (FocusScope.of(context).hasFocus) {
+                  //             FocusScope.of(context).unfocus();
+                  //           }
+                  //           _switchPageCallback(_pageIndex + 1);
+                  //         }
+                  //       : null,
+                  //   icon: Icon(
+                  //     Icons.arrow_circle_right,
+                  //     size: 48,
+                  //     color: _isAgeValid && _isHeightValid && _isWeightValid
+                  //         ? Theme.of(context).primaryColor
+                  //         : Colors.grey,
+                  //   ),
+                  // )
+                ],
               ),
             ),
           ),

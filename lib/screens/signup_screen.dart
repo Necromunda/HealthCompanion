@@ -16,9 +16,27 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController();
   String? _username, _email, _password;
-  int? _age, _height;
-  double? _weight;
+  int? _age;
+  double? _height, _weight;
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    print("Signup screen init");
+    super.initState();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void _switchPage(int index) {
     print("Switch page to $index");
@@ -42,7 +60,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  void _setHeightCallback(int height) {
+  void _setHeightCallback(double height) {
     setState(() {
       _height = height;
     });
@@ -74,14 +92,14 @@ class _SignUpState extends State<SignUp> {
 
   int? _getAge() => _age;
 
-  int? _getHeight() => _height;
+  double? _getHeight() => _height;
 
   double? _getWeight() => _weight;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -90,6 +108,8 @@ class _SignUpState extends State<SignUp> {
           icon: const Icon(Icons.close),
           color: Colors.black,
         ),
+        centerTitle: true,
+        title: Text("Page ${_selectedIndex + 1} / 4", style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),),
       ),
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),

@@ -8,10 +8,10 @@ class SignUpInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      width: MediaQuery.of(context).size.width,
       child: Card(
         elevation: 1,
-        margin: const EdgeInsets.only(top: 25.0),
+        margin: const EdgeInsets.all(0),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(

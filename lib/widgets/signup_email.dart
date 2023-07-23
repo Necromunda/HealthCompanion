@@ -2,6 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
 
+import 'custom_button.dart';
+
 class SignUpEmail extends StatefulWidget {
   final int pageIndex;
   final Function inputCallback;
@@ -18,8 +20,7 @@ class SignUpEmail extends StatefulWidget {
   State<SignUpEmail> createState() => _SignUpEmailState();
 }
 
-class _SignUpEmailState extends State<SignUpEmail>
-    with AutomaticKeepAliveClientMixin<SignUpEmail> {
+class _SignUpEmailState extends State<SignUpEmail> with AutomaticKeepAliveClientMixin<SignUpEmail> {
   final TextEditingController _emailController = TextEditingController();
   bool _isEmailValid = false;
   late final _pageIndex = widget.pageIndex;
@@ -54,34 +55,30 @@ class _SignUpEmailState extends State<SignUpEmail>
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 125.0),
-            child: Text(
-              "Page ${_pageIndex + 1} / 4",
-              textAlign: TextAlign.center,
-            ),
+          // Padding(
+          //   padding: const EdgeInsets.only(bottom: 125.0),
+          //   child: Text(
+          //     "Page ${_pageIndex + 1} / 4",
+          //     textAlign: TextAlign.center,
+          //   ),
+          // ),
+          const SizedBox(
+            height: 50.0,
           ),
           TextField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             onChanged: (value) {
               setState(() {
-                if (EmailValidator.validate(value)) {
-                  _inputCallback(value);
-                  _isEmailValid = true;
-                } else {
-                  _isEmailValid = false;
-                }
+                _isEmailValid = EmailValidator.validate(value);
+                _inputCallback(value);
               });
             },
             decoration: InputDecoration(
-              errorText: _isEmailValid || _emailController.text.isEmpty
-                  ? null
-                  : 'Invalid email',
+              errorText: _isEmailValid || _emailController.text.isEmpty ? null : 'Invalid email',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color:
-                      _emailController.text.isEmpty ? Colors.grey : Colors.red,
+                  color: _emailController.text.isEmpty ? Colors.grey : Colors.red,
                   width: 2.0,
                 ),
               ),
@@ -122,50 +119,79 @@ class _SignUpEmailState extends State<SignUpEmail>
               ),
             ),
           ),
-          const SignUpInfoCard(
-            hint:
-                "Email must be a valid email address.\nEmail is used for sign in.",
+          const SizedBox(
+            height: 10.0,
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        if (FocusScope.of(context).hasFocus) {
-                          FocusScope.of(context).unfocus();
-                        }
-                        _switchPageCallback(_pageIndex - 1);
-                      },
-                      icon: Icon(
-                        Icons.arrow_circle_left,
-                        size: 48,
-                        color: Theme.of(context).primaryColor,
-                      ),
+          const SignUpInfoCard(
+            hint: "Email must be a valid email address.\nEmail is used for sign in.",
+          ),
+          const Expanded(
+            child: SizedBox(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    onPressed: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      _switchPageCallback(_pageIndex - 1);
+                    },
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 26,
                     ),
-                    IconButton(
-                      onPressed: _isEmailValid
-                          ? () {
-                              if (FocusScope.of(context).hasFocus) {
-                                FocusScope.of(context).unfocus();
-                              }
-                              _switchPageCallback(_pageIndex + 1);
-                            }
-                          : null,
-                      icon: Icon(
-                        Icons.arrow_circle_right,
-                        size: 48,
-                        color: _isEmailValid
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  CustomButton(
+                    onPressed: _isEmailValid
+                        ? () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _switchPageCallback(_pageIndex + 1);
+                          }
+                        : null,
+                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
+                    child: const Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     if (FocusScope.of(context).hasFocus) {
+                  //       FocusScope.of(context).unfocus();
+                  //     }
+                  //     _switchPageCallback(_pageIndex - 1);
+                  //   },
+                  //   icon: Icon(
+                  //     Icons.arrow_circle_left,
+                  //     size: 48,
+                  //     color: Theme.of(context).primaryColor,
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   onPressed: _isEmailValid
+                  //       ? () {
+                  //           if (FocusScope.of(context).hasFocus) {
+                  //             FocusScope.of(context).unfocus();
+                  //           }
+                  //           _switchPageCallback(_pageIndex + 1);
+                  //         }
+                  //       : null,
+                  //   icon: Icon(
+                  //     Icons.arrow_circle_right,
+                  //     size: 48,
+                  //     color: _isEmailValid
+                  //         ? Theme.of(context).primaryColor
+                  //         : Colors.grey,
+                  //   ),
+                  // )
+                ],
               ),
             ),
           ),
