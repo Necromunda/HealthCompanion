@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/daily_data_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:health_companion/widgets/bundle_button_bar.dart';
+import 'package:health_companion/widgets/bundles.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:health_companion/widgets/custom_button.dart';
 import 'package:health_companion/widgets/loading_components.dart';
@@ -48,8 +50,10 @@ class _OverviewState extends State<Overview> {
     _bundlePageViewController = PageController();
     _currentBundleIndex = 0;
     _lastBundleIndex = 0;
-    _userDailyDataDocStream =
-        FirebaseFirestore.instance.collection("user_daily_data").doc(_currentUser.uid).snapshots();
+    _userDailyDataDocStream = FirebaseFirestore.instance
+        .collection("user_daily_data")
+        .doc(_currentUser.uid)
+        .snapshots();
     _today = DateFormat('EEEE').format(DateTime.now());
     _currentData = [];
     // _isLatestDataCurrentDaysData = true;
@@ -85,21 +89,62 @@ class _OverviewState extends State<Overview> {
         },
       ),
     );
-    if (component != null) _addComponentToDailyData(<Component>[component]);
+    if (component != null) {
+      _addComponentToBundle(_currentData, _currentBundleIndex, [component]);
+    }
     print(component);
   }
 
   void _addExistingComponentButtonHandler() async {
-    final List<Component>? selectedComponents = await Navigator.of(context).push(
+    final List<Component>? selectedComponents =
+        await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const AddExistingComponent(),
       ),
     );
     if (selectedComponents != null) {
-      _addComponentToDailyData(selectedComponents);
+      _addComponentToBundle(
+          _currentData, _currentBundleIndex, selectedComponents);
     }
     print("Current data is $_currentData");
     print("Selected components: $selectedComponents");
+  }
+
+  void _addComponentToBundle(List<DailyData> bundles, int bundleIndex,
+      List<Component> newComponents) async {
+    print("bundles: $bundles");
+    print("bundleindex: $bundleIndex");
+    bundles[bundleIndex].components!.addAll(newComponents);
+    await FirebaseService.updateDailyData(bundles);
+    // DailyData newDailyData = DailyData.fromJson({
+    //   "creationDate": DateTime.now().millisecondsSinceEpoch,
+    //   "lastEdited": DateTime.now().millisecondsSinceEpoch,
+    //   "components": components.map((e) => e.toJson()).toList(),
+    //   // "components": components,
+    // });
+    // List<DailyData> updatedDailyData = [];
+
+    // if (_currentData.isEmpty) {
+    //   updatedDailyData.add(newDailyData);
+    // } else {
+    //   final DailyData latestDailyData = _currentData.last;
+    //   final DateTime latestDailyDataCreationDate =
+    //       DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
+    //
+    //   bool isNextDay = Util.isNextDay(
+    //       now: DateTime.now(), compareTo: latestDailyDataCreationDate);
+    //
+    //   if (isNextDay) {
+    //     updatedDailyData.add(newDailyData);
+    //   } else {
+    //     latestDailyData.components?.addAll(components);
+    //     latestDailyData.lastEdited = DateTime.now().millisecondsSinceEpoch;
+    //     _currentData.removeLast();
+    //     _currentData.add(latestDailyData);
+    //     updatedDailyData = _currentData;
+    //   }
+    // }
+    // await FirebaseService.updateDailyData(updatedDailyData);
   }
 
   void _addNewBundle() async {
@@ -114,68 +159,53 @@ class _OverviewState extends State<Overview> {
     _scrollBundles(_lastBundleIndex);
   }
 
+  // void _onPageChanged(int pageIndex) {
+  //   // setState(() {
+  //     _currentBundleIndex = pageIndex;
+  //   // });
+  // }
+
   void _showPreviousBundle() {
     if (_currentBundleIndex > 0) {
-      // setState(() {
       _currentBundleIndex -= 1;
       _scrollBundles(_currentBundleIndex);
-      // });
     }
-    // print(
-    //     "CURRENT INDEX: $_currentBundleIndex\nLAST BUNDLE INDEX: $_lastBundleIndex\nNUMBER OF BUNDLES: ${_currentData.length}");
   }
 
   void _showNextBundle() {
-
     if (_currentBundleIndex < _lastBundleIndex) {
-      // setState(() {
       _currentBundleIndex += 1;
       _scrollBundles(_currentBundleIndex);
-      // });
     }
-    // print(
-    //     "CURRENT INDEX: $_currentBundleIndex\nLAST BUNDLE INDEX: $_lastBundleIndex\nNUMBER OF BUNDLES: ${_currentData.length}");
+  }
+
+  void _showFirstBundle() {
+    _currentBundleIndex = 0;
+    _scrollBundles(_currentBundleIndex);
+  }
+
+  void _showLastBundle() {
+    _currentBundleIndex = _lastBundleIndex;
+    _scrollBundles(_currentBundleIndex);
   }
 
   void _scrollBundles(int index) {
-    // print("Scroll to $index");
-    // print("Current data length ${_currentData.length}");
+    // if ((_currentBundleIndex - index) < 0) {
+    //   index = 0;
+    // } else if ((_currentBundleIndex + index) > _lastBundleIndex) {
+    //   index = _lastBundleIndex;
+    // } else {
+    //   index = _currentBundleIndex - index;
+    // }
+    print("Scroll to $index");
+    // setState(() {
     _bundlePageViewController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-  }
-
-  void _addComponentToDailyData(List<Component> components) async {
-    DailyData newDailyData = DailyData.fromJson({
-      "creationDate": DateTime.now().millisecondsSinceEpoch,
-      "lastEdited": DateTime.now().millisecondsSinceEpoch,
-      "components": components.map((e) => e.toJson()).toList(),
-      // "components": components,
-    });
-    List<DailyData> updatedDailyData = [];
-
-    if (_currentData.isEmpty) {
-      updatedDailyData.add(newDailyData);
-    } else {
-      final DailyData latestDailyData = _currentData.last;
-      final DateTime latestDailyDataCreationDate =
-          DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-
-      bool isNextDay = Util.isNextDay(now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-
-      if (isNextDay) {
-        updatedDailyData.add(newDailyData);
-      } else {
-        latestDailyData.components?.addAll(components);
-        latestDailyData.lastEdited = DateTime.now().millisecondsSinceEpoch;
-        _currentData.removeLast();
-        _currentData.add(latestDailyData);
-        updatedDailyData = _currentData;
-      }
-    }
-    await FirebaseService.updateDailyData(updatedDailyData);
+    // _currentBundleIndex = index;
+    // });
   }
 
   void _showComponentBreakdown(Component component) {
@@ -190,14 +220,34 @@ class _OverviewState extends State<Overview> {
     );
   }
 
-  void _deleteComponentFromDailyData(DailyData todaysData, int componentIndex) async {
-    todaysData.lastEdited = DateTime.now().millisecondsSinceEpoch;
-    Component? retVal = todaysData.components?.removeAt(componentIndex);
-    _currentData.removeLast();
-    _currentData.add(todaysData);
+  void _deleteComponentFromBundle(
+      List<DailyData> bundles, int bundleIndex, int componentIndex) async {
+    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    Component? retVal =
+        bundles[bundleIndex].components?.removeAt(componentIndex);
     print("Removed component: $retVal");
-    await FirebaseService.updateDailyData(_currentData);
+    await FirebaseService.updateDailyData(bundles);
   }
+
+  void _deleteBundle() async {
+    List<DailyData> updatedBundles = List.from(_currentData);
+    updatedBundles.removeAt(_currentBundleIndex);
+    await FirebaseService.updateDailyData(updatedBundles);
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //
+  //     if (_bundlePageViewController.hasClients) {
+  //       _bundlePageViewController.jumpToPage(_lastBundleIndex);
+  //     }
+  //
+  //   });
+  //
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -257,118 +307,133 @@ class _OverviewState extends State<Overview> {
                     if (snapshot.hasData) {
                       List<Map<String, dynamic>> data =
                           snapshot.data["data"].cast<Map<String, dynamic>>();
-                      _currentData = data.map((e) => DailyData.fromJson(e)).toList();
-                      print(_currentData);
+                      _currentData =
+                          data.map((e) => DailyData.fromJson(e)).toList();
+
                       if (_currentData.isEmpty) {
                         _addNewBundle();
-                      } else {
-                        _lastBundleIndex = _currentData.length - 1;
-                        print("LASTBUNDLEINDEX: $_lastBundleIndex");
-                        _bundlePageViewController = PageController(initialPage: _lastBundleIndex);
-                        print("INIT PAGE: ${_bundlePageViewController.initialPage}");
-                        _currentBundleIndex = _lastBundleIndex;
-                        print("CURRENTBUNDLEINDEX: $_lastBundleIndex");
+                      }
+                      _lastBundleIndex = _currentData.length - 1;
+                      // _bundlePageViewController =
+                      //     PageController(initialPage: _lastBundleIndex);
+                      // _currentBundleIndex = _lastBundleIndex;
 
-                        DailyData latestDailyData = _currentData.last;
-                        final DateTime latestDailyDataCreationDate =
-                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-                        final DateTime latestDailyDataEditedDate =
-                            DateTime.fromMillisecondsSinceEpoch(latestDailyData.lastEdited!);
-                        final String formattedCreatedDate =
-                            DateFormat('d.M H:mm').format(latestDailyDataCreationDate);
-                        final String formattedEditedDate =
-                            DateFormat('d.M H:mm').format(latestDailyDataEditedDate);
+                      // return Bundles(
+                      //     key: Key("${Random().nextDouble()}"),
+                      //     initialPageIndex: _lastBundleIndex,
+                      //     bundles: _currentData,
+                      //   onPageChanged: _onPageChanged,
+                      // );
+                      return PageView.builder(
+                        controller: _bundlePageViewController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _currentData.length,
+                        onPageChanged: (index) {
+                          // setState(() {
+                          _currentBundleIndex = index;
+                          // });
+                        },
+                        itemBuilder: (context, pageviewIndex) {
+                          DailyData bundle = DailyData.fromJson(
+                              snapshot.data["data"][pageviewIndex]);
 
-                        print("LATEST DATA CREATED: $latestDailyDataCreationDate");
-                        print("LATEST DATA EDITED: $latestDailyDataEditedDate");
-                        // if (_currentData.last.components!.isEmpty) {
-                        if (false) {
-                          return SizedBox(
-                            width: double.infinity,
-                            child: Center(
-                              child: Text(
-                                "No data in this bundle\nCreated $formattedCreatedDate",
-                                style: const TextStyle(fontSize: 22),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          );
-                        }
-
-                        return SizedBox(
-                          width: double.infinity,
-                          child: Column(
+                          return Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5.0),
-                                child: Text(
-                                  "What you have eaten",
-                                  style: TextStyle(fontSize: 20),
-                                ),
+                              const SizedBox(height: 5),
+                              Text(
+                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      bundle.creationDate!),
+                                )}",
+                                style: const TextStyle(fontSize: 16),
                               ),
-                              Expanded(
-                                child: PageView.builder(
-                                  controller: _bundlePageViewController,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: _currentData.length,
-                                  onPageChanged: (index) {
-                                    _currentBundleIndex = index;
-                                  },
-                                  itemBuilder: (context, index) {
-                                    return Center(
-                                      child: Text("Bundle $index"),
-                                    );
-                                  },
+                              if (bundle.components!.isEmpty)
+                                const Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      "This bundle is empty",
+                                      style: TextStyle(fontSize: 18),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                )
+                              else
+                                Expanded(
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    controller: _listScrollController,
+                                    itemCount: bundle.components!.length,
+                                    itemBuilder: (context, listviewIndex) {
+                                      // _scrollBundles(_lastBundleIndex);
+                                      return ListTile(
+                                        title: Text(
+                                          bundle
+                                              .components![listviewIndex].name!,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          bundle.components?[listviewIndex]
+                                                  .description ??
+                                              "No description",
+                                          style: const TextStyle(fontSize: 16),
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _deleteComponentFromBundle(
+                                                      _currentData,
+                                                      pageviewIndex,
+                                                      listviewIndex),
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                                size: 32.0,
+                                              ),
+                                            ),
+                                            const Icon(Icons.launch)
+                                          ],
+                                        ),
+                                        onTap: () => _showComponentBreakdown(
+                                            bundle.components![listviewIndex]),
+                                      );
+                                    },
+                                  ),
                                 ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                      onPressed: _showFirstBundle,
+                                      icon: const Icon(
+                                          Icons.keyboard_double_arrow_left)),
+                                  IconButton(
+                                      onPressed: _showPreviousBundle,
+                                      icon: const Icon(Icons.keyboard_arrow_left)),
+                                  IconButton(
+                                      onPressed: _addNewBundle,
+                                      icon: const Icon(Icons.add)),
+                                  IconButton(
+                                      onPressed: _deleteBundle,
+                                      icon: const Icon(Icons.delete_forever)),
+                                  IconButton(
+                                      onPressed: _showNextBundle,
+                                      icon: const Icon(Icons.keyboard_arrow_right)),
+                                  IconButton(
+                                      onPressed: _showLastBundle,
+                                      icon: const Icon(
+                                          Icons.keyboard_double_arrow_right)),
+                                ],
                               )
-                              // Expanded(
-                              //   child: ListView.builder(
-                              //     padding: EdgeInsets.zero,
-                              //     controller: _listScrollController,
-                              //     itemCount: latestDailyData.components!.length,
-                              //     // itemCount: 10,
-                              //     // shrinkWrap: true,
-                              //     itemBuilder: (context, index) {
-                              //       return ListTile(
-                              //         title: Text(
-                              //           latestDailyData.components![index].name ?? "No name",
-                              //           // "Item $index",
-                              //           style: const TextStyle(
-                              //             fontSize: 18,
-                              //           ),
-                              //         ),
-                              //         subtitle: Text(
-                              //           latestDailyData.components![index].description ??
-                              //               "No description",
-                              //           // "Item $index description",
-                              //           style: const TextStyle(fontSize: 16),
-                              //         ),
-                              //         trailing: Row(
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: [
-                              //             IconButton(
-                              //               onPressed: () => _deleteComponentFromDailyData(
-                              //                   latestDailyData, index),
-                              //               icon: const Icon(
-                              //                 Icons.delete,
-                              //                 color: Colors.red,
-                              //                 size: 32.0,
-                              //               ),
-                              //             ),
-                              //             const Icon(Icons.launch)
-                              //           ],
-                              //         ),
-                              //         onTap: () => _showComponentBreakdown(
-                              //             latestDailyData.components![index]),
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
                             ],
-                          ),
-                        );
-                      }
+                          );
+                        },
+                      );
                     }
                     return const LoadingComponents();
                   },
@@ -376,10 +441,12 @@ class _OverviewState extends State<Overview> {
               ),
             ),
           ),
-          BundleButtonBar(
-            onPressedLeft: _showPreviousBundle,
-            onPressedCenter: _addNewBundle,
-            onPressedRight: _showNextBundle,
+          Card(
+            child: BundleButtonBar(
+              onPressedLeft: _showPreviousBundle,
+              onPressedCenter: _addNewBundle,
+              onPressedRight: _showNextBundle,
+            ),
           ),
         ],
       ),
