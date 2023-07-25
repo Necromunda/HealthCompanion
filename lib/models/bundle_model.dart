@@ -2,21 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'component_model.dart';
 
-class DailyData {
+class Bundle {
   int? creationDate, lastEdited;
   List<Component>? components;
-  double? salt,
-      energy,
-      energyKcal,
-      protein,
-      carbohydrate,
-      alcohol,
-      organicAcids,
-      sugarAlcohol,
-      saturatedFat,
-      fiber,
-      sugar,
-      fat;
+  // double? salt,
+  //     energy,
+  //     energyKcal,
+  //     protein,
+  //     carbohydrate,
+  //     alcohol,
+  //     organicAcids,
+  //     sugarAlcohol,
+  //     saturatedFat,
+  //     fiber,
+  //     sugar,
+  //     fat;
 
   // DailyData({
   //   this.components,
@@ -34,7 +34,7 @@ class DailyData {
   //   this.fat,
   // });
 
-  DailyData.fromJson(Map<String, dynamic> json) {
+  Bundle.fromJson(Map<String, dynamic> json) {
     creationDate = json["creationDate"];
     lastEdited = json["lastEdited"];
     components = (json["components"] as List).map((e) => Component.fromJson(e)).toList();
@@ -65,20 +65,20 @@ class DailyData {
     return data;
   }
 
-  void _sumComponents() {
-    energy = totalEnergy ?? 0.0;
-    energyKcal = totalEnergyKcal ?? 0.0;
-    salt = totalSalt ?? 0.0;
-    protein = totalProtein ?? 0.0;
-    carbohydrate = totalCarbohydrate ?? 0.0;
-    alcohol = totalAlcohol ?? 0.0;
-    organicAcids = totalOrganicAcids ?? 0.0;
-    sugarAlcohol = totalSugarAlcohol ?? 0.0;
-    saturatedFat = totalSaturatedFat ?? 0.0;
-    fiber = totalFiber ?? 0.0;
-    sugar = totalSugar ?? 0.0;
-    fat = totalFat ?? 0.0;
-  }
+  // void _sumComponents() {
+  //   energy = totalEnergy ?? 0.0;
+  //   energyKcal = totalEnergyKcal ?? 0.0;
+  //   salt = totalSalt ?? 0.0;
+  //   protein = totalProtein ?? 0.0;
+  //   carbohydrate = totalCarbohydrate ?? 0.0;
+  //   alcohol = totalAlcohol ?? 0.0;
+  //   organicAcids = totalOrganicAcids ?? 0.0;
+  //   sugarAlcohol = totalSugarAlcohol ?? 0.0;
+  //   saturatedFat = totalSaturatedFat ?? 0.0;
+  //   fiber = totalFiber ?? 0.0;
+  //   sugar = totalSugar ?? 0.0;
+  //   fat = totalFat ?? 0.0;
+  // }
 
   double? get totalEnergy =>
       components?.map((e) => (e.energy ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);

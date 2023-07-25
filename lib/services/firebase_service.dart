@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:health_companion/models/component_model.dart';
-import 'package:health_companion/models/daily_data_model.dart';
+import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/util.dart';
 import 'package:intl/intl.dart';
 
@@ -166,12 +166,12 @@ class FirebaseService {
     }
   }
 
-  static Future<void> updateDailyData(List<DailyData> updatedData) async {
+  static Future<void> updateDailyData(List<Bundle> bundles) async {
     try {
       final FirebaseFirestore db = FirebaseFirestore.instance;
       String uid = FirebaseAuth.instance.currentUser!.uid;
       final DocumentReference userDailyDataDocRef = db.collection("user_daily_data").doc(uid);
-      List<Map<String, dynamic>> updatedDataJson = updatedData.map((e) => e.toJson()).toList();
+      List<Map<String, dynamic>> updatedDataJson = bundles.map((e) => e.toJson()).toList();
 
       await userDailyDataDocRef.update({"data": updatedDataJson});
     } catch (e, stackTrace) {

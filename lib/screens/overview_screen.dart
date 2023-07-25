@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/daily_data_model.dart';
+import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:health_companion/widgets/bundle_button_bar.dart';
 import 'package:health_companion/widgets/bundles.dart';
@@ -35,11 +35,10 @@ class _OverviewState extends State<Overview> {
   late final ScrollController _scrollController, _listScrollController;
   late final User _currentUser;
   late final Stream _userDailyDataDocStream;
-  late String _today;
-  late List<DailyData> _currentData;
-  late bool _isLatestDataCurrentDaysData;
+  late List<Bundle> _userBundles;
   late int _currentBundleIndex, _lastBundleIndex;
   late PageController _bundlePageViewController;
+  late Bundle? _currentBundle;
 
   @override
   void initState() {
@@ -54,10 +53,20 @@ class _OverviewState extends State<Overview> {
         .collection("user_daily_data")
         .doc(_currentUser.uid)
         .snapshots();
-    _today = DateFormat('EEEE').format(DateTime.now());
-    _currentData = [];
-    // _isLatestDataCurrentDaysData = true;
+    _userBundles = [];
+    _currentBundle = null;
     super.initState();
+    // WidgetsBinding.instance
+    //     .addPostFrameCallback((_) {
+    //       setState(() {
+    //         print("here");
+    //         // print(_userBundles);
+    //         // print(_currentBundleIndex);
+    //         if (_userBundles.isNotEmpty) {
+    //           _currentBundle = _userBundles[_currentBundleIndex];
+    //         }
+    //       });
+    // });
   }
 
   @override
@@ -66,11 +75,6 @@ class _OverviewState extends State<Overview> {
       super.setState(fn);
     }
   }
-
-  // @override
-  // void didUpdateWidget(covariant Overview oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  // }
 
   @override
   void dispose() {
@@ -90,7 +94,7 @@ class _OverviewState extends State<Overview> {
       ),
     );
     if (component != null) {
-      _addComponentToBundle(_currentData, _currentBundleIndex, [component]);
+      _addComponentToBundle(_userBundles, _currentBundleIndex, [component]);
     }
     print(component);
   }
@@ -104,66 +108,62 @@ class _OverviewState extends State<Overview> {
     );
     if (selectedComponents != null) {
       _addComponentToBundle(
-          _currentData, _currentBundleIndex, selectedComponents);
+          _userBundles, _currentBundleIndex, selectedComponents);
     }
-    print("Current data is $_currentData");
+    print("Current data is $_userBundles");
     print("Selected components: $selectedComponents");
   }
 
-  void _addComponentToBundle(List<DailyData> bundles, int bundleIndex,
+  void _addComponentToBundle(List<Bundle> bundles, int bundleIndex,
       List<Component> newComponents) async {
     print("bundles: $bundles");
     print("bundleindex: $bundleIndex");
+    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
     bundles[bundleIndex].components!.addAll(newComponents);
     await FirebaseService.updateDailyData(bundles);
-    // DailyData newDailyData = DailyData.fromJson({
-    //   "creationDate": DateTime.now().millisecondsSinceEpoch,
-    //   "lastEdited": DateTime.now().millisecondsSinceEpoch,
-    //   "components": components.map((e) => e.toJson()).toList(),
-    //   // "components": components,
-    // });
-    // List<DailyData> updatedDailyData = [];
-
-    // if (_currentData.isEmpty) {
-    //   updatedDailyData.add(newDailyData);
-    // } else {
-    //   final DailyData latestDailyData = _currentData.last;
-    //   final DateTime latestDailyDataCreationDate =
-    //       DateTime.fromMillisecondsSinceEpoch(latestDailyData.creationDate!);
-    //
-    //   bool isNextDay = Util.isNextDay(
-    //       now: DateTime.now(), compareTo: latestDailyDataCreationDate);
-    //
-    //   if (isNextDay) {
-    //     updatedDailyData.add(newDailyData);
-    //   } else {
-    //     latestDailyData.components?.addAll(components);
-    //     latestDailyData.lastEdited = DateTime.now().millisecondsSinceEpoch;
-    //     _currentData.removeLast();
-    //     _currentData.add(latestDailyData);
-    //     updatedDailyData = _currentData;
-    //   }
-    // }
-    // await FirebaseService.updateDailyData(updatedDailyData);
   }
 
   void _addNewBundle() async {
     print(_currentBundleIndex);
-    DailyData newBundle = DailyData.fromJson({
+    Bundle newBundle = Bundle.fromJson({
       "creationDate": DateTime.now().millisecondsSinceEpoch,
       "lastEdited": DateTime.now().millisecondsSinceEpoch,
       "components": [],
     });
-    _currentData.add(newBundle);
-    await FirebaseService.updateDailyData(_currentData);
+    _userBundles.add(newBundle);
+    await FirebaseService.updateDailyData(_userBundles);
     _scrollBundles(_lastBundleIndex);
   }
 
-  // void _onPageChanged(int pageIndex) {
-  //   // setState(() {
-  //     _currentBundleIndex = pageIndex;
-  //   // });
-  // }
+  void _deleteComponentFromBundle(
+      List<Bundle> bundles, int bundleIndex, int componentIndex) async {
+    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    Component? retVal =
+        bundles[bundleIndex].components?.removeAt(componentIndex);
+    print("Removed component: $retVal");
+    await FirebaseService.updateDailyData(bundles);
+  }
+
+  void _deleteBundle(int bundleIndex) async {
+    List<Bundle> updatedBundles = List.from(_userBundles);
+    if (bundleIndex == 0) {
+      if (updatedBundles.length > 1) {
+        updatedBundles.removeAt(0);
+      } else {
+        updatedBundles[0] = Bundle.fromJson({
+          "creationDate": DateTime.now().millisecondsSinceEpoch,
+          "lastEdited": DateTime.now().millisecondsSinceEpoch,
+          "components": [],
+        });
+      }
+    } else {
+      updatedBundles.removeAt(_currentBundleIndex);
+      if (bundleIndex == _lastBundleIndex) {
+        _currentBundleIndex -= 1;
+      }
+    }
+    await FirebaseService.updateDailyData(updatedBundles);
+  }
 
   void _showPreviousBundle() {
     if (_currentBundleIndex > 0) {
@@ -190,22 +190,12 @@ class _OverviewState extends State<Overview> {
   }
 
   void _scrollBundles(int index) {
-    // if ((_currentBundleIndex - index) < 0) {
-    //   index = 0;
-    // } else if ((_currentBundleIndex + index) > _lastBundleIndex) {
-    //   index = _lastBundleIndex;
-    // } else {
-    //   index = _currentBundleIndex - index;
-    // }
     print("Scroll to $index");
-    // setState(() {
     _bundlePageViewController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
-    // _currentBundleIndex = index;
-    // });
   }
 
   void _showComponentBreakdown(Component component) {
@@ -220,42 +210,13 @@ class _OverviewState extends State<Overview> {
     );
   }
 
-  void _deleteComponentFromBundle(
-      List<DailyData> bundles, int bundleIndex, int componentIndex) async {
-    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
-    Component? retVal =
-        bundles[bundleIndex].components?.removeAt(componentIndex);
-    print("Removed component: $retVal");
-    await FirebaseService.updateDailyData(bundles);
-  }
-
-  void _deleteBundle() async {
-    List<DailyData> updatedBundles = List.from(_currentData);
-    updatedBundles.removeAt(_currentBundleIndex);
-    await FirebaseService.updateDailyData(updatedBundles);
-  }
-
-  // @override
-  // void didChangeDependencies() {
-  //
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //
-  //     if (_bundlePageViewController.hasClients) {
-  //       _bundlePageViewController.jumpToPage(_lastBundleIndex);
-  //     }
-  //
-  //   });
-  //
-  //   super.didChangeDependencies();
-  // }
-
   @override
   Widget build(BuildContext context) {
+    print("currentbundle is $_currentBundle");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
-          const Chart(),
           Card(
             elevation: 3,
             child: ExpansionTile(
@@ -307,39 +268,36 @@ class _OverviewState extends State<Overview> {
                     if (snapshot.hasData) {
                       List<Map<String, dynamic>> data =
                           snapshot.data["data"].cast<Map<String, dynamic>>();
-                      _currentData =
-                          data.map((e) => DailyData.fromJson(e)).toList();
+                      _userBundles =
+                          data.map((e) => Bundle.fromJson(e)).toList();
 
-                      if (_currentData.isEmpty) {
+                      if (_userBundles.isEmpty) {
                         _addNewBundle();
                       }
-                      _lastBundleIndex = _currentData.length - 1;
-                      // _bundlePageViewController =
-                      //     PageController(initialPage: _lastBundleIndex);
-                      // _currentBundleIndex = _lastBundleIndex;
+                      print(_userBundles);
+                      _lastBundleIndex = _userBundles.length - 1;
 
-                      // return Bundles(
-                      //     key: Key("${Random().nextDouble()}"),
-                      //     initialPageIndex: _lastBundleIndex,
-                      //     bundles: _currentData,
-                      //   onPageChanged: _onPageChanged,
-                      // );
                       return PageView.builder(
                         controller: _bundlePageViewController,
                         scrollDirection: Axis.horizontal,
-                        itemCount: _currentData.length,
+                        itemCount: _userBundles.length,
                         onPageChanged: (index) {
-                          // setState(() {
-                          _currentBundleIndex = index;
-                          // });
+                          setState(() {
+                            _currentBundleIndex = index;
+                          });
                         },
                         itemBuilder: (context, pageviewIndex) {
-                          DailyData bundle = DailyData.fromJson(
-                              snapshot.data["data"][pageviewIndex]);
+                          // Bundle bundle = Bundle.fromJson(
+                          //     snapshot.data["data"][pageviewIndex]);
+                          Bundle bundle = _userBundles[pageviewIndex];
 
                           return Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
+                              if (bundle.components!.isNotEmpty)
+                                Chart(
+                                    key: Key("${Random().nextDouble() * 1000}"),
+                                    bundle: bundle),
                               const SizedBox(height: 5),
                               Text(
                                 "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(
@@ -386,7 +344,7 @@ class _OverviewState extends State<Overview> {
                                             IconButton(
                                               onPressed: () =>
                                                   _deleteComponentFromBundle(
-                                                      _currentData,
+                                                      _userBundles,
                                                       pageviewIndex,
                                                       listviewIndex),
                                               icon: const Icon(
@@ -404,32 +362,6 @@ class _OverviewState extends State<Overview> {
                                     },
                                   ),
                                 ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton(
-                                      onPressed: _showFirstBundle,
-                                      icon: const Icon(
-                                          Icons.keyboard_double_arrow_left)),
-                                  IconButton(
-                                      onPressed: _showPreviousBundle,
-                                      icon: const Icon(Icons.keyboard_arrow_left)),
-                                  IconButton(
-                                      onPressed: _addNewBundle,
-                                      icon: const Icon(Icons.add)),
-                                  IconButton(
-                                      onPressed: _deleteBundle,
-                                      icon: const Icon(Icons.delete_forever)),
-                                  IconButton(
-                                      onPressed: _showNextBundle,
-                                      icon: const Icon(Icons.keyboard_arrow_right)),
-                                  IconButton(
-                                      onPressed: _showLastBundle,
-                                      icon: const Icon(
-                                          Icons.keyboard_double_arrow_right)),
-                                ],
-                              )
                             ],
                           );
                         },
@@ -442,12 +374,37 @@ class _OverviewState extends State<Overview> {
             ),
           ),
           Card(
-            child: BundleButtonBar(
-              onPressedLeft: _showPreviousBundle,
-              onPressedCenter: _addNewBundle,
-              onPressedRight: _showNextBundle,
+            elevation: 3,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                    onPressed: _showFirstBundle,
+                    icon: const Icon(Icons.keyboard_double_arrow_left)),
+                IconButton(
+                    onPressed: _showPreviousBundle,
+                    icon: const Icon(Icons.keyboard_arrow_left)),
+                IconButton(
+                    onPressed: _addNewBundle, icon: const Icon(Icons.add)),
+                IconButton(
+                    onPressed: () => _deleteBundle(_currentBundleIndex),
+                    icon: const Icon(Icons.delete_forever)),
+                IconButton(
+                    onPressed: _showNextBundle,
+                    icon: const Icon(Icons.keyboard_arrow_right)),
+                IconButton(
+                    onPressed: _showLastBundle,
+                    icon: const Icon(Icons.keyboard_double_arrow_right)),
+              ],
             ),
           ),
+          // Card(
+          //   child: BundleButtonBar(
+          //     onPressedLeft: _showPreviousBundle,
+          //     onPressedCenter: _addNewBundle,
+          //     onPressedRight: _showNextBundle,
+          //   ),
+          // ),
         ],
       ),
     );

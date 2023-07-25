@@ -15,20 +15,20 @@ class ChartBarHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(vertical: 0.0),
       child: Column(
         children: <Widget>[
+          // SizedBox(
+          //   height: 18,
+          //   child: FittedBox(
+          //     child: Text("${value.toStringAsFixed(0)} $label"),
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 5,
+          // ),
           SizedBox(
-            height: 18,
-            child: FittedBox(
-              child: Text("${value.toStringAsFixed(0)} kcal"),
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          SizedBox(
-            height: 10,
+            height: 20,
             width: MediaQuery.of(context).size.width * 0.8,
             child: Stack(
               children: <Widget>[
@@ -54,20 +54,34 @@ class ChartBarHorizontal extends StatelessWidget {
                     ),
                   ),
                 ),
+                Align(
+                  child: SizedBox(
+                    height: 18,
+                    child: FittedBox(
+                      child: Text("${value.toStringAsFixed(0)} $label"),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(
-            // height: constraints.maxHeight * 0.05,
-            height: 5,
-          ),
-          SizedBox(
-            // height: constraints.maxHeight * 0.15,
-            height: 15,
-            child: FittedBox(
-              child: Text(label),
-            ),
-          ),
+          // const SizedBox(
+          //   // height: constraints.maxHeight * 0.05,
+          //   height: 5,
+          // ),
+          // SizedBox(
+          //   height: 18,
+          //   child: FittedBox(
+          //     child: Text("${value.toStringAsFixed(0)} $label"),
+          //   ),
+          // ),
+          // SizedBox(
+          //   // height: constraints.maxHeight * 0.15,
+          //   height: 15,
+          //   child: FittedBox(
+          //     child: Text(label),
+          //   ),
+          // ),
         ],
       ),
     );

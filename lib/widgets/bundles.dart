@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/daily_data_model.dart';
+import 'package:health_companion/models/bundle_model.dart';
 import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
@@ -9,7 +9,7 @@ import 'bundle_button_bar.dart';
 
 class Bundles extends StatefulWidget {
   final int initialPageIndex;
-  final List<DailyData> bundles;
+  final List<Bundle> bundles;
   final Function onPageChanged;
 
   const Bundles({
@@ -28,7 +28,7 @@ class _BundlesState extends State<Bundles> {
   late int _currentBundleIndex;
   late final PageController _bundlePageViewController;
   late final ScrollController _listScrollController;
-  late final List<DailyData> _bundles;
+  late final List<Bundle> _bundles;
   late final Function _onPageChanged;
 
   @override
@@ -84,7 +84,7 @@ class _BundlesState extends State<Bundles> {
   }
 
   void _addNewBundle() async {
-    DailyData newBundle = DailyData.fromJson({
+    Bundle newBundle = Bundle.fromJson({
       "creationDate": DateTime.now().millisecondsSinceEpoch,
       "lastEdited": DateTime.now().millisecondsSinceEpoch,
       "components": [],
@@ -107,7 +107,7 @@ class _BundlesState extends State<Bundles> {
   }
 
   void _deleteComponentFromBundle(
-      List<DailyData> bundles, int bundleIndex, int componentIndex) async {
+      List<Bundle> bundles, int bundleIndex, int componentIndex) async {
     bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
     Component? retVal =
         bundles[bundleIndex].components?.removeAt(componentIndex);
@@ -131,7 +131,7 @@ class _BundlesState extends State<Bundles> {
               });
             },
             itemBuilder: (context, pageviewIndex) {
-              DailyData bundle = _bundles[pageviewIndex];
+              Bundle bundle = _bundles[pageviewIndex];
 
               return Column(
                 mainAxisSize: MainAxisSize.max,
