@@ -113,11 +113,7 @@ class _ComponentsState extends State<Components> {
                   List<Map<String, dynamic>> json =
                       snapshot.data["components"].cast<Map<String, dynamic>>();
                   List<Component> components = json.map((e) => Component.fromJson(e)).toList();
-                  // components.removeLast();
-                  // components.removeLast();
-                  // components.removeLast();
-                  // components.removeLast();
-                  // components.removeLast();
+
                   if (components.isEmpty) {
                     return const NoComponentsFound();
                   } else {

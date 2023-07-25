@@ -16,6 +16,7 @@ class AddExistingComponent extends StatefulWidget {
 
 class _AddExistingComponentState extends State<AddExistingComponent> {
   late List<Component> _selectedComponents;
+  late List<int> _selectedComponentsIndexes;
   late final ScrollController _listScrollController;
   late final Stream _userComponentsDocStream;
   late final User? _currentUser;
@@ -24,9 +25,12 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser;
     _selectedComponents = <Component>[];
+    _selectedComponentsIndexes = <int>[];
     _listScrollController = ScrollController();
-    _userComponentsDocStream =
-        FirebaseFirestore.instance.collection("user_components").doc(_currentUser?.uid).snapshots();
+    _userComponentsDocStream = FirebaseFirestore.instance
+        .collection("user_components")
+        .doc(_currentUser?.uid)
+        .snapshots();
     super.initState();
   }
 
@@ -36,15 +40,19 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
     super.dispose();
   }
 
-  void _addSelection(Component component) {
+  // void _addSelection(Component component) {
+  void _addSelection(int index, Component component) {
     setState(() {
       _selectedComponents.add(component);
+      _selectedComponentsIndexes.add(index);
     });
   }
 
-  void _removeSelection(Component component) {
+  // void _removeSelection(Component component) {
+  void _removeSelection(int index, Component component) {
     setState(() {
       _selectedComponents.remove(component);
+      _selectedComponentsIndexes.remove(index);
     });
   }
 
@@ -60,11 +68,15 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
     );
   }
 
-  bool _isSelected(Component component) {
-    for (var e in _selectedComponents) {
-      if (e == component) return true;
-    }
-    return false;
+  // bool _isSelected(Component component) {
+  //   for (var e in _selectedComponents) {
+  //     if (e == component) return true;
+  //   }
+  //   return false;
+  // }
+
+  bool _isSelected(int index) {
+    return _selectedComponentsIndexes.contains(index);
   }
 
   @override
@@ -102,9 +114,11 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                     );
                   }
                   if (snapshot.hasData) {
-                    List<Map<String, dynamic>> json =
-                        snapshot.data["components"].cast<Map<String, dynamic>>();
-                    List<Component> components = json.map((e) => Component.fromJson(e)).toList();
+                    List<Map<String, dynamic>> json = snapshot
+                        .data["components"]
+                        .cast<Map<String, dynamic>>();
+                    List<Component> components =
+                        json.map((e) => Component.fromJson(e)).toList();
 
                     if (components.isEmpty) {
                       return const NoComponentsFound();
@@ -120,7 +134,8 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                                 components[index].name!,
                                 style: TextStyle(
                                     fontSize: 18,
-                                    color: _isSelected(components[index])
+                                    // color: _isSelected(components[index])
+                                    color: _isSelected(index)
                                         ? Theme.of(context).primaryColor
                                         : null),
                               ),
@@ -129,10 +144,12 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                                 style: const TextStyle(fontSize: 16),
                               ),
                               trailing: const Icon(Icons.launch),
-                              onTap: () => _isSelected(components[index])
-                                  ? _removeSelection(components[index])
-                                  : _addSelection(components[index]),
-                              onLongPress: () => _showComponentBreakdown(components[index]),
+                              // onTap: () => _isSelected(components[index])
+                              onTap: () => _isSelected(index)
+                                  ? _removeSelection(index, components[index])
+                                  : _addSelection(index, components[index]),
+                              onLongPress: () =>
+                                  _showComponentBreakdown(components[index]),
                             ),
                           );
                         },

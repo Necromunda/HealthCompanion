@@ -22,29 +22,30 @@ class FineliModel {
       sugar,
       fat;
 
-  FineliModel(
-      {this.id,
-      this.type,
-      this.name,
-      this.preparationMethod,
-      this.ediblePortion,
-      this.specialDiets,
-      this.themes,
-      this.units,
-      this.ingredientClass,
-      this.functionClass,
-      this.salt,
-      this.energy,
-      this.energyKcal,
-      this.protein,
-      this.carbohydrate,
-      this.alcohol,
-      this.organicAcids,
-      this.sugarAlcohol,
-      this.saturatedFat,
-      this.fiber,
-      this.sugar,
-      this.fat});
+  FineliModel({
+    this.id,
+    this.type,
+    this.name,
+    this.preparationMethod,
+    this.ediblePortion,
+    this.specialDiets,
+    this.themes,
+    this.units,
+    this.ingredientClass,
+    this.functionClass,
+    this.salt,
+    this.energy,
+    this.energyKcal,
+    this.protein,
+    this.carbohydrate,
+    this.alcohol,
+    this.organicAcids,
+    this.sugarAlcohol,
+    this.saturatedFat,
+    this.fiber,
+    this.sugar,
+    this.fat,
+  });
 
   FineliModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -83,7 +84,7 @@ class FineliModel {
     functionClass = json['functionClass'] != null
         ? Type.fromJson(json['functionClass'])
         : null;
-    salt = json['salt'].toDouble();
+    salt = json['salt'].toDouble() / 1000; // Convert from mg to g
     energy = json['energy'].toDouble();
     energyKcal = json['energyKcal'].toDouble();
     protein = json['protein'].toDouble();
@@ -141,7 +142,9 @@ class FineliModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name?.fi;
     data['description'] = type?.description?.fi;
-    data['subComponents'] = null;
+    data['category'] = "Component";
+    data['macroSelection'] = "Individual";
+    data['subComponents'] = [];
     data['salt'] = salt;
     data['energy'] = energy;
     data['energyKcal'] = energyKcal;
