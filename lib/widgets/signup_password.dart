@@ -43,18 +43,19 @@ class _SignUpPasswordState extends State<SignUpPassword>
     with AutomaticKeepAliveClientMixin<SignUpPassword> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordValid = false;
-  final RegExp _passwordRegExp =
-      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+  bool _obscureText = true;
+  final RegExp _passwordRegExp = RegExp(
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
   late final int _pageIndex = widget.pageIndex;
   late final Function _inputCallback = widget.inputCallback;
   late final Function _switchPageCallback = widget.switchPageCallback;
   late final Function _getUsernameCallback = widget.getUsernameCallback;
-  // late final Function _getAgeCallback = widget.getAgeCallback;
   late final Function _getDateOfBirthCallback = widget.getDateOfBirthCallback;
   late final Function _getHeightCallback = widget.getHeightCallback;
   late final Function _getWeightCallback = widget.getWeightCallback;
   late final Function _getEmailCallback = widget.getEmailCallback;
   late final Function _getPasswordCallback = widget.getPasswordCallback;
+  // late final Function _getAgeCallback = widget.getAgeCallback;
 
   @override
   bool get wantKeepAlive => true;
@@ -100,7 +101,8 @@ class _SignUpPasswordState extends State<SignUpPassword>
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
+                      borderRadius:
+                          BorderRadius.circular(5.0), // Set borderRadius to 0
                     ),
                   ),
                 ),
@@ -113,7 +115,8 @@ class _SignUpPasswordState extends State<SignUpPassword>
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0), // Set borderRadius to 0
+                      borderRadius:
+                          BorderRadius.circular(5.0), // Set borderRadius to 0
                     ),
                   ),
                 ),
@@ -181,11 +184,91 @@ class _SignUpPasswordState extends State<SignUpPassword>
           ? Colors.green
           : Colors.red;
 
+  Widget get _passwordTextField => TextField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        controller: _passwordController,
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: _obscureText,
+        maxLength: 64,
+        onChanged: (value) {
+          setState(() {
+            _isPasswordValid = _passwordRegExp.hasMatch(value);
+          });
+        },
+        decoration: InputDecoration(
+          counterText: "",
+          hintText: "Password",
+          contentPadding: EdgeInsets.zero,
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: _passwordController.text.isEmpty
+                  ? null
+                  : _isPasswordValid
+                      ? Colors.lightGreen
+                      : Colors.redAccent,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
+                ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.key,
+                  size: 30,
+                  color: _passwordController.text.isEmpty
+                      ? Colors.black87
+                      : _isPasswordValid
+                          ? Colors.white
+                          : Colors.black87),
+            ),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.black87,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
           // Padding(
@@ -198,70 +281,77 @@ class _SignUpPasswordState extends State<SignUpPassword>
           const SizedBox(
             height: 50,
           ),
-          TextField(
-            controller: _passwordController,
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: true,
-            maxLength: 64,
-            onChanged: (value) {
-              setState(() {
-                if (_passwordRegExp.hasMatch(value)) {
-                  _inputCallback(value);
-                  _isPasswordValid = true;
-                } else {
-                  _isPasswordValid = false;
-                }
-              });
-            },
-            decoration: InputDecoration(
-              errorText:
-                  _isPasswordValid || _passwordController.text.isEmpty ? null : 'Invalid password',
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: _passwordController.text.isEmpty ? Colors.grey : Colors.red,
-                  width: 2.0,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: _passwordColor,
-                  width: 2.0,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: _passwordColor,
-                  width: 2.0,
-                ),
-              ),
-              prefixIcon: Icon(
-                Icons.password,
-                color: _passwordColor,
-              ),
-              suffixIcon: _passwordController.text.isEmpty
-                  ? null
-                  : _isPasswordValid
-                      ? const Icon(
-                          Icons.check,
-                          color: Colors.green,
-                        )
-                      : const Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        ),
-              hintText: "Password",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(
-                  width: 2.0,
-                  style: BorderStyle.none,
-                ),
-              ),
-            ),
-          ),
+          _passwordTextField,
           const SizedBox(
-            height: 10,
+            height: 20,
           ),
+          // TextField(
+          //   controller: _passwordController,
+          //   keyboardType: TextInputType.visiblePassword,
+          //   obscureText: true,
+          //   maxLength: 64,
+          //   onChanged: (value) {
+          //     setState(() {
+          //       if (_passwordRegExp.hasMatch(value)) {
+          //         _inputCallback(value);
+          //         _isPasswordValid = true;
+          //       } else {
+          //         _isPasswordValid = false;
+          //       }
+          //     });
+          //   },
+          //   decoration: InputDecoration(
+          //     errorText: _isPasswordValid || _passwordController.text.isEmpty
+          //         ? null
+          //         : 'Invalid password',
+          //     errorBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _passwordController.text.isEmpty
+          //             ? Colors.grey
+          //             : Colors.red,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     focusedBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _passwordColor,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     enabledBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _passwordColor,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     prefixIcon: Icon(
+          //       Icons.password,
+          //       color: _passwordColor,
+          //     ),
+          //     suffixIcon: _passwordController.text.isEmpty
+          //         ? null
+          //         : _isPasswordValid
+          //             ? const Icon(
+          //                 Icons.check,
+          //                 color: Colors.green,
+          //               )
+          //             : const Icon(
+          //                 Icons.close,
+          //                 color: Colors.red,
+          //               ),
+          //     hintText: "Password",
+          //     border: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(5.0),
+          //       borderSide: const BorderSide(
+          //         width: 2.0,
+          //         style: BorderStyle.none,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
           const SignUpInfoCard(
             hint:
                 "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8-64 characters long.",

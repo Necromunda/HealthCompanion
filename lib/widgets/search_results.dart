@@ -81,12 +81,14 @@ class _SearchResultsState extends State<SearchResults> {
                           : const Icon(Icons.add),
                       color: Colors.green,
                       disabledColor: Theme.of(context).primaryColor,
-                      onPressed: _addedComponents.contains(index) ? null : () => _addComponent(results[index]).then((value) {
-                        setState(() {
-                          _addedComponents.add(index);
-                        });
-                        // print(_boolList);
-                      }),
+                      onPressed: _addedComponents.contains(index)
+                          ? null
+                          : () => _addComponent(results[index]).then((value) {
+                                setState(() {
+                                  _addedComponents.add(index);
+                                });
+                                // print(_boolList);
+                              }),
                     ),
                     trailing: const Icon(Icons.launch),
                     onTap: () => _showComponentBreakdown(results[index]),
@@ -97,7 +99,13 @@ class _SearchResultsState extends State<SearchResults> {
             ),
           );
         }
-        return const Expanded(child: Center(child: LoadingComponents()));
+        return const Expanded(
+          child: Center(
+            child: LoadingComponents(
+              message: "Fetching data",
+            ),
+          ),
+        );
       },
     );
   }
