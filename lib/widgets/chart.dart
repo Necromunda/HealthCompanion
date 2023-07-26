@@ -61,7 +61,7 @@ class _ChartState extends State<Chart> {
       // child: Card(
       //   elevation: 3,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
         child: Column(
           children: [
             // Padding(
@@ -84,107 +84,121 @@ class _ChartState extends State<Chart> {
                       // mainAxisAlignment: MainAxisAlignment.spaceAround,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (_bundle.totalAlcohol != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Alcohol",
-                              value: _bundle.totalAlcohol!,
-                              totalValuePct:
-                                  _bundle.totalAlcohol! / _bundle.totalAlcohol!,
-                            ),
+                        // if (_bundle.totalAlcohol != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Alcohol",
+                            value: _bundle.totalAlcohol ?? 0,
+                            totalValuePct: _bundle.totalAlcohol == 0.0
+                                ? 0
+                                : _bundle.totalAlcohol! / _bundle.totalAlcohol!,
                           ),
-                        if (_bundle.totalCarbohydrate != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Carbs",
-                              value: _bundle.totalCarbohydrate!,
-                              totalValuePct: _bundle.totalCarbohydrate! /
-                                  _bundle.totalCarbohydrate!,
-                            ),
+                        ),
+                        // if (_bundle.totalCarbohydrate != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Carbs",
+                            value: _bundle.totalCarbohydrate ?? 0,
+                            totalValuePct: _bundle.totalCarbohydrate == 0.0
+                                ? 0
+                                : _bundle.totalCarbohydrate! /
+                                    _bundle.totalCarbohydrate!,
                           ),
-                        if (_bundle.totalFat != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Fat",
-                              value: _bundle.totalFat!,
-                              totalValuePct:
-                                  _bundle.totalFat! / _bundle.totalFat!,
-                            ),
+                        ),
+                        // if (_bundle.totalFat != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Fat",
+                            value: _bundle.totalFat ?? 0,
+                            totalValuePct: _bundle.totalFat == 0.0
+                                ? 0
+                                : _bundle.totalFat! / _bundle.totalFat!,
                           ),
-                        if (_bundle.totalFiber != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Fiber",
-                              value: _bundle.totalFiber!,
-                              totalValuePct:
-                                  _bundle.totalFiber! / _bundle.totalFiber!,
-                            ),
+                        ),
+                        // if (_bundle.totalFiber != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Fiber",
+                            value: _bundle.totalFiber ?? 0,
+                            totalValuePct: _bundle.totalFiber == 0.0
+                                ? 0
+                                : _bundle.totalFiber! / _bundle.totalFiber!,
                           ),
-                        if (_bundle.totalOrganicAcids != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Organic acids",
-                              value: _bundle.totalOrganicAcids!,
-                              totalValuePct: _bundle.totalOrganicAcids! /
-                                  _bundle.totalOrganicAcids!,
-                            ),
+                        ),
+                        // if (_bundle.totalOrganicAcids != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Organic acids",
+                            value: _bundle.totalOrganicAcids ?? 0,
+                            totalValuePct: _bundle.totalOrganicAcids == 0.0
+                                ? 0
+                                : _bundle.totalOrganicAcids! /
+                                    _bundle.totalOrganicAcids!,
                           ),
-                        if (_bundle.totalProtein != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Protein",
-                              value: _bundle.totalProtein!,
-                              totalValuePct:
-                                  _bundle.totalProtein! / _bundle.totalProtein!,
-                            ),
+                        ),
+                        // if (_bundle.totalProtein != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Protein",
+                            value: _bundle.totalProtein ?? 0,
+                            totalValuePct: _bundle.totalProtein == 0.0
+                                ? 0
+                                : _bundle.totalProtein! / _bundle.totalProtein!,
                           ),
-                        if (_bundle.totalSalt != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Salt",
-                              value: _bundle.totalSalt!,
-                              totalValuePct:
-                                  _bundle.totalSalt! / _bundle.totalSalt!,
-                            ),
+                        ),
+                        // if (_bundle.totalSalt != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Salt",
+                            value: _bundle.totalSalt ?? 0,
+                            totalValuePct: _bundle.totalSalt == 0.0
+                                ? 0
+                                : _bundle.totalSalt! / _bundle.totalSalt!,
                           ),
-                        if (_bundle.totalSaturatedFat != 0.0)
-                          SizedBox(
-                            width: 75,
-                            // height: 15,
-                            child: ChartBar(
-                              label: "Saturated fat",
-                              value: _bundle.totalSaturatedFat!,
-                              totalValuePct: _bundle.totalSaturatedFat! /
-                                  _bundle.totalSaturatedFat!,
-                            ),
+                        ),
+                        // if (_bundle.totalSaturatedFat != 0.0)
+                        SizedBox(
+                          width: 75,
+                          // height: 15,
+                          child: ChartBar(
+                            label: "Saturated fat",
+                            value: _bundle.totalSaturatedFat ?? 0,
+                            totalValuePct: _bundle.totalSaturatedFat == 0.0
+                                ? 0
+                                : _bundle.totalSaturatedFat! /
+                                    _bundle.totalSaturatedFat!,
                           ),
-                        if (_bundle.totalSugar != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Sugar",
-                              value: _bundle.totalSugar!,
-                              totalValuePct:
-                                  _bundle.totalSugar! / _bundle.totalSugar!,
-                            ),
+                        ),
+                        // if (_bundle.totalSugar != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Sugar",
+                            value: _bundle.totalSugar ?? 0,
+                            totalValuePct: _bundle.totalSugar == 0.0
+                                ? 0
+                                : _bundle.totalSugar! / _bundle.totalSugar!,
                           ),
-                        if (_bundle.totalSugarAlcohol != 0.0)
-                          SizedBox(
-                            width: 75,
-                            child: ChartBar(
-                              label: "Sugar",
-                              value: _bundle.totalSugarAlcohol!,
-                              totalValuePct: _bundle.totalSugarAlcohol! /
-                                  _bundle.totalSugarAlcohol!,
-                            ),
-                          )
+                        ),
+                        // if (_bundle.totalSugarAlcohol != 0.0)
+                        SizedBox(
+                          width: 75,
+                          child: ChartBar(
+                            label: "Sugar",
+                            value: _bundle.totalSugarAlcohol ?? 0,
+                            totalValuePct: _bundle.totalSugarAlcohol == 0.0
+                                ? 0
+                                : _bundle.totalSugarAlcohol! /
+                                    _bundle.totalSugarAlcohol!,
+                          ),
+                        )
                       ],
                     ),
                   ],
@@ -194,19 +208,24 @@ class _ChartState extends State<Chart> {
             const SizedBox(
               height: 15,
             ),
+            // if (_bundle.totalEnergyKcal != 0.0)
             ChartBarHorizontal(
               label: "Kcal",
-              value: _bundle.totalEnergyKcal!,
-              totalValuePct:
-                  _bundle.totalEnergyKcal! / _bundle.totalEnergyKcal!,
+              value: _bundle.totalEnergyKcal ?? 0,
+              totalValuePct: _bundle.totalEnergyKcal == 0.0
+                  ? 0
+                  : _bundle.totalEnergyKcal! / _bundle.totalEnergyKcal!,
             ),
             const SizedBox(
               height: 10,
             ),
+            // if (_bundle.totalEnergy != 0.0)
             ChartBarHorizontal(
               label: "kJ",
-              value: _bundle.totalEnergy!,
-              totalValuePct: _bundle.totalEnergy! / _bundle.totalEnergy!,
+              value: _bundle.totalEnergy ?? 0,
+              totalValuePct: _bundle.totalEnergy == 0.0
+                  ? 0
+                  : _bundle.totalEnergy! / _bundle.totalEnergy!,
             ),
             const Divider(
               // indent: 5,

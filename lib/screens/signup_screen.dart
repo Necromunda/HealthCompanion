@@ -16,7 +16,9 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController();
   String? _username, _email, _password;
-  int? _age;
+
+  // int? _age;
+  DateTime? _dateOfBirth;
   double? _height, _weight;
   int _selectedIndex = 0;
 
@@ -40,7 +42,8 @@ class _SignUpState extends State<SignUp> {
 
   void _switchPage(int index) {
     print("Switch page to $index");
-    print("username: $_username\nAge: $_age\nHeight: $_height\nWeight: $_weight\nEmail: $_email\nPassword: $_password");
+    print(
+        "username: $_username\nDate of Birth: $_dateOfBirth\nHeight: $_height\nWeight: $_weight\nEmail: $_email\nPassword: $_password");
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 300),
@@ -54,9 +57,15 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  void _setAgeCallback(int age) {
+  // void _setAgeCallback(int age) {
+  //   setState(() {
+  //     _age = age;
+  //   });
+  // }
+
+  void _setDateOBirthCallback(DateTime dateOfBirth) {
     setState(() {
-      _age = age;
+      _dateOfBirth = dateOfBirth;
     });
   }
 
@@ -90,7 +99,9 @@ class _SignUpState extends State<SignUp> {
 
   String? _getPassword() => _password;
 
-  int? _getAge() => _age;
+  // int? _getAge() => _age;
+
+  DateTime? _getDateOfBirth() => _dateOfBirth;
 
   double? _getHeight() => _height;
 
@@ -109,7 +120,10 @@ class _SignUpState extends State<SignUp> {
           color: Colors.black,
         ),
         centerTitle: true,
-        title: Text("Page ${_selectedIndex + 1} / 4", style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),),
+        title: Text(
+          "Page ${_selectedIndex + 1} / 4",
+          style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+        ),
       ),
       body: PageView(
         physics: const NeverScrollableScrollPhysics(),
@@ -122,7 +136,8 @@ class _SignUpState extends State<SignUp> {
           ),
           SignUpBackgroundInfo(
             pageIndex: 1,
-            inputCallbackAge: _setAgeCallback,
+            // inputCallbackAge: _setAgeCallback,
+            inputCallbackDateOfBirth: _setDateOBirthCallback,
             inputCallbackHeight: _setHeightCallback,
             inputCallbackWeight: _setWeightCallback,
             switchPageCallback: _switchPage,
@@ -137,7 +152,8 @@ class _SignUpState extends State<SignUp> {
             inputCallback: _setPasswordCallback,
             switchPageCallback: _switchPage,
             getUsernameCallback: _getUsername,
-            getAgeCallback: _getAge,
+            // getAgeCallback: _setAgeCallback,
+            getDateOfBirthCallback: _getDateOfBirth,
             getHeightCallback: _getHeight,
             getWeightCallback: _getWeight,
             getEmailCallback: _getEmail,

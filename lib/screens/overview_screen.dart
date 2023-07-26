@@ -290,21 +290,35 @@ class _OverviewState extends State<Overview> {
                           // Bundle bundle = Bundle.fromJson(
                           //     snapshot.data["data"][pageviewIndex]);
                           Bundle bundle = _userBundles[pageviewIndex];
+                          DateTime created =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  bundle.creationDate!);
+                          DateTime edited = DateTime.fromMillisecondsSinceEpoch(
+                              bundle.lastEdited!);
 
                           return Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               if (bundle.components!.isNotEmpty)
                                 Chart(
-                                    key: Key("${Random().nextDouble() * 1000}"),
-                                    bundle: bundle),
+                                  key: Key("${Random().nextDouble() * 1000}"),
+                                  bundle: bundle,
+                                ),
                               const SizedBox(height: 5),
                               Text(
-                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                      bundle.creationDate!),
-                                )}",
+                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(created)}",
                                 style: const TextStyle(fontSize: 16),
+                              ),
+                              Text(
+                                "Last edited: ${DateFormat('d.M H:mm').format(edited)}",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(height: 5),
+                              const Divider(
+                                indent: 20,
+                                endIndent: 20,
+                                color: Colors.black,
+                                thickness: 1,
                               ),
                               if (bundle.components!.isEmpty)
                                 const Expanded(

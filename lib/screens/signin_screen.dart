@@ -20,7 +20,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   late final TextEditingController _emailController, _passwordController;
-  late bool _isEmailValid, _isPasswordValid;
+  late bool _isEmailValid, _isPasswordValid, _obscureText;
   late final RegExp _passwordRegExp;
 
   @override
@@ -30,8 +30,9 @@ class _SignInState extends State<SignIn> {
     _passwordController = TextEditingController();
     _isEmailValid = false;
     _isPasswordValid = false;
-    _passwordRegExp =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+    _obscureText = true;
+    _passwordRegExp = RegExp(
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
     setState(() {
       _emailController.text = "johannes.rantapaa@gmail.com";
       _passwordController.text = "Johannes00!!";
@@ -53,7 +54,8 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  Future<void> _showAlertDialog(BuildContext context, String title, String message) {
+  Future<void> _showAlertDialog(
+      BuildContext context, String title, String message) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -82,29 +84,34 @@ class _SignInState extends State<SignIn> {
       context,
       MaterialPageRoute(
         builder: (context) => FutureBuilder(
-          future:
-              FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password),
+          future: FirebaseAuth.instance
+              .signInWithEmailAndPassword(email: email, password: password),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               Future(() => Navigator.of(context).pop());
               if (snapshot.error is FirebaseAuthException) {
-                FirebaseAuthException firebaseError = snapshot.error as FirebaseAuthException;
+                FirebaseAuthException firebaseError =
+                    snapshot.error as FirebaseAuthException;
                 switch (firebaseError.code) {
                   case "wrong-password":
                     Future(
-                      () => Util.showNotification(context: context, message: "Incorrect email and/or password."),
+                      () => Util.showNotification(
+                          context: context,
+                          message: "Incorrect email and/or password."),
                     );
                     break;
                   case "invalid-email":
                     Future(
-                      () => Util.showNotification(context: context, message: "Email is not valid"),
+                      () => Util.showNotification(
+                          context: context, message: "Email is not valid"),
                     );
                     break;
                   case "user-not-found":
                     Future(
                       () => Util.showNotification(
                           context: context,
-                          message: "Could not find a user with that email address."),
+                          message:
+                              "Could not find a user with that email address."),
                     );
                     break;
                 }
@@ -171,6 +178,156 @@ class _SignInState extends State<SignIn> {
           ? Colors.green
           : Colors.red;
 
+  Widget get _emailTextField => TextField(
+    onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+    controller: _emailController,
+    keyboardType: TextInputType.emailAddress,
+    maxLength: 99,
+    onChanged: (value) {
+      setState(() {
+        _isEmailValid =
+        EmailValidator.validate(value) ? true : false;
+      });
+    },
+    decoration: InputDecoration(
+      counterText: "",
+      hintText: "Email",
+      contentPadding: EdgeInsets.zero,
+      filled: true,
+      fillColor: const Color(0XDEDEDEDE),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+          width: 2.0,
+        ),
+      ),
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.transparent,
+          width: 2.0,
+        ),
+      ),
+      prefixIcon: Container(
+        margin: const EdgeInsets.only(right: 15.0),
+        // padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        decoration: BoxDecoration(
+          color: _emailController.text.isEmpty
+              ? null
+              : _isEmailValid
+              ? Colors.lightGreen
+              : Colors.redAccent,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(5.0),
+            bottomLeft: Radius.circular(5.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(1),
+              spreadRadius: -1,
+              offset: const Offset(2, 0), // changes position of shadow
+            ),
+            BoxShadow(
+              color: const Color(0XDEDEDEDE).withOpacity(1),
+              spreadRadius: 0,
+              offset: const Offset(1, 0), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Icon(Icons.email,
+              size: 30,
+              color: _emailController.text.isEmpty
+                  ? Colors.black87
+                  : _isEmailValid
+                  ? Colors.white
+                  : Colors.black87),
+        ),
+      ),
+      suffixIcon: const SizedBox()
+    ),
+  );
+
+  Widget get _passwordTextField => TextField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        controller: _passwordController,
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: _obscureText,
+        maxLength: 64,
+        onChanged: (value) {
+          setState(() {
+            _isPasswordValid = _passwordRegExp.hasMatch(value);
+          });
+        },
+        decoration: InputDecoration(
+          counterText: "",
+          hintText: "Password",
+          contentPadding: EdgeInsets.zero,
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: _passwordController.text.isEmpty
+                  ? null
+                  : _isPasswordValid
+                      ? Colors.lightGreen
+                      : Colors.redAccent,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
+                ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.key,
+                  size: 30,
+                  color: _passwordController.text.isEmpty
+                      ? Colors.black87
+                      : _isPasswordValid
+                          ? Colors.white
+                          : Colors.black87),
+            ),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.black87,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,103 +339,113 @@ class _SignInState extends State<SignIn> {
       body: Center(
         child: Padding(
           // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: Image.asset("assets/images/placeholder_logo.png"),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) => setState(() {
-                    _isEmailValid = EmailValidator.validate(value) ? true : false;
-                  }),
-                  decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _emailController.text.isEmpty ? Colors.grey : Colors.red,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _emailColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _emailColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.email,
-                      color: _emailColor,
-                    ),
-                    hintText: "Email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: const BorderSide(
-                        width: 2.0,
-                        style: BorderStyle.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: TextField(
-                  controller: _passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  onChanged: (value) => setState(() {
-                    if (_passwordRegExp.hasMatch(value)) {
-                      _isPasswordValid = true;
-                    } else {
-                      _isPasswordValid = false;
-                    }
-                  }),
-                  decoration: InputDecoration(
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _passwordController.text.isEmpty ? Colors.grey : Colors.red,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _passwordColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: _passwordColor,
-                        width: 2.0,
-                      ),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.password,
-                      color: _passwordColor,
-                    ),
-                    // label: Text("Password"),
-                    hintText: "Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: const BorderSide(
-                        width: 2.0,
-                        style: BorderStyle.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 10.0),
+              //   child:
+              //   TextField(
+              //     controller: _emailController,
+              //     keyboardType: TextInputType.emailAddress,
+              //     onChanged: (value) => setState(() {
+              //       _isEmailValid =
+              //           EmailValidator.validate(value) ? true : false;
+              //     }),
+              //     decoration: InputDecoration(
+              //       errorBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _emailController.text.isEmpty
+              //               ? Colors.grey
+              //               : Colors.red,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       focusedBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _emailColor,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _emailColor,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       prefixIcon: Icon(
+              //         Icons.email,
+              //         color: _emailColor,
+              //       ),
+              //       hintText: "Email",
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(5.0),
+              //         borderSide: const BorderSide(
+              //           width: 2.0,
+              //           style: BorderStyle.none,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(bottom: 10.0),
+              //   child: TextField(
+              //     controller: _passwordController,
+              //     keyboardType: TextInputType.visiblePassword,
+              //     obscureText: true,
+              //     onChanged: (value) => setState(() {
+              //       if (_passwordRegExp.hasMatch(value)) {
+              //         _isPasswordValid = true;
+              //       } else {
+              //         _isPasswordValid = false;
+              //       }
+              //     }),
+              //     decoration: InputDecoration(
+              //       errorBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _passwordController.text.isEmpty
+              //               ? Colors.grey
+              //               : Colors.red,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       focusedBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _passwordColor,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       enabledBorder: OutlineInputBorder(
+              //         borderSide: BorderSide(
+              //           color: _passwordColor,
+              //           width: 2.0,
+              //         ),
+              //       ),
+              //       prefixIcon: Icon(
+              //         Icons.password,
+              //         color: _passwordColor,
+              //       ),
+              //       // label: Text("Password"),
+              //       hintText: "Password",
+              //       border: OutlineInputBorder(
+              //         borderRadius: BorderRadius.circular(5.0),
+              //         borderSide: const BorderSide(
+              //           width: 2.0,
+              //           style: BorderStyle.none,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              _emailTextField,
+              const SizedBox(height: 10,),
+              _passwordTextField,
+              const SizedBox(height: 10,),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(

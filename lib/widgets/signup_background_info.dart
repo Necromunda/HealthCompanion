@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
+import 'package:intl/intl.dart';
 
 import 'custom_button.dart';
 
 class SignUpBackgroundInfo extends StatefulWidget {
   final int pageIndex;
-  final Function switchPageCallback, inputCallbackAge, inputCallbackHeight, inputCallbackWeight;
+
+  // final Function switchPageCallback, inputCallbackAge, inputCallbackHeight, inputCallbackWeight;
+  final Function switchPageCallback,
+      inputCallbackDateOfBirth,
+      inputCallbackHeight,
+      inputCallbackWeight;
 
   const SignUpBackgroundInfo({
     Key? key,
     required this.pageIndex,
-    required this.inputCallbackAge,
+    // required this.inputCallbackAge,
+    required this.inputCallbackDateOfBirth,
     required this.inputCallbackHeight,
     required this.inputCallbackWeight,
     required this.switchPageCallback,
@@ -24,18 +31,25 @@ class SignUpBackgroundInfo extends StatefulWidget {
 
 class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
     with AutomaticKeepAliveClientMixin<SignUpBackgroundInfo> {
-  final TextEditingController _ageController = TextEditingController();
+  // final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _dateOfBirthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   late final _pageIndex = widget.pageIndex;
-  late final _inputCallbackAge = widget.inputCallbackAge;
+
+  // late final _inputCallbackAge = widget.inputCallbackAge;
+  late final _inputCallbackDateOfBirth = widget.inputCallbackDateOfBirth;
   late final _inputCallbackHeight = widget.inputCallbackHeight;
   late final _inputCallbackWeight = widget.inputCallbackWeight;
   late final _switchPageCallback = widget.switchPageCallback;
-  bool _isAgeValid = false;
+
+  // bool _isAgeValid = false;
+  bool _isDateOfBirthValid = false;
   bool _isHeightValid = false;
   bool _isWeightValid = false;
-  final _weightRegexp = RegExp(r'^(?!^0[,.0])(?!^[,.])(?!^0+$)(?!^[,.0]+$)\d+(?:[,.]\d*)?$');
+  final _weightRegexp =
+      RegExp(r'^(?!^0[,.0])(?!^[,.])(?!^0+$)(?!^[,.0]+$)\d+(?:[,.]\d*)?$');
+  DateTime? _dateOfBirth;
 
   @override
   bool get wantKeepAlive => true;
@@ -52,11 +66,59 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
     super.didUpdateWidget(oldWidget);
   }
 
-  Color get _ageColor => _ageController.text.isEmpty
-      ? Colors.grey
-      : _isAgeValid
-          ? Colors.green
-          : Colors.red;
+  Future<DateTime?> _showDateTimePicker({
+    required BuildContext context,
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
+    initialDate ??= DateTime.now();
+    // firstDate ??= initialDate.subtract(const Duration(days: 365 * 100));
+    firstDate ??= DateTime(1900, 1, 1);
+    // lastDate ??= firstDate.add(const Duration(days: 365 * 200));
+    lastDate ??= DateTime.now();
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (selectedDate == null) return null;
+
+    if (!context.mounted) return selectedDate;
+
+    // final TimeOfDay? selectedTime = await showTimePicker(
+    //   context: context,
+    //   initialTime: TimeOfDay.fromDateTime(selectedDate),
+    // );
+
+    // return selectedTime == null
+    //     ? selectedDate
+    //     : DateTime(
+    //   selectedDate.year,
+    //   selectedDate.month,
+    //   selectedDate.day,
+    //   selectedTime.hour,
+    //   selectedTime.minute,
+    // );
+
+    return DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+    );
+  }
+
+  // Color get _ageColor => _ageController.text.isEmpty
+  //     ? Colors.grey
+  //     : _isAgeValid
+  //         ? Colors.green
+  //         : Colors.red;
+
+  Color get _dateOfBirthColor =>
+      _dateOfBirthController.text.isEmpty ? Colors.grey : Colors.green;
 
   Color get _heightColor => _heightController.text.isEmpty
       ? Colors.grey
@@ -88,49 +150,46 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
             height: 50.0,
           ),
           TextField(
-            controller: _ageController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            maxLength: 3,
-            onChanged: (value) {
-              setState(() {
-                if (value.isNotEmpty && !value.startsWith('0')) {
-                  print(value);
-                  _isAgeValid = true;
-                  _inputCallbackAge(int.tryParse(value));
+            readOnly: true,
+            onTap: () {
+              _showDateTimePicker(context: context, initialDate: _dateOfBirth)
+                  .then((value) {
+                print(value);
+                if (value == null) {
+                  _isDateOfBirthValid = false;
                 } else {
-                  _isAgeValid = false;
+                  _dateOfBirth = value;
+                  _isDateOfBirthValid = true;
+                  _dateOfBirthController.text =
+                      DateFormat("d.M.yyyy").format(value);
+                  _inputCallbackDateOfBirth(value);
                 }
               });
             },
+            inputFormatters: [FilteringTextInputFormatter.deny(r"^*")],
+            controller: _dateOfBirthController,
+            keyboardType: TextInputType.none,
             decoration: InputDecoration(
-              errorText: _isAgeValid || _ageController.text.isEmpty ? null : 'Invalid age',
-              errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: _ageController.text.isEmpty ? Colors.grey : Colors.red,
-                  width: 2.0,
-                ),
-              ),
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _ageColor,
+                  color: _dateOfBirthColor,
                   width: 2.0,
                 ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _ageColor,
+                  color: _dateOfBirthColor,
                   width: 2.0,
                 ),
               ),
               prefixIcon: Icon(
                 Icons.cake,
-                color: _ageColor,
+                color: _dateOfBirthColor,
               ),
-              suffixText: "years",
-              suffixIcon: _ageController.text.isEmpty
+              suffixText: "date of birth",
+              suffixIcon: _dateOfBirthController.text.isEmpty
                   ? null
-                  : _isAgeValid
+                  : _isDateOfBirthValid
                       ? const Icon(
                           Icons.check,
                           color: Colors.green,
@@ -139,13 +198,76 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                           Icons.close,
                           color: Colors.red,
                         ),
-              hintText: "Age",
+              hintText: "Date of birth",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide:
+                    const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          // TextField(
+          //   controller: _ageController,
+          //   keyboardType: TextInputType.number,
+          //   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          //   maxLength: 3,
+          //   onChanged: (value) {
+          //     setState(() {
+          //       if (value.isNotEmpty && !value.startsWith('0')) {
+          //         print(value);
+          //         _isAgeValid = true;
+          //         _inputCallbackAge(int.tryParse(value));
+          //       } else {
+          //         _isAgeValid = false;
+          //       }
+          //     });
+          //   },
+          //   decoration: InputDecoration(
+          //     errorText: _isAgeValid || _ageController.text.isEmpty ? null : 'Invalid age',
+          //     errorBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _ageController.text.isEmpty ? Colors.grey : Colors.red,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     focusedBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _ageColor,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     enabledBorder: OutlineInputBorder(
+          //       borderSide: BorderSide(
+          //         color: _ageColor,
+          //         width: 2.0,
+          //       ),
+          //     ),
+          //     prefixIcon: Icon(
+          //       Icons.cake,
+          //       color: _ageColor,
+          //     ),
+          //     suffixText: "years",
+          //     suffixIcon: _ageController.text.isEmpty
+          //         ? null
+          //         : _isAgeValid
+          //             ? const Icon(
+          //                 Icons.check,
+          //                 color: Colors.green,
+          //               )
+          //             : const Icon(
+          //                 Icons.close,
+          //                 color: Colors.red,
+          //               ),
+          //     hintText: "Age",
+          //     border: OutlineInputBorder(
+          //       borderRadius: BorderRadius.circular(5.0),
+          //       borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
+          //     ),
+          //   ),
+          // ),
           TextField(
             controller: _heightController,
             keyboardType: TextInputType.number,
@@ -163,10 +285,13 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               });
             },
             decoration: InputDecoration(
-              errorText: _isHeightValid || _heightController.text.isEmpty ? null : 'Invalid height',
+              errorText: _isHeightValid || _heightController.text.isEmpty
+                  ? null
+                  : 'Invalid height',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _heightController.text.isEmpty ? Colors.grey : Colors.red,
+                  color:
+                      _heightController.text.isEmpty ? Colors.grey : Colors.red,
                   width: 2.0,
                 ),
               ),
@@ -201,7 +326,8 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               hintText: "Height",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide:
+                    const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
           ),
@@ -224,10 +350,13 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               });
             },
             decoration: InputDecoration(
-              errorText: _isWeightValid || _weightController.text.isEmpty ? null : 'Invalid weight',
+              errorText: _isWeightValid || _weightController.text.isEmpty
+                  ? null
+                  : 'Invalid weight',
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: _weightController.text.isEmpty ? Colors.grey : Colors.red,
+                  color:
+                      _weightController.text.isEmpty ? Colors.grey : Colors.red,
                   width: 2.0,
                 ),
               ),
@@ -262,7 +391,8 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
               hintText: "Weight",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
-                borderSide: const BorderSide(width: 2.0, style: BorderStyle.none),
+                borderSide:
+                    const BorderSide(width: 2.0, style: BorderStyle.none),
               ),
             ),
           ),
@@ -296,12 +426,14 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                     ),
                   ),
                   CustomButton(
-                    onPressed: _isAgeValid && _isHeightValid && _isWeightValid
-                        ? () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _switchPageCallback(_pageIndex + 1);
-                          }
-                        : null,
+                    // onPressed: _isAgeValid && _isHeightValid && _isWeightValid
+                    onPressed:
+                        _isDateOfBirthValid && _isHeightValid && _isWeightValid
+                            ? () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                _switchPageCallback(_pageIndex + 1);
+                              }
+                            : null,
                     // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
                     child: const Icon(
                       Icons.arrow_forward,

@@ -50,7 +50,7 @@ class _ProfileState extends State<Profile> {
   void _statsButtonHandler() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const Stats(),
+        builder: (context) => Stats(),
       ),
     );
   }
@@ -125,6 +125,7 @@ class _ProfileState extends State<Profile> {
           Map<String, dynamic> json = snapshot.data.data();
           AppUser appUser = AppUser.fromJson(json);
           String joinDate = DateFormat('d.M.yyyy').format(appUser.joinDate!);
+          String dateOfBirth = DateFormat('d.M.yyyy').format(appUser.dateOfBirth!);
 
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -157,6 +158,10 @@ class _ProfileState extends State<Profile> {
                           "Joined",
                           style: TextStyle(fontSize: 18),
                         ),
+                        Text(
+                          "Date of birth",
+                          style: TextStyle(fontSize: 18),
+                        ),
                       ],
                     ),
                     const SizedBox(width: 15.0),
@@ -169,6 +174,10 @@ class _ProfileState extends State<Profile> {
                         ),
                         Text(
                           joinDate,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        Text(
+                          dateOfBirth,
                           style: const TextStyle(fontSize: 18),
                         ),
                       ],

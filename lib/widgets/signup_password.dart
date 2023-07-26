@@ -14,7 +14,8 @@ class SignUpPassword extends StatefulWidget {
   final Function inputCallback,
       switchPageCallback,
       getUsernameCallback,
-      getAgeCallback,
+      // getAgeCallback,
+      getDateOfBirthCallback,
       getHeightCallback,
       getWeightCallback,
       getEmailCallback,
@@ -26,7 +27,8 @@ class SignUpPassword extends StatefulWidget {
     required this.inputCallback,
     required this.switchPageCallback,
     required this.getUsernameCallback,
-    required this.getAgeCallback,
+    // required this.getAgeCallback,
+    required this.getDateOfBirthCallback,
     required this.getHeightCallback,
     required this.getWeightCallback,
     required this.getEmailCallback,
@@ -43,15 +45,16 @@ class _SignUpPasswordState extends State<SignUpPassword>
   bool _isPasswordValid = false;
   final RegExp _passwordRegExp =
       RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
-  late final _pageIndex = widget.pageIndex;
-  late final _inputCallback = widget.inputCallback;
-  late final _switchPageCallback = widget.switchPageCallback;
-  late final _getUsernameCallback = widget.getUsernameCallback;
-  late final _getAgeCallback = widget.getAgeCallback;
-  late final _getHeightCallback = widget.getHeightCallback;
-  late final _getWeightCallback = widget.getWeightCallback;
-  late final _getEmailCallback = widget.getEmailCallback;
-  late final _getPasswordCallback = widget.getPasswordCallback;
+  late final int _pageIndex = widget.pageIndex;
+  late final Function _inputCallback = widget.inputCallback;
+  late final Function _switchPageCallback = widget.switchPageCallback;
+  late final Function _getUsernameCallback = widget.getUsernameCallback;
+  // late final Function _getAgeCallback = widget.getAgeCallback;
+  late final Function _getDateOfBirthCallback = widget.getDateOfBirthCallback;
+  late final Function _getHeightCallback = widget.getHeightCallback;
+  late final Function _getWeightCallback = widget.getWeightCallback;
+  late final Function _getEmailCallback = widget.getEmailCallback;
+  late final Function _getPasswordCallback = widget.getPasswordCallback;
 
   @override
   bool get wantKeepAlive => true;
@@ -130,7 +133,8 @@ class _SignUpPasswordState extends State<SignUpPassword>
           email: _getEmailCallback(),
           password: _getPasswordCallback(),
           username: _getUsernameCallback(),
-          age: _getAgeCallback(),
+          // age: _getAgeCallback(),
+          dateOfBirth: _getDateOfBirthCallback(),
           height: _getHeightCallback(),
           weight: _getWeightCallback(),
         ),

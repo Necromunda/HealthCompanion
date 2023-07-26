@@ -11,7 +11,8 @@ class FirebaseService {
   static Future<AppUser?> createUserOnSignup({
     required User user,
     required String username,
-    required int age,
+    // required int age,
+    required DateTime dateOfBirth,
     required double height,
     required double weight,
     required String email,
@@ -35,7 +36,8 @@ class FirebaseService {
           .set({});
       await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
         "username": username,
-        "age": age,
+        // "age": age,
+        "dateOfBirth": dateOfBirth,
         "height": height,
         "weight": weight,
         "email": email,

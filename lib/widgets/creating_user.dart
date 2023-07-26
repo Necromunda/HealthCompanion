@@ -5,7 +5,9 @@ import '../services/firebase_service.dart';
 
 class CreatingUser extends StatefulWidget {
   final String username, email, password;
-  final int age;
+
+  // final int age;
+  final DateTime dateOfBirth;
   final double height, weight;
 
   const CreatingUser({
@@ -13,7 +15,8 @@ class CreatingUser extends StatefulWidget {
     required this.email,
     required this.password,
     required this.username,
-    required this.age,
+    // required this.age,
+    required this.dateOfBirth,
     required this.height,
     required this.weight,
   }) : super(key: key);
@@ -24,7 +27,9 @@ class CreatingUser extends StatefulWidget {
 
 class _CreatingUserState extends State<CreatingUser> {
   late final String _username, _email, _password;
-  late final int _age;
+
+  // late final int _age;
+  late final DateTime _dateOfBirth;
   late final double _height, _weight;
   late bool _isRegisterSuccessful;
 
@@ -33,7 +38,8 @@ class _CreatingUserState extends State<CreatingUser> {
     _username = widget.username;
     _email = widget.email;
     _password = widget.password;
-    _age = widget.age;
+    // _age = widget.age;
+    _dateOfBirth = widget.dateOfBirth;
     _height = widget.height;
     _weight = widget.weight;
     _isRegisterSuccessful = false;
@@ -100,14 +106,16 @@ class _CreatingUserState extends State<CreatingUser> {
                 if (snapshot.hasError) {
                   Future(() => Navigator.of(context).pop());
                   if (snapshot.error is FirebaseAuthException) {
-                    FirebaseAuthException firebaseError = snapshot.error as FirebaseAuthException;
+                    FirebaseAuthException firebaseError =
+                        snapshot.error as FirebaseAuthException;
                     switch (firebaseError.code) {
                       case "email-already-in-use":
                         Future(() => _showDialog("Email address already in use",
                             "$_email is already in use. Login to continue using HealthCompanion."));
                         break;
                       case "invalid-email":
-                        Future(() => _showDialog("Invalid email", "$_email is not valid."));
+                        Future(() => _showDialog(
+                            "Invalid email", "$_email is not valid."));
                         break;
                     }
                   }
@@ -132,8 +140,10 @@ class _CreatingUserState extends State<CreatingUser> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 15.0),
-                            child:
-                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                            child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator()),
                           ),
                         ],
                       ),
@@ -146,7 +156,8 @@ class _CreatingUserState extends State<CreatingUser> {
               future: FirebaseService.createUserOnSignup(
                 user: FirebaseAuth.instance.currentUser!,
                 username: _username,
-                age: _age,
+                // age: _age,
+                dateOfBirth: _dateOfBirth,
                 height: _height,
                 weight: _weight,
                 email: _email,
@@ -154,10 +165,12 @@ class _CreatingUserState extends State<CreatingUser> {
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   Future(() => Navigator.of(context).pop());
-                  _showDialog("Error", "User could not be created.\nContact support.");
+                  _showDialog(
+                      "Error", "User could not be created.\nContact support.");
                 }
                 if (snapshot.hasData) {
-                  Future(() => Navigator.of(context).popUntil(ModalRoute.withName("/")));
+                  Future(() =>
+                      Navigator.of(context).popUntil(ModalRoute.withName("/")));
                 }
                 return Center(
                   child: Column(
@@ -189,8 +202,10 @@ class _CreatingUserState extends State<CreatingUser> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 15.0),
-                            child:
-                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                            child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator()),
                           ),
                         ],
                       ),
