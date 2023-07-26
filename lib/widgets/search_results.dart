@@ -54,7 +54,19 @@ class _SearchResultsState extends State<SearchResults> {
           List<Component> results = snapshot.data!
               .map((e) => FineliModel.fromJson(e).toComponent())
               .toList();
-          // _boolList = List.generate(results.length, (index) => false);
+
+          if (results.isEmpty) {
+            return Expanded(
+              child: Center(
+                child: Text(
+                  "No results with $_search",
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            );
+          }
 
           return Expanded(
             child: ListView.builder(
@@ -82,7 +94,7 @@ class _SearchResultsState extends State<SearchResults> {
                       color: Colors.green,
                       disabledColor: Theme.of(context).primaryColor,
                       onPressed: _addedComponents.contains(index)
-                          ? null
+                          ? () {}
                           : () => _addComponent(results[index]).then((value) {
                                 setState(() {
                                   _addedComponents.add(index);
