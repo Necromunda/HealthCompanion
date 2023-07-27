@@ -230,15 +230,21 @@ class _OverviewState extends State<Overview> {
                     "Add new component",
                     style: TextStyle(fontSize: 18),
                   ),
-                  trailing: const Icon(Icons.launch),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addNewComponentButtonHandler,
+                ),
+                const Divider(
+                  height: 0,
+                  indent: 10,
+                  endIndent: 10,
+                  color: Colors.black,
                 ),
                 ListTile(
                   title: const Text(
                     "Add existing component",
                     style: TextStyle(fontSize: 18),
                   ),
-                  trailing: const Icon(Icons.launch),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addExistingComponentButtonHandler,
                 ),
               ],
@@ -301,7 +307,8 @@ class _OverviewState extends State<Overview> {
                             children: [
                               if (bundle.components!.isNotEmpty)
                                 Chart(
-                                  key: Key("${Random().nextDouble() * 1000}"),
+                                  // key: Key("${Random().nextDouble() * 1000}"),
+                                  key: Key("${bundle.components?.length}"),
                                   bundle: bundle,
                                 ),
                               const SizedBox(height: 5),
@@ -367,7 +374,8 @@ class _OverviewState extends State<Overview> {
                                                 size: 32.0,
                                               ),
                                             ),
-                                            const Icon(Icons.launch)
+                                            const Icon(
+                                                Icons.keyboard_arrow_right)
                                           ],
                                         ),
                                         onTap: () => _showComponentBreakdown(

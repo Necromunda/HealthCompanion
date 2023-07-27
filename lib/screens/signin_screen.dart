@@ -191,61 +191,62 @@ class _SignInState extends State<SignIn> {
           });
         },
         decoration: InputDecoration(
-            counterText: "",
-            hintText: "Email",
-            contentPadding: EdgeInsets.zero,
-            filled: true,
-            fillColor: const Color(0XDEDEDEDE),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.transparent,
-                width: 2.0,
-              ),
+          counterText: "",
+          hintText: "Email",
+          contentPadding: EdgeInsets.zero,
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
             ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.transparent,
-                width: 2.0,
-              ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
             ),
-            prefixIcon: Container(
-              margin: const EdgeInsets.only(right: 15.0),
-              // padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              decoration: BoxDecoration(
-                color: _emailController.text.isEmpty
-                    ? null
-                    : _isEmailValid
-                        ? Colors.lightGreen
-                        : Colors.redAccent,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  bottomLeft: Radius.circular(5.0),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: _emailController.text.isEmpty
+                  ? null
+                  : _isEmailValid
+                      ? Colors.lightGreen
+                      : Colors.redAccent,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(1),
-                    spreadRadius: -1,
-                    offset: const Offset(2, 0), // changes position of shadow
-                  ),
-                  BoxShadow(
-                    color: const Color(0XDEDEDEDE).withOpacity(1),
-                    spreadRadius: 0,
-                    offset: const Offset(1, 0), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.email,
-                    size: 30,
-                    color: _emailController.text.isEmpty
-                        ? Colors.black87
-                        : _isEmailValid
-                            ? Colors.white
-                            : Colors.black87),
-              ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
             ),
-            suffixIcon: const SizedBox()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.email,
+                  size: 30,
+                  color: _emailController.text.isEmpty
+                      ? Colors.black87
+                      : _isEmailValid
+                          ? Colors.white
+                          : Colors.black87),
+            ),
+          ),
+          suffixIcon: const SizedBox(),
+        ),
       );
 
   Widget get _passwordTextField => TextField(

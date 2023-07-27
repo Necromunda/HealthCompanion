@@ -142,6 +142,7 @@ class FirebaseService {
       await FirebaseAuth.instance.currentUser?.reauthenticateWithCredential(credential);
       return true;
     } catch (e, stackTrace) {
+      if (e is FirebaseAuthException) return false;
       print("Error reauthenticating user: $e, $stackTrace");
       return false;
     }

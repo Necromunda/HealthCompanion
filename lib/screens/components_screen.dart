@@ -126,53 +126,56 @@ class _ComponentsState extends State<Components> {
     setState(() {});
   }
 
-  Widget get _searchTextField => TextField(
-        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-        controller: _searchController,
-        keyboardType: TextInputType.text,
-        maxLength: 99,
-        onChanged: (value) => _onSearchTextChanged(value),
-        decoration: InputDecoration(
-          counterText: "",
-          hintText: "Search",
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-          filled: true,
-          fillColor: const Color(0XDEDEDEDE),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.transparent,
-              width: 2.0,
-            ),
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.transparent,
-              width: 2.0,
-            ),
-          ),
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(right: 15.0),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(5.0),
-                bottomLeft: Radius.circular(5.0),
+  Widget get _searchTextField => Card(
+    margin: EdgeInsets.zero,
+        child: TextField(
+          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+          controller: _searchController,
+          keyboardType: TextInputType.text,
+          maxLength: 99,
+          onChanged: (value) => _onSearchTextChanged(value),
+          decoration: InputDecoration(
+            counterText: "",
+            hintText: "Search",
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            filled: true,
+            fillColor: const Color(0XDEDEDEDE),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 2.0,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(1),
-                  spreadRadius: -1,
-                  offset: const Offset(2, 0), // changes position of shadow
-                ),
-                BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
-                  spreadRadius: 0,
-                  offset: const Offset(1, 0), // changes position of shadow
-                ),
-              ],
             ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.search, size: 30, color: Colors.black87),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 2.0,
+              ),
+            ),
+            prefixIcon: Container(
+              margin: const EdgeInsets.only(right: 15.0),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  bottomLeft: Radius.circular(5.0),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(1),
+                    spreadRadius: -1,
+                    offset: const Offset(2, 0), // changes position of shadow
+                  ),
+                  BoxShadow(
+                    color: const Color(0XDEDEDEDE).withOpacity(1),
+                    spreadRadius: 0,
+                    offset: const Offset(1, 0), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(Icons.search, size: 30, color: Colors.black87),
+              ),
             ),
           ),
         ),
@@ -194,7 +197,7 @@ class _ComponentsState extends State<Components> {
                   "Add component +",
                   style: TextStyle(fontSize: 22),
                 ),
-                trailing: const Icon(Icons.launch),
+                trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: _addComponent,
               ),
             ),
@@ -261,11 +264,11 @@ class _ComponentsState extends State<Components> {
                                               _searchResults[index]),
                                           icon: const Icon(
                                             Icons.delete,
-                                            color: Colors.red,
+                                            color: Colors.redAccent,
                                             size: 32.0,
                                           ),
                                         ),
-                                        const Icon(Icons.launch)
+                                        const Icon(Icons.keyboard_arrow_right)
                                       ],
                                     ),
                                     onTap: () => _showComponentBreakdown(
@@ -301,11 +304,11 @@ class _ComponentsState extends State<Components> {
                                               components[index]),
                                           icon: const Icon(
                                             Icons.delete,
-                                            color: Colors.red,
+                                            color: Colors.redAccent,
                                             size: 32.0,
                                           ),
                                         ),
-                                        const Icon(Icons.launch)
+                                        const Icon(Icons.keyboard_arrow_right)
                                       ],
                                     ),
                                     onTap: () => _showComponentBreakdown(

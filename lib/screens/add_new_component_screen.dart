@@ -19,13 +19,19 @@ class AddNewComponent extends StatefulWidget {
 class _AddNewComponentState extends State<AddNewComponent> {
   static final RegExp _noLeadingZeroRegexp = RegExp(r'^0[0-9]+');
   static final RegExp _noOnlySpacesRegexp = RegExp(r'^\s*$');
-  static const List<String> _categories = ["Component", "Breakfast", "Lunch", "Dinner", "Snack"];
+  static const List<String> _categories = [
+    "Component",
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snack"
+  ];
   static const double _kJMultiplier = 4.1855;
   Macros? _macrosSelection;
-  String? _name, _description, _category, _macrosSelectionText;
+  String? _title, _description, _category, _macrosSelectionText;
   late List<Component>? _subComponents, _selectedComponents;
   late final ScrollController _listScrollController;
-  late final TextEditingController _nameController,
+  late final TextEditingController _titleController,
       _descriptionController,
       _energyKcalController,
       _saltController,
@@ -51,6 +57,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
       _sugar,
       _fat;
   late bool _isTitleEmpty;
+  late final RegExp _macroRegExp;
 
   @override
   void initState() {
@@ -61,7 +68,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _subComponents = <Component>[];
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
-    _nameController = TextEditingController();
+    _titleController = TextEditingController();
     _descriptionController = TextEditingController();
     _energyKcalController = TextEditingController();
     _saltController = TextEditingController();
@@ -74,6 +81,8 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _fiberController = TextEditingController();
     _sugarController = TextEditingController();
     _fatController = TextEditingController();
+    _macroRegExp = RegExp(r"^[1-9]\d*((\.|,)\d?)?");
+
     super.initState();
   }
 
@@ -87,7 +96,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
   @override
   void dispose() {
     _listScrollController.dispose();
-    _nameController.dispose();
+    _titleController.dispose();
     _descriptionController.dispose();
     _energyKcalController.dispose();
     _saltController.dispose();
@@ -130,7 +139,9 @@ class _AddNewComponentState extends State<AddNewComponent> {
 
   Component _createComponent() {
     _energyKcal ??= 0.0;
-    _energy = double.tryParse((_energyKcal! * _kJMultiplier).toStringAsFixed(0)) ?? 0.0;
+    _energy =
+        double.tryParse((_energyKcal! * _kJMultiplier).toStringAsFixed(0)) ??
+            0.0;
     _salt ??= 0.0;
     _protein ??= 0.0;
     _carbohydrate ??= 0.0;
@@ -142,7 +153,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _sugar ??= 0.0;
     _fat ??= 0.0;
     Map<String, dynamic> data = {
-      "name": _name,
+      "name": _title,
       "description": _description,
       "category": _category,
       "macroSelection": _macrosSelectionText,
@@ -173,6 +184,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
       double totalFiber = _ingredientsTotalFiber ?? 0.0;
       double totalSugar = _ingredientsTotalSugar ?? 0.0;
       double totalFat = _ingredientsTotalFat ?? 0.0;
+
       if (_macrosSelection == Macros.inherit) {
         data["energy"] = totalEnergyKj;
         data["energyKcal"] = totalEnergyKcal;
@@ -239,77 +251,111 @@ class _AddNewComponentState extends State<AddNewComponent> {
     );
   }
 
-  InputDecoration _textfieldInputDecoration(String hintText) {
-    return InputDecoration(
-      suffix: const Text("g"),
-      errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Theme.of(context).primaryColor,
-          width: 2.0,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Theme.of(context).primaryColor,
-          width: 2.0,
-        ),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Colors.grey,
-          width: 2.0,
-        ),
-      ),
-      prefixIcon: Icon(
-        Icons.title,
-        color: Theme.of(context).primaryColor,
-      ),
-      hintText: hintText,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(5.0),
-        borderSide: const BorderSide(
-          width: 2.0,
-          style: BorderStyle.none,
-        ),
-      ),
-    );
-  }
+  // InputDecoration _textfieldInputDecoration(String hintText) {
+  //   return InputDecoration(
+  //     suffix: const Text("g"),
+  //     errorBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Theme.of(context).primaryColor,
+  //         width: 2.0,
+  //       ),
+  //     ),
+  //     focusedBorder: OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Theme.of(context).primaryColor,
+  //         width: 2.0,
+  //       ),
+  //     ),
+  //     enabledBorder: const OutlineInputBorder(
+  //       borderSide: BorderSide(
+  //         color: Colors.grey,
+  //         width: 2.0,
+  //       ),
+  //     ),
+  //     prefixIcon: Icon(
+  //       Icons.title,
+  //       color: Theme.of(context).primaryColor,
+  //     ),
+  //     hintText: hintText,
+  //     border: OutlineInputBorder(
+  //       borderRadius: BorderRadius.circular(5.0),
+  //       borderSide: const BorderSide(
+  //         width: 2.0,
+  //         style: BorderStyle.none,
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  double? get _ingredientsTotalEnergy =>
-      _selectedComponents?.map((e) => (e.energy ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalEnergy => _selectedComponents
+      ?.map((e) => (e.energy ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalEnergyKcal =>
-      _selectedComponents?.map((e) => (e.energyKcal ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalEnergyKcal => _selectedComponents
+      ?.map((e) => (e.energyKcal ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalSalt =>
-      _selectedComponents?.map((e) => (e.salt ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalSalt => _selectedComponents
+      ?.map((e) => (e.salt ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalProtein =>
-      _selectedComponents?.map((e) => (e.protein ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalProtein => _selectedComponents
+      ?.map((e) => (e.protein ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalCarbohydrate =>
-      _selectedComponents?.map((e) => (e.carbohydrate ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalCarbohydrate => _selectedComponents
+      ?.map((e) => (e.carbohydrate ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalAlcohol =>
-      _selectedComponents?.map((e) => (e.alcohol ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalAlcohol => _selectedComponents
+      ?.map((e) => (e.alcohol ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalOrganicAcids =>
-      _selectedComponents?.map((e) => (e.organicAcids ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalOrganicAcids => _selectedComponents
+      ?.map((e) => (e.organicAcids ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalSugarAlcohol =>
-      _selectedComponents?.map((e) => (e.sugarAlcohol ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalSugarAlcohol => _selectedComponents
+      ?.map((e) => (e.sugarAlcohol ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalSaturatedFat =>
-      _selectedComponents?.map((e) => (e.saturatedFat ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalSaturatedFat => _selectedComponents
+      ?.map((e) => (e.saturatedFat ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalFiber =>
-      _selectedComponents?.map((e) => (e.fiber ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalFiber => _selectedComponents
+      ?.map((e) => (e.fiber ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalSugar =>
-      _selectedComponents?.map((e) => (e.sugar ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalSugar => _selectedComponents
+      ?.map((e) => (e.sugar ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
 
-  double? get _ingredientsTotalFat =>
-      _selectedComponents?.map((e) => (e.fat ?? 0.0)).fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double? get _ingredientsTotalFat => _selectedComponents
+      ?.map((e) => (e.fat ?? 0.0))
+      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+
+  void _setEnergyKcal(double value) => _energyKcal = value;
+
+  void _setProtein(double value) => _protein = value;
+
+  void _setCarbohydrate(double value) => _carbohydrate = value;
+
+  void _setSalt(double value) => _salt = value;
+
+  void _setSugar(double value) => _sugar = value;
+
+  void _setFat(double value) => _fat = value;
+
+  void _setSaturatedFat(double value) => _saturatedFat = value;
+
+  void _setFiber(double value) => _fiber = value;
+
+  void _setOrganicAcids(double value) => _organicAcids = value;
+
+  void _setAlcohol(double value) => _alcohol = value;
+
+  void _setSugarAlcohol(double value) => _sugarAlcohol = value;
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +376,8 @@ class _AddNewComponentState extends State<AddNewComponent> {
             ),
             onPressed: () async {
               _isTitleEmpty
-                  ? Util.showNotification(context: context, message: "Title must not be empty")
+                  ? Util.showNotification(
+                      context: context, message: "Title must not be empty")
                   : Navigator.of(context).pop(_createComponent());
             },
           )
@@ -344,180 +391,182 @@ class _AddNewComponentState extends State<AddNewComponent> {
               SizedBox(
                 width: double.infinity,
                 child: Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
-                      TextField(
-                        controller: _nameController,
-                        keyboardType: TextInputType.text,
-                        onChanged: (value) => setState(() {
-                          _isTitleEmpty = _noOnlySpacesRegexp.hasMatch(value);
-                          print("TITLE IS EMPTY: $_isTitleEmpty");
-                          _name = value;
-                        }),
-                        decoration: InputDecoration(
-                          errorText: (_nameController.text.isEmpty || !_isTitleEmpty)
-                              ? null
-                              : "Title must not be empty",
-                          errorBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: _nameController.text.isEmpty ? Colors.grey : Colors.red,
-                              width: 2.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 2.0,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 2.0,
-                            ),
-                          ),
-                          prefixIcon: Icon(
-                            Icons.title,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          hintText: "Title",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              width: 2.0,
-                              style: BorderStyle.none,
-                            ),
-                          ),
-                        ),
-                      ),
+                      _titleTextField,
                       const SizedBox(
                         height: 5.0,
                       ),
-                      TextField(
-                        maxLength: 99,
-                        controller: _descriptionController,
-                        keyboardType: TextInputType.text,
-                        onChanged: (value) => setState(() {
-                          _description = value;
-                        }),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 2.0,
-                            ),
-                          ),
-                          prefixIcon: Icon(
-                            Icons.description,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          hintText: "Description",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              width: 2.0,
-                              style: BorderStyle.none,
-                            ),
-                          ),
-                        ),
-                      ),
+                      _descriptionTextField,
+                      // TextField(
+                      //   controller: _titleController,
+                      //   keyboardType: TextInputType.text,
+                      //   onChanged: (value) => setState(() {
+                      //     _isTitleEmpty = _noOnlySpacesRegexp.hasMatch(value);
+                      //     print("TITLE IS EMPTY: $_isTitleEmpty");
+                      //     _title = value;
+                      //   }),
+                      //   decoration: InputDecoration(
+                      //     errorText: (_titleController.text.isEmpty || !_isTitleEmpty)
+                      //         ? null
+                      //         : "Title must not be empty",
+                      //     errorBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: _titleController.text.isEmpty ? Colors.grey : Colors.red,
+                      //         width: 2.0,
+                      //       ),
+                      //     ),
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Theme.of(context).primaryColor,
+                      //         width: 2.0,
+                      //       ),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Theme.of(context).primaryColor,
+                      //         width: 2.0,
+                      //       ),
+                      //     ),
+                      //     prefixIcon: Icon(
+                      //       Icons.title,
+                      //       color: Theme.of(context).primaryColor,
+                      //     ),
+                      //     hintText: "Title",
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(5.0),
+                      //       borderSide: const BorderSide(
+                      //         width: 2.0,
+                      //         style: BorderStyle.none,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // const SizedBox(
+                      //   height: 5.0,
+                      // ),
+                      // TextField(
+                      //   maxLength: 99,
+                      //   controller: _descriptionController,
+                      //   keyboardType: TextInputType.text,
+                      //   onChanged: (value) => setState(() {
+                      //     _description = value;
+                      //   }),
+                      //   decoration: InputDecoration(
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Theme.of(context).primaryColor,
+                      //         width: 2.0,
+                      //       ),
+                      //     ),
+                      //     prefixIcon: Icon(
+                      //       Icons.description,
+                      //       color: Theme.of(context).primaryColor,
+                      //     ),
+                      //     hintText: "Description",
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(5.0),
+                      //       borderSide: const BorderSide(
+                      //         width: 2.0,
+                      //         style: BorderStyle.none,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
               ),
               Card(
-                // elevation: 0,
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ExpansionTile(
-                  onExpansionChanged: (value) => FocusManager.instance.primaryFocus?.unfocus(),
+                  onExpansionChanged: (value) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
                     "Category",
                     style: TextStyle(fontSize: 22),
                   ),
                   children: [
                     ..._categories.map(
-                      (e) => ListTile(
+                      (category) => ListTile(
                         title: Text(
-                          e,
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: _category == e ? Theme.of(context).primaryColor : null),
+                          category,
+                          style: const TextStyle(fontSize: 18),
                         ),
-                        trailing: Icon(
-                          Icons.category,
-                          color: _category == e ? Theme.of(context).primaryColor : null,
-                        ),
-                        onTap: () => _categoryDropdownHandler(e),
+                        trailing: const Icon(Icons.category),
+                        selected: _category == category ? true : false,
+                        selectedColor: Colors.white,
+                        selectedTileColor: _category == category
+                            ? Theme.of(context).primaryColor.withOpacity(0.5)
+                            : null,
+                        onTap: () => _categoryDropdownHandler(category),
                       ),
                     ),
                   ],
                 ),
               ),
               Card(
-                // elevation: 0,
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ExpansionTile(
-                  onExpansionChanged: (value) => FocusManager.instance.primaryFocus?.unfocus(),
+                  onExpansionChanged: (value) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
                     "Macro type",
                     style: TextStyle(fontSize: 22),
                   ),
                   children: [
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Set individual",
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: _macrosSelection == Macros.individual
-                                ? Theme.of(context).primaryColor
-                                : null),
+                        style: TextStyle(fontSize: 18),
                       ),
-                      trailing: Icon(
-                        Icons.category,
-                        color: _macrosSelection == Macros.individual
-                            ? Theme.of(context).primaryColor
-                            : null,
-                      ),
+                      trailing: const Icon(Icons.category),
+                      selected:
+                          _macrosSelection == Macros.individual ? true : false,
+                      selectedColor: Colors.white,
+                      selectedTileColor: _macrosSelection == Macros.individual
+                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          : null,
                       onTap: () => _macrosDropdownHandler(Macros.individual),
                     ),
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Inherit from child components",
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: _macrosSelection == Macros.inherit
-                                ? Theme.of(context).primaryColor
-                                : null),
+                        style: TextStyle(fontSize: 18),
                       ),
-                      trailing: Icon(
-                        Icons.category,
-                        color: _macrosSelection == Macros.inherit
-                            ? Theme.of(context).primaryColor
-                            : null,
-                      ),
+                      trailing: const Icon(Icons.category),
+                      selected:
+                          _macrosSelection == Macros.inherit ? true : false,
+                      selectedColor: Colors.white,
+                      selectedTileColor: _macrosSelection == Macros.inherit
+                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          : null,
                       onTap: () => _macrosDropdownHandler(Macros.inherit),
                     ),
                     ListTile(
-                      title: Text(
+                      title: const Text(
                         "Both",
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: _macrosSelection == Macros.both
-                                ? Theme.of(context).primaryColor
-                                : null),
+                        style: TextStyle(fontSize: 18),
                       ),
-                      trailing: Icon(
-                        Icons.category,
-                        color:
-                            _macrosSelection == Macros.both ? Theme.of(context).primaryColor : null,
-                      ),
+                      trailing: const Icon(Icons.category),
+                      selected: _macrosSelection == Macros.both ? true : false,
+                      selectedColor: Colors.white,
+                      selectedTileColor: _macrosSelection == Macros.both
+                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          : null,
                       onTap: () => _macrosDropdownHandler(Macros.both),
                     ),
                   ],
                 ),
               ),
-              if (_macrosSelection != null && _macrosSelection != Macros.inherit)
+              if (_macrosSelection != null &&
+                  _macrosSelection != Macros.inherit)
                 Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
                   child: ExpansionTile(
-                    onExpansionChanged: (value) => FocusManager.instance.primaryFocus?.unfocus(),
+                    onExpansionChanged: (value) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
                     title: const Text(
                       "Macros",
                       style: TextStyle(fontSize: 22),
@@ -527,175 +576,244 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         "Macros",
                         style: TextStyle(fontSize: 22),
                       ),
-                      TextField(
+                      _macroTextField(
                         controller: _energyKcalController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _energyKcalController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _energyKcal = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Kcal"),
+                        setter: _setEnergyKcal,
+                        hint: "Kcal",
+                        suffixText: null,
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _proteinController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _proteinController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _protein = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Protein"),
+                        setter: _setProtein,
+                        hint: "Protein",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _carbohydrateController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _carbohydrateController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _carbohydrate = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Carbohydrates"),
+                        setter: _setCarbohydrate,
+                        hint: "Carbohydrate",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _saltController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _saltController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _salt = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Salt"),
+                        setter: _setSalt,
+                        hint: "Salt",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _sugarController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _sugarController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _sugar = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Sugar"),
+                        setter: _setSugar,
+                        hint: "Sugar",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _fatController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _fatController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _fat = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Fat"),
+                        setter: _setFat,
+                        hint: "Fat",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _saturatedFatController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _saturatedFatController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _saturatedFat = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Saturated fat"),
+                        setter: _setSaturatedFat,
+                        hint: "Saturated fat",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _fiberController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _fiberController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _fiber = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Fiber"),
+                        setter: _setFiber,
+                        hint: "Fiber",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _organicAcidsController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _organicAcidsController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _organicAcids = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Organic acids"),
+                        setter: _setOrganicAcids,
+                        hint: "Organic acids",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _alcoholController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _alcoholController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _alcohol = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Alcohol"),
+                        setter: _setAlcohol,
+                        hint: "Alcohol",
                       ),
                       const SizedBox(height: 10.0),
-                      TextField(
+                      _macroTextField(
                         controller: _sugarAlcoholController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                              replacementString: _sugarAlcoholController.text),
-                        ],
-                        onChanged: (value) => setState(() {
-                          _sugarAlcohol = double.tryParse(value);
-                        }),
-                        decoration: _textfieldInputDecoration("Sugar alcohol"),
+                        setter: _setSugarAlcohol,
+                        hint: "Sugar alcohol",
                       ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _energyKcalController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _energyKcalController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _energyKcal = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Kcal"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _proteinController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _proteinController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _protein = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Protein"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _carbohydrateController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _carbohydrateController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _carbohydrate = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Carbohydrates"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _saltController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _saltController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _salt = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Salt"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _sugarController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _sugarController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _sugar = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Sugar"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _fatController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _fatController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _fat = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Fat"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _saturatedFatController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _saturatedFatController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _saturatedFat = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Saturated fat"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _fiberController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _fiberController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _fiber = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Fiber"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _organicAcidsController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _organicAcidsController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _organicAcids = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Organic acids"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _alcoholController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _alcoholController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _alcohol = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Alcohol"),
+                      // ),
+                      // const SizedBox(height: 10.0),
+                      // TextField(
+                      //   controller: _sugarAlcoholController,
+                      //   keyboardType: TextInputType.number,
+                      //   inputFormatters: [
+                      //     FilteringTextInputFormatter.digitsOnly,
+                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
+                      //         replacementString: _sugarAlcoholController.text),
+                      //   ],
+                      //   onChanged: (value) => setState(() {
+                      //     _sugarAlcohol = double.tryParse(value);
+                      //   }),
+                      //   decoration: _textfieldInputDecoration("Sugar alcohol"),
+                      // ),
                     ],
                   ),
                 ),
               Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ListTile(
                   title: const Text(
                     "Add ingredient +",
                     style: TextStyle(fontSize: 22),
                     // textAlign: TextAlign.center,
                   ),
-                  trailing: const Icon(Icons.launch),
+                  trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addIngredientHandler,
                 ),
               ),
               if (_subComponents != null && _subComponents!.isNotEmpty)
                 Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
                       const Text(
@@ -721,17 +839,19 @@ class _AddNewComponentState extends State<AddNewComponent> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  onPressed: () => _removeIngredient(_subComponents![index]),
+                                  onPressed: () =>
+                                      _removeIngredient(_subComponents![index]),
                                   icon: const Icon(
                                     Icons.delete,
                                     color: Colors.red,
                                     size: 32.0,
                                   ),
                                 ),
-                                const Icon(Icons.launch)
+                                const Icon(Icons.keyboard_arrow_right)
                               ],
                             ),
-                            onTap: () => _showComponentBreakdown(_subComponents![index]),
+                            onTap: () =>
+                                _showComponentBreakdown(_subComponents![index]),
                           );
                         },
                       )
@@ -739,6 +859,210 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   ),
                 ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget get _titleTextField => TextField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        controller: _titleController,
+        keyboardType: TextInputType.text,
+        maxLength: 30,
+        onChanged: (value) {
+          setState(() {
+            _isTitleEmpty = _noOnlySpacesRegexp.hasMatch(value);
+            _title = value;
+          });
+        },
+        decoration: InputDecoration(
+          counterText: "",
+          hintText: "Title",
+          contentPadding: const EdgeInsets.only(right: 10),
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            decoration: BoxDecoration(
+              color: _titleController.text.isEmpty
+                  ? null
+                  : _isTitleEmpty
+                      ? Colors.redAccent
+                      : Colors.lightGreen,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
+                ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.short_text,
+                size: 30,
+                color: _titleController.text.isEmpty
+                    ? Colors.black87
+                    : _isTitleEmpty
+                        ? Colors.black87
+                        : Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget get _descriptionTextField => TextField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        controller: _descriptionController,
+        keyboardType: TextInputType.text,
+        maxLength: 50,
+        onChanged: (value) {
+          setState(() {
+            _description = value;
+          });
+        },
+        decoration: InputDecoration(
+          counterText: "",
+          hintText: "Description",
+          contentPadding: const EdgeInsets.only(right: 10),
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            decoration: BoxDecoration(
+              color: _descriptionController.text.isEmpty
+                  ? null
+                  : Colors.lightGreen,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
+                ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.description,
+                size: 30,
+                color: _descriptionController.text.isEmpty
+                    ? Colors.black87
+                    : Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget _macroTextField({
+    required TextEditingController controller,
+    required Function setter,
+    required String hint,
+    String? suffixText = "g",
+  }) {
+    return TextField(
+      onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [FilteringTextInputFormatter.allow(_macroRegExp)],
+      onChanged: (value) {
+        setState(() {
+          setter(double.tryParse(value.replaceAll(',', '.')));
+        });
+      },
+      decoration: InputDecoration(
+        counterText: "",
+        hintText: hint,
+        suffixText: suffixText,
+        contentPadding: const EdgeInsets.only(right: 10),
+        filled: true,
+        fillColor: const Color(0XDEDEDEDE),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 2.0,
+          ),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.transparent,
+            width: 2.0,
+          ),
+        ),
+        prefixIcon: Container(
+          margin: const EdgeInsets.only(right: 15.0),
+          decoration: BoxDecoration(
+            color: controller.text.isEmpty ? null : Colors.lightGreen,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(5.0),
+              bottomLeft: Radius.circular(5.0),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(1),
+                spreadRadius: -1,
+                offset: const Offset(2, 0), // changes position of shadow
+              ),
+              BoxShadow(
+                color: const Color(0XDEDEDEDE).withOpacity(1),
+                spreadRadius: 0,
+                offset: const Offset(1, 0), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Icon(
+              Icons.bar_chart,
+              size: 30,
+              color: controller.text.isEmpty ? Colors.black87 : Colors.white,
+            ),
           ),
         ),
       ),

@@ -249,6 +249,7 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
             // if (_component.subComponents!.isNotEmpty)
             else
               Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 // width: double.infinity,
                 // height: double.infinity,
                 child: ListView.builder(

@@ -13,7 +13,7 @@ class DeleteAccount extends StatefulWidget {
 
 class _DeleteAccountState extends State<DeleteAccount> {
   late final TextEditingController _passwordController;
-  late bool _deleteConfirm, _isPasswordValid;
+  late bool _deleteConfirm, _isPasswordValid, _obscureText;
   late final RegExp _passwordRegExp;
   late final User _currentUser;
 
@@ -22,9 +22,10 @@ class _DeleteAccountState extends State<DeleteAccount> {
     _currentUser = FirebaseAuth.instance.currentUser!;
     _deleteConfirm = false;
     _isPasswordValid = false;
+    _obscureText = true;
     _passwordController = TextEditingController();
-    _passwordRegExp =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
+    _passwordRegExp = RegExp(
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
     super.initState();
   }
 
@@ -54,13 +55,12 @@ class _DeleteAccountState extends State<DeleteAccount> {
   void _deleteAccountButtonHandler() async {
     try {
       String password = _passwordController.text;
-      final AuthCredential credential =
-          EmailAuthProvider.credential(email: _currentUser.email!, password: password);
+      final AuthCredential credential = EmailAuthProvider.credential(
+          email: _currentUser.email!, password: password);
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => DeletingAccount(authCredential: credential)
-        ),
+            builder: (context) => DeletingAccount(authCredential: credential)),
       );
     } catch (e, stackTrace) {
       print("Error deleting user: $e, $stackTrace");
@@ -72,6 +72,86 @@ class _DeleteAccountState extends State<DeleteAccount> {
       : _isPasswordValid
           ? Colors.green
           : Colors.red;
+
+  Widget get _passwordTextField => TextField(
+        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+        controller: _passwordController,
+        keyboardType: TextInputType.visiblePassword,
+        obscureText: _obscureText,
+        maxLength: 64,
+        onChanged: (value) {
+          setState(() {
+            _isPasswordValid = _passwordRegExp.hasMatch(value);
+          });
+        },
+        decoration: InputDecoration(
+          counterText: "",
+          hintText: "Password",
+          contentPadding: EdgeInsets.zero,
+          filled: true,
+          fillColor: const Color(0XDEDEDEDE),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            decoration: BoxDecoration(
+              color: _passwordController.text.isEmpty
+                  ? null
+                  : _isPasswordValid
+                      ? Colors.lightGreen
+                      : Colors.redAccent,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(1),
+                  spreadRadius: -1,
+                  offset: const Offset(2, 0), // changes position of shadow
+                ),
+                BoxShadow(
+                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  spreadRadius: 0,
+                  offset: const Offset(1, 0), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(Icons.key,
+                  size: 30,
+                  color: _passwordController.text.isEmpty
+                      ? Colors.black87
+                      : _isPasswordValid
+                          ? Colors.white
+                          : Colors.black87),
+            ),
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(
+              _obscureText ? Icons.visibility : Icons.visibility_off,
+              color: Colors.black87,
+            ),
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText;
+              });
+            },
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -90,61 +170,65 @@ class _DeleteAccountState extends State<DeleteAccount> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: _deleteConfirm
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextField(
-                    controller: _passwordController,
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
-                    onChanged: (value) => setState(() {
-                      if (_passwordRegExp.hasMatch(value)) {
-                        _isPasswordValid = true;
-                      } else {
-                        _isPasswordValid = false;
-                      }
-                    }),
-                    decoration: InputDecoration(
-                      errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: _passwordController.text.isEmpty ? Colors.grey : Colors.red,
-                          width: 2.0,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: _passwordColor,
-                          width: 2.0,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: _passwordColor,
-                          width: 2.0,
-                        ),
-                      ),
-                      prefixIcon: Icon(
-                        Icons.password,
-                        color: _passwordColor,
-                      ),
-                      // label: Text("Password"),
-                      hintText: "Password",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: const BorderSide(
-                          width: 2.0,
-                          style: BorderStyle.none,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // TextField(
+                  //   controller: _passwordController,
+                  //   keyboardType: TextInputType.visiblePassword,
+                  //   obscureText: true,
+                  //   onChanged: (value) => setState(() {
+                  //     if (_passwordRegExp.hasMatch(value)) {
+                  //       _isPasswordValid = true;
+                  //     } else {
+                  //       _isPasswordValid = false;
+                  //     }
+                  //   }),
+                  //   decoration: InputDecoration(
+                  //     errorBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: _passwordController.text.isEmpty
+                  //             ? Colors.grey
+                  //             : Colors.red,
+                  //         width: 2.0,
+                  //       ),
+                  //     ),
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: _passwordColor,
+                  //         width: 2.0,
+                  //       ),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderSide: BorderSide(
+                  //         color: _passwordColor,
+                  //         width: 2.0,
+                  //       ),
+                  //     ),
+                  //     prefixIcon: Icon(
+                  //       Icons.password,
+                  //       color: _passwordColor,
+                  //     ),
+                  //     // label: Text("Password"),
+                  //     hintText: "Password",
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(5.0),
+                  //       borderSide: const BorderSide(
+                  //         width: 2.0,
+                  //         style: BorderStyle.none,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  _passwordTextField,
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                      onPressed: _isPasswordValid ? _deleteAccountButtonHandler : null,
+                      onPressed:
+                          _isPasswordValid ? _deleteAccountButtonHandler : null,
                       style: FilledButton.styleFrom(
                         // backgroundColor: Colors.deepPurple.shade400,
                         backgroundColor: Colors.redAccent,
@@ -162,7 +246,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    "Are you sure you want to delete your account?\nThis action is permanent.",
+                    "Are you sure you want to delete your account?\nThis action is permanent and cannot be undone.",
                     style: TextStyle(fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
@@ -174,7 +258,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           onPressed: _cancelButtonHandler,
                           style: FilledButton.styleFrom(
                             // backgroundColor: Colors.deepPurple.shade400,
-                            backgroundColor: Colors.green,
+                            backgroundColor: Colors.lightGreen,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(1.0),
                             ),

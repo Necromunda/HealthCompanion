@@ -129,21 +129,32 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            color: _isSelected(index)
+                                ? Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.5)
+                                : null,
                             child: ListTile(
                               title: Text(
                                 components[index].name!,
                                 style: TextStyle(
-                                    fontSize: 18,
-                                    // color: _isSelected(components[index])
-                                    color: _isSelected(index)
-                                        ? Theme.of(context).primaryColor
-                                        : null),
+                                  fontSize: 18,
+                                  // color: _isSelected(components[index])
+                                  color:
+                                      _isSelected(index) ? Colors.white : null,
+                                ),
+                                // ),
                               ),
                               subtitle: Text(
                                 components[index].description!,
-                                style: const TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      _isSelected(index) ? Colors.white : null,
+                                ),
                               ),
-                              trailing: const Icon(Icons.launch),
+                              // trailing: const Icon(Icons.keyboard_arrow_right),
                               // onTap: () => _isSelected(components[index])
                               onTap: () => _isSelected(index)
                                   ? _removeSelection(index, components[index])

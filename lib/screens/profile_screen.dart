@@ -22,8 +22,10 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser!;
-    _userDocStream =
-        FirebaseFirestore.instance.collection("users").doc(_currentUser.uid).snapshots();
+    _userDocStream = FirebaseFirestore.instance
+        .collection("users")
+        .doc(_currentUser.uid)
+        .snapshots();
     super.initState();
   }
 
@@ -125,17 +127,20 @@ class _ProfileState extends State<Profile> {
           Map<String, dynamic> json = snapshot.data.data();
           AppUser appUser = AppUser.fromJson(json);
           String joinDate = DateFormat('d.M.yyyy').format(appUser.joinDate!);
-          String dateOfBirth = DateFormat('d.M.yyyy').format(appUser.dateOfBirth!);
+          String dateOfBirth =
+              DateFormat('d.M.yyyy').format(appUser.dateOfBirth!);
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0), // Adjust the value as needed
+                  borderRadius: BorderRadius.circular(10.0),
+                  // Adjust the value as needed
                   child: Image.asset(
-                    "assets/images/profile-picture-placeholder.jpg", // Replace with your image URL
+                    "assets/images/profile-picture-placeholder.jpg",
+                    // Replace with your image URL
                     width: 200,
                     height: 200,
                     fit: BoxFit.cover,
@@ -185,38 +190,57 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
                 const SizedBox(height: 30.0),
-                ListTile(
-                  title: const Text(
-                    "Stats",
-                    style: TextStyle(fontSize: 18),
+                Card(
+                  margin: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: const Text(
+                          "Stats",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right),
+                        // onTap: _statsButtonHandler,
+                        onTap: _statsButtonHandler,
+                        minVerticalPadding: 0.0,
+                        // shape: const Border(bottom: BorderSide()),
+                      ),
+                      const Divider(
+                        height: 0,
+                        indent: 10,
+                        endIndent: 10,
+                        color: Colors.black,
+                      ),
+                      ListTile(
+                        title: const Text(
+                          "Achievements",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right),
+                        // onTap: _statsButtonHandler,
+                        onTap: _achievementsButtonHandler,
+                        minVerticalPadding: 0.0,
+                        // shape: const Border(bottom: BorderSide()),
+                      ),
+                      const Divider(
+                        height: 0,
+                        indent: 10,
+                        endIndent: 10,
+                        color: Colors.black,
+                      ),
+                      ListTile(
+                        title: const Text(
+                          "Delete account",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        trailing: const Icon(Icons.keyboard_arrow_right),
+                        // onTap: _statsButtonHandler,
+                        onTap: _deleteAccountButtonHandler,
+                        minVerticalPadding: 0.0,
+                        // shape: const Border(bottom: BorderSide()),
+                      ),
+                    ],
                   ),
-                  trailing: const Icon(Icons.launch),
-                  // onTap: _statsButtonHandler,
-                  onTap: _statsButtonHandler,
-                  minVerticalPadding: 0.0,
-                  shape: const Border(bottom: BorderSide()),
-                ),
-                ListTile(
-                  title: const Text(
-                    "Achievements",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  trailing: const Icon(Icons.launch),
-                  // onTap: _statsButtonHandler,
-                  onTap: _achievementsButtonHandler,
-                  minVerticalPadding: 0.0,
-                  shape: const Border(bottom: BorderSide()),
-                ),
-                ListTile(
-                  title: const Text(
-                    "Delete account",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  trailing: const Icon(Icons.launch),
-                  // onTap: _statsButtonHandler,
-                  onTap: _deleteAccountButtonHandler,
-                  minVerticalPadding: 0.0,
-                  shape: const Border(bottom: BorderSide()),
                 ),
                 const Expanded(child: SizedBox()),
                 Align(
