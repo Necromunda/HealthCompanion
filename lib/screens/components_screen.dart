@@ -23,6 +23,7 @@ class _ComponentsState extends State<Components> {
   late final User _currentUser;
   late final Stream _userComponentsDocStream;
   late String _searchString;
+  late List<Component> _userComponents, _searchResults;
 
   @override
   void initState() {
@@ -35,6 +36,8 @@ class _ComponentsState extends State<Components> {
     _listScrollController = ScrollController();
     _searchController = TextEditingController();
     _searchString = "";
+    _userComponents = [];
+    _searchResults = [];
     super.initState();
   }
 
@@ -64,14 +67,34 @@ class _ComponentsState extends State<Components> {
     if (component != null) {
       FirebaseService.saveUserComponents(_currentUser.uid, component);
     }
+    _onSearchTextChanged(_searchString);
     print(component);
   }
 
   // void _deleteComponent(List<Component> components, Component componentToRemove) async {
-  void _deleteComponent(List<Component> components, int index) async {
-    components.removeAt(index);
-    FirebaseService.deleteUserComponent(_currentUser.uid, components)
+  // void _deleteComponent(List<Component> components, int index) async {
+  //   components.removeAt(index);
+  //   FirebaseService.deleteUserComponent(_currentUser.uid, components)
+  //       .then((value) => print("Deleted items?: $value"));
+  // }
+
+  void _deleteComponent(Component component) async {
+    List<Component> duplicates =
+        _userComponents.where((element) => element == component).toList();
+    if (duplicates.length == 1) {
+      _userComponents.removeWhere((element) => element == component);
+      if (_searchResults.isNotEmpty) {
+        _searchResults.removeWhere((element) => element == component);
+      }
+    } else {
+      _userComponents.remove(component);
+      if (_searchResults.isNotEmpty) {
+        _searchResults.remove(component);
+      }
+    }
+    FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents)
         .then((value) => print("Deleted items?: $value"));
+    setState(() {});
   }
 
   void _showComponentBreakdown(Component component) {
@@ -86,14 +109,29 @@ class _ComponentsState extends State<Components> {
     );
   }
 
+  void _onSearchTextChanged(String text) async {
+    _searchString = text;
+    _searchResults.clear();
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+
+    _userComponents.forEach((component) {
+      if (component.name!.toLowerCase().contains(text)) {
+        _searchResults.add(component);
+      }
+    });
+    print(_searchResults);
+    setState(() {});
+  }
+
   Widget get _searchTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         controller: _searchController,
         keyboardType: TextInputType.text,
         maxLength: 99,
-        onChanged: (value) {
-          setState(() {});
-        },
+        onChanged: (value) => _onSearchTextChanged(value),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Search",
@@ -166,6 +204,10 @@ class _ComponentsState extends State<Components> {
           const SizedBox(
             height: 10,
           ),
+          _searchTextField,
+          const SizedBox(
+            height: 10,
+          ),
           Expanded(
             child: StreamBuilder(
               // key: Key(_searchString),
@@ -181,70 +223,142 @@ class _ComponentsState extends State<Components> {
                       snapshot.data["components"].cast<Map<String, dynamic>>();
                   List<Component> components =
                       json.map((e) => Component.fromJson(e)).toList();
-                  print(components
-                      .map((e) => e.name?.contains(_searchString))
-                      .toList());
+                  _userComponents = List.from(components);
 
                   if (components.isEmpty) {
                     return const NoComponentsFound();
                   } else {
-                    return Column(
-                      children: [
-                        _searchTextField,
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            // key: Key(_searchString),
-                            padding: EdgeInsets.zero,
-                            controller: _listScrollController,
-                            itemCount: _searchString.isEmpty
-                                ? components.length
-                                : components
-                                    .map((e) => e.name?.contains(_searchString))
-                                    .toList()
-                                    .length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                margin: EdgeInsets.only(bottom: 4),
-                                child: ListTile(
-                                  title: Text(
-                                    components[index].name!,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                  subtitle: Text(
-                                    components[index].description!,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () =>
-                                            _deleteComponent(components, index),
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Colors.red,
-                                          size: 32.0,
+                    if (_searchString.isNotEmpty && _searchResults.isEmpty) {
+                      return const Center(
+                        child: Text("No matches"),
+                      );
+                    } else {
+                      return _searchResults.isNotEmpty
+                          ? ListView.builder(
+                              padding: EdgeInsets.zero,
+                              // controller: _listScrollController,
+                              itemCount: _searchResults.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 4),
+                                  child: ListTile(
+                                    title: Text(
+                                      _searchResults[index].name!,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                    subtitle: Text(
+                                      _searchResults[index].description!,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          // onPressed: () => _deleteComponent(
+                                          //     _searchResults, index),
+                                          onPressed: () => _deleteComponent(
+                                              _searchResults[index]),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 32.0,
+                                          ),
                                         ),
-                                      ),
-                                      const Icon(Icons.launch)
-                                    ],
+                                        const Icon(Icons.launch)
+                                      ],
+                                    ),
+                                    onTap: () => _showComponentBreakdown(
+                                        _searchResults[index]),
                                   ),
-                                  onTap: () => _showComponentBreakdown(
-                                      components[index]),
-                                  // shape: components.indexOf(components.last) == index
-                                  //     ? null
-                                  //     : const Border(bottom: BorderSide()),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    );
+                                );
+                              },
+                            )
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              controller: _listScrollController,
+                              itemCount: components.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 4),
+                                  child: ListTile(
+                                    title: Text(
+                                      components[index].name!,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                    subtitle: Text(
+                                      components[index].description!,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          // onPressed: () => _deleteComponent(
+                                          //     components, index),
+                                          onPressed: () => _deleteComponent(
+                                              components[index]),
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 32.0,
+                                          ),
+                                        ),
+                                        const Icon(Icons.launch)
+                                      ],
+                                    ),
+                                    onTap: () => _showComponentBreakdown(
+                                        components[index]),
+                                  ),
+                                );
+                              },
+                            );
+                    }
+                    // return Column(
+                    //   children: [
+                    //     Expanded(
+                    //       child: ListView.builder(
+                    //         padding: EdgeInsets.zero,
+                    //         controller: _listScrollController,
+                    //         itemCount: components.length,
+                    //         shrinkWrap: true,
+                    //         itemBuilder: (context, index) {
+                    //           return Card(
+                    //             margin: const EdgeInsets.only(bottom: 4),
+                    //             child: ListTile(
+                    //               title: Text(
+                    //                 components[index].name!,
+                    //                 style: const TextStyle(fontSize: 18),
+                    //               ),
+                    //               subtitle: Text(
+                    //                 components[index].description!,
+                    //                 style: const TextStyle(fontSize: 16),
+                    //               ),
+                    //               trailing: Row(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   IconButton(
+                    //                     onPressed: () =>
+                    //                         _deleteComponent(components, index),
+                    //                     icon: const Icon(
+                    //                       Icons.delete,
+                    //                       color: Colors.red,
+                    //                       size: 32.0,
+                    //                     ),
+                    //                   ),
+                    //                   const Icon(Icons.launch)
+                    //                 ],
+                    //               ),
+                    //               onTap: () => _showComponentBreakdown(
+                    //                   components[index]),
+                    //             ),
+                    //           );
+                    //         },
+                    //       ),
+                    //     ),
+                    //   ],
+                    // );
                   }
                 }
                 // return const Expanded(child: LoadingComponents());
