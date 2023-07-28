@@ -15,8 +15,10 @@ class AddExistingComponent extends StatefulWidget {
 }
 
 class _AddExistingComponentState extends State<AddExistingComponent> {
-  late List<Component> _selectedComponents;
-  late List<int> _selectedComponentsIndexes;
+  // late List<Component> _selectedComponents;
+  late List<Map<String, dynamic>> _amountOfelectedComponents;
+
+  // late List<int> _selectedComponentsIndexes;
   late final ScrollController _listScrollController;
   late final Stream _userComponentsDocStream;
   late final User? _currentUser;
@@ -24,8 +26,9 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   @override
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser;
-    _selectedComponents = <Component>[];
-    _selectedComponentsIndexes = <int>[];
+    // _selectedComponents = <Component>[];
+    _amountOfelectedComponents = <Map<String, dynamic>>[];
+    // _selectedComponentsIndexes = <int>[];
     _listScrollController = ScrollController();
     _userComponentsDocStream = FirebaseFirestore.instance
         .collection("user_components")
@@ -43,16 +46,23 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   // void _addSelection(Component component) {
   void _addSelection(int index, Component component) {
     setState(() {
-      _selectedComponents.add(component);
-      _selectedComponentsIndexes.add(index);
+      // _selectedComponents.add(component);
+      // _selectedComponentsIndexes.add(index);
+      _amountOfelectedComponents.add({
+        "component": component,
+        "index": index,
+        "amount": 1,
+      });
     });
   }
 
   // void _removeSelection(Component component) {
   void _removeSelection(int index, Component component) {
     setState(() {
-      _selectedComponents.remove(component);
-      _selectedComponentsIndexes.remove(index);
+      // _selectedComponents.remove(component);
+      // _selectedComponentsIndexes.remove(index);
+      _amountOfelectedComponents
+          .removeWhere((element) => element["index"] == index);
     });
   }
 
@@ -76,7 +86,59 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
   // }
 
   bool _isSelected(int index) {
-    return _selectedComponentsIndexes.contains(index);
+    // return _selectedComponentsIndexes.contains(index);
+    for (Map map in _amountOfelectedComponents) {
+      if (map["index"] == index) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  int _getIndexInSelectedComponents(Component component) {
+    // return _selectedComponents.indexWhere((element) => element == component) + 1;
+    return _amountOfelectedComponents
+                .where((element) => element["component"] == component).first["index"] +
+        1;
+  }
+
+  void _increaseAmount(int index) {
+    Map map = _amountOfelectedComponents
+        .where((element) => element["index"] == index).first;
+
+    setState(() {
+      (map["amount"] as int) + 1;
+    });
+  }
+
+  void _decreaseAmount(int index) {
+    Map map = _amountOfelectedComponents
+        .where((element) => element["index"] == index).first;
+
+    if (map["amount"] > 1) {
+      setState(() {
+        (map["amount"] as int) + 1;
+      });
+    }
+  }
+
+  int _getAmountSelected(int index) {
+    if (!_isSelected(index)) {
+      return 0;
+    }
+    return _amountOfelectedComponents
+            .where((element) => element["index"] == index).first["amount"];
+  }
+
+  List<Component> _returnSelectedComponents() {
+    List<Component> selectedComponents = [];
+    print(_amountOfelectedComponents);
+    for (Map map in _amountOfelectedComponents) {
+      for (int i = 0; i <= map["amount"]; i++) {
+        selectedComponents.add(map["component"]);
+      }
+    }
+    return selectedComponents;
   }
 
   @override
@@ -86,7 +148,12 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            print("here");
+            List<Component> selected = _returnSelectedComponents();
+            print(selected);
+              Navigator.of(context).pop(selected);
+          },
           icon: const Icon(Icons.close),
           color: Colors.black,
         ),
@@ -96,7 +163,8 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
               Icons.check,
               color: Colors.black,
             ),
-            onPressed: () => Navigator.of(context).pop(_selectedComponents),
+            // onPressed: () => Navigator.of(context).pop(_selectedComponents),
+            onPressed: () => Navigator.of(context).pop(),
           )
         ],
       ),
@@ -154,8 +222,41 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                                       _isSelected(index) ? Colors.white : null,
                                 ),
                               ),
-                              // trailing: const Icon(Icons.keyboard_arrow_right),
-                              // onTap: () => _isSelected(components[index])
+                              // leading: _selectedComponents.isEmpty ||
+                              //         !_selectedComponentsIndexes
+                              //             .contains(index)
+                              leading: _amountOfelectedComponents.isEmpty ||
+                                      !_isSelected(index)
+                                  ? null
+                                  : Text(
+                                      "#${_getIndexInSelectedComponents(components[index])}",
+                                      style: const TextStyle(fontSize: 28),
+                                    ),
+                              trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                        onPressed: () {
+                                          if (_isSelected(index)) {
+                                            _decreaseAmount(index);
+                                          }
+                                        },
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_left)),
+                                    // Text("${components[index].amount}"),
+                                    Text("${_getAmountSelected(index)}"),
+                                    IconButton(
+                                        onPressed: () {
+                                          if (!_isSelected(index)) {
+                                            _addSelection(
+                                                index, components[index]);
+                                          } else {
+                                            _increaseAmount(index);
+                                          }
+                                        },
+                                        icon: const Icon(
+                                            Icons.keyboard_arrow_right)),
+                                  ]),
                               onTap: () => _isSelected(index)
                                   ? _removeSelection(index, components[index])
                                   : _addSelection(index, components[index]),

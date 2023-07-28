@@ -155,8 +155,10 @@ class _OverviewState extends State<Overview> {
         updatedBundles.removeAt(0);
       } else {
         updatedBundles[0] = Bundle.fromJson({
-          "creationDate": DateTime.now().millisecondsSinceEpoch,
-          "lastEdited": DateTime.now().millisecondsSinceEpoch,
+          // "creationDate": DateTime.now().millisecondsSinceEpoch,
+          "creationDate": DateTime.now(),
+          // "lastEdited": DateTime.now().millisecondsSinceEpoch,
+          "lastEdited": DateTime.now(),
           "components": [],
         });
       }
@@ -216,7 +218,6 @@ class _OverviewState extends State<Overview> {
 
   @override
   Widget build(BuildContext context) {
-    print("currentbundle is $_currentBundle");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
@@ -254,9 +255,6 @@ class _OverviewState extends State<Overview> {
               ],
             ),
           ),
-
-          // Bug in pageview: When deleting bundle from db, pageview doesnt update so current index is wrong.
-
           Expanded(
             child: SizedBox(
               width: double.infinity,
