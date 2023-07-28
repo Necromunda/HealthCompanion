@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
 
@@ -34,6 +36,8 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
     _component = widget.component;
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
+    // print(DateTime.now().ti);
+    // print(Timestamp.fromMillisecondsSinceEpoch(DateTime.now()))
     super.initState();
   }
 
@@ -98,6 +102,11 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                   ),
                 Text(
                   _component.category!,
+                  style: const TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "Created ${DateFormat('d.M H:mm').format(_component.creationDate!)}",
                   style: const TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),

@@ -108,7 +108,8 @@ class _BundlesState extends State<Bundles> {
 
   void _deleteComponentFromBundle(
       List<Bundle> bundles, int bundleIndex, int componentIndex) async {
-    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    // bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    bundles[bundleIndex].lastEdited = DateTime.now();
     Component? retVal =
         bundles[bundleIndex].components?.removeAt(componentIndex);
     print("Removed component: $retVal");
@@ -139,7 +140,8 @@ class _BundlesState extends State<Bundles> {
                   const SizedBox(height: 5),
                   Text(
                     "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(
-                      DateTime.fromMillisecondsSinceEpoch(bundle.creationDate!),
+                      bundle.creationDate!,
+                      // DateTime.fromMillisecondsSinceEpoch(bundle.creationDate!),
                     )}",
                     style: const TextStyle(fontSize: 16),
                   ),

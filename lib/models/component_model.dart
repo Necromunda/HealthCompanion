@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 
 class Component extends Equatable {
+  DateTime? creationDate;
   String? name, description, category, macroSelection;
   List<Component>? subComponents;
   double? salt,
@@ -39,6 +42,9 @@ class Component extends Equatable {
     description = json['description'] ?? "";
     category = json['category'];
     macroSelection = json['macroSelection'];
+    creationDate = (json['creationDate'] is DateTime)
+        ? json['creationDate']
+        : json['creationDate'].toDate();
     // subComponents = json['subComponents'];
     // subComponents = <Component>[];
     // if (json['subComponents'] != null) {
@@ -46,7 +52,9 @@ class Component extends Equatable {
     //     subComponents?.add(Component.fromJson(v));
     //   });
     // }
-    subComponents = (json['subComponents'] as List).map((e) => Component.fromJson(e)).toList();
+    subComponents = (json['subComponents'] as List)
+        .map((e) => Component.fromJson(e))
+        .toList();
     salt = (json['salt'] ?? 0).toDouble();
     energy = (json['energy'] ?? 0).toDouble();
     energyKcal = (json['energyKcal'] ?? 0).toDouble();
@@ -67,6 +75,7 @@ class Component extends Equatable {
     data['description'] = description;
     data['category'] = category;
     data['macroSelection'] = macroSelection;
+    data['creationDate'] = creationDate;
     // if (subComponents != null) {
     //   data['subComponents'] = subComponents!.map((v) => v.toJson()).toList();
     // }
@@ -87,6 +96,6 @@ class Component extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, description, category, macroSelection, subComponents?.length];
-
+  List<Object?> get props =>
+      [name, description, category, macroSelection, subComponents?.length];
 }

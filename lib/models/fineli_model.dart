@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:health_companion/models/component_model.dart';
 
 class FineliModel {
@@ -142,8 +143,10 @@ class FineliModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name?.fi;
     data['description'] = type?.description?.fi;
-    data['category'] = "Component";
-    data['macroSelection'] = "Individual";
+    data['category'] = ingredientClass?.description?.en ?? "Component";
+    // data['creationDate'] = Timestamp.now();
+    data['creationDate'] = DateTime.now();
+    data['macroSelection'] = 'Individual';
     data['subComponents'] = [];
     data['salt'] = salt;
     data['energy'] = energy;

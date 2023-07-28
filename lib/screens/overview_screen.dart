@@ -118,7 +118,8 @@ class _OverviewState extends State<Overview> {
       List<Component> newComponents) async {
     print("bundles: $bundles");
     print("bundleindex: $bundleIndex");
-    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    // bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    bundles[bundleIndex].lastEdited = DateTime.now();
     bundles[bundleIndex].components!.addAll(newComponents);
     await FirebaseService.updateDailyData(bundles);
   }
@@ -126,8 +127,10 @@ class _OverviewState extends State<Overview> {
   void _addNewBundle() async {
     print(_currentBundleIndex);
     Bundle newBundle = Bundle.fromJson({
-      "creationDate": DateTime.now().millisecondsSinceEpoch,
-      "lastEdited": DateTime.now().millisecondsSinceEpoch,
+      // "creationDate": DateTime.now().millisecondsSinceEpoch,
+      "creationDate": DateTime.now(),
+      // "lastEdited": DateTime.now().millisecondsSinceEpoch,
+      "lastEdited": DateTime.now(),
       "components": [],
     });
     _userBundles.add(newBundle);
@@ -137,7 +140,8 @@ class _OverviewState extends State<Overview> {
 
   void _deleteComponentFromBundle(
       List<Bundle> bundles, int bundleIndex, int componentIndex) async {
-    bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    // bundles[bundleIndex].lastEdited = DateTime.now().millisecondsSinceEpoch;
+    bundles[bundleIndex].lastEdited = DateTime.now();
     Component? retVal =
         bundles[bundleIndex].components?.removeAt(componentIndex);
     print("Removed component: $retVal");
@@ -296,11 +300,8 @@ class _OverviewState extends State<Overview> {
                           // Bundle bundle = Bundle.fromJson(
                           //     snapshot.data["data"][pageviewIndex]);
                           Bundle bundle = _userBundles[pageviewIndex];
-                          DateTime created =
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  bundle.creationDate!);
-                          DateTime edited = DateTime.fromMillisecondsSinceEpoch(
-                              bundle.lastEdited!);
+                          // DateTime created = DateTime.fromMillisecondsSinceEpoch(bundle.creationDate!);
+                          // DateTime edited = DateTime.fromMillisecondsSinceEpoch(bundle.lastEdited!);
 
                           return Column(
                             mainAxisSize: MainAxisSize.max,
@@ -313,11 +314,13 @@ class _OverviewState extends State<Overview> {
                                 ),
                               const SizedBox(height: 5),
                               Text(
-                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(created)}",
+                                // "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(created)}",
+                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(bundle.creationDate!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               Text(
-                                "Last edited: ${DateFormat('d.M H:mm').format(edited)}",
+                                // "Last edited: ${DateFormat('d.M H:mm').format(edited)}",
+                                "Last edited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(height: 5),

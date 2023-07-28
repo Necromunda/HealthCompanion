@@ -65,18 +65,17 @@ class _ComponentsState extends State<Components> {
       ),
     );
     if (component != null) {
-      FirebaseService.saveUserComponents(_currentUser.uid, component);
+      await FirebaseService.saveUserComponents(_currentUser.uid, component);
+      if (_searchString.isNotEmpty) {
+        if (component.name!.toLowerCase().contains(_searchString)) {
+          setState(() {
+            _searchResults.add(component);
+          });
+        }
+      }
     }
-    _onSearchTextChanged(_searchString);
     print(component);
   }
-
-  // void _deleteComponent(List<Component> components, Component componentToRemove) async {
-  // void _deleteComponent(List<Component> components, int index) async {
-  //   components.removeAt(index);
-  //   FirebaseService.deleteUserComponent(_currentUser.uid, components)
-  //       .then((value) => print("Deleted items?: $value"));
-  // }
 
   void _deleteComponent(Component component) async {
     List<Component> duplicates =
@@ -92,9 +91,7 @@ class _ComponentsState extends State<Components> {
         _searchResults.remove(component);
       }
     }
-    FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents)
-        .then((value) => print("Deleted items?: $value"));
-    setState(() {});
+    FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents);
   }
 
   void _showComponentBreakdown(Component component) {
@@ -122,12 +119,13 @@ class _ComponentsState extends State<Components> {
         _searchResults.add(component);
       }
     });
+
     print(_searchResults);
     setState(() {});
   }
 
   Widget get _searchTextField => Card(
-    margin: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
         child: TextField(
           onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
           controller: _searchController,
@@ -239,7 +237,7 @@ class _ComponentsState extends State<Components> {
                       return _searchResults.isNotEmpty
                           ? ListView.builder(
                               padding: EdgeInsets.zero,
-                              // controller: _listScrollController,
+                              controller: _listScrollController,
                               itemCount: _searchResults.length,
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
@@ -260,8 +258,11 @@ class _ComponentsState extends State<Components> {
                                         IconButton(
                                           // onPressed: () => _deleteComponent(
                                           //     _searchResults, index),
-                                          onPressed: () => _deleteComponent(
-                                              _searchResults[index]),
+                                          onPressed: () {
+                                            _deleteComponent(
+                                              _searchResults[index],
+                                            );
+                                          },
                                           icon: const Icon(
                                             Icons.delete,
                                             color: Colors.redAccent,
@@ -272,7 +273,8 @@ class _ComponentsState extends State<Components> {
                                       ],
                                     ),
                                     onTap: () => _showComponentBreakdown(
-                                        _searchResults[index]),
+                                      _searchResults[index],
+                                    ),
                                   ),
                                 );
                               },

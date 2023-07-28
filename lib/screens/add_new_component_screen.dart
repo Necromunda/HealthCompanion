@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
@@ -157,6 +158,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
       "description": _description,
       "category": _category,
       "macroSelection": _macrosSelectionText,
+      "creationDate": Timestamp.now(),
       "subComponents": _subComponents?.map((e) => e.toJson()).toList(),
       "salt": _salt,
       "energy": _energy,
