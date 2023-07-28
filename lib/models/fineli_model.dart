@@ -141,9 +141,9 @@ class FineliModel {
 
   Component toComponent() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name?.fi;
-    data['description'] = type?.description?.fi;
-    data['category'] = ingredientClass?.description?.en ?? "Component";
+    data['name'] = name?.en;
+    data['description'] = ingredientClass?.description?.en ?? "Component";
+    data['category'] = type?.description?.en;
     // data['creationDate'] = Timestamp.now();
     data['creationDate'] = DateTime.now();
     data['macroSelection'] = 'Individual';
