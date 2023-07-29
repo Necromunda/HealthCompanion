@@ -106,7 +106,7 @@ class _OverviewState extends State<Overview> {
         builder: (context) => const AddExistingComponent(),
       ),
     );
-    if (selectedComponents != null) {
+    if (selectedComponents != null && selectedComponents.isNotEmpty) {
       _addComponentToBundle(
           _userBundles, _currentBundleIndex, selectedComponents);
     }
