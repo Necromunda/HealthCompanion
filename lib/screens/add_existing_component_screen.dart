@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/util.dart';
 import 'package:health_companion/widgets/loading_components.dart';
 
 import '../models/component_model.dart';
@@ -125,6 +126,10 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
     return components;
   }
 
+  Color? get selectedColor => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,14 +139,14 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          color: Colors.black,
+          // color: Colors.black,
         ),
         actions: <Widget>[
           if (_selectedComponents.isNotEmpty)
             IconButton(
               icon: const Icon(
                 Icons.check,
-                color: Colors.black,
+                // color: Colors.black,
               ),
               onPressed: () {
                 List<Component> selected = _returnSelectedComponents();
@@ -179,12 +184,13 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return Card(
+                            clipBehavior: Clip.antiAlias,
                             margin: const EdgeInsets.symmetric(vertical: 4),
-                            color: _isSelected(index)
-                                ? Theme.of(context)
-                                    .primaryColor
-                                    .withOpacity(0.5)
-                                : null,
+                            // color: _isSelected(index)
+                            //     ? Theme.of(context)
+                            //         .colorScheme.primary
+                            //     : null,
+                            color: _isSelected(index) ? selectedColor : null,
                             child: ListTile(
                               title: Text(
                                 _userComponents[index].name!,
@@ -213,14 +219,20 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                      onPressed: () {
-                                        if (_isSelected(index)) {
-                                          _decreaseAmount(index);
-                                        }
-                                      },
-                                      icon: const Icon(
-                                          Icons.keyboard_arrow_left)),
-                                  Text("${_getAmountSelected(index)}"),
+                                    onPressed: () {
+                                      if (_isSelected(index)) {
+                                        _decreaseAmount(index);
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_left,
+                                      size: 32,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${_getAmountSelected(index)}",
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
                                   IconButton(
                                     onPressed: () {
                                       if (!_isSelected(index)) {
@@ -229,8 +241,10 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
                                         _increaseAmount(index);
                                       }
                                     },
-                                    icon:
-                                        const Icon(Icons.keyboard_arrow_right),
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      size: 32,
+                                    ),
                                   ),
                                 ],
                               ),

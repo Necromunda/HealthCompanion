@@ -72,7 +72,7 @@ class _ProfileState extends State<Profile> {
     //   FirebaseAuth.instance.currentUser!.reauthenticateWithCredential()
     //   print("deleting account");
     // }
-    bool? res = await Navigator.of(context).push(
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const DeleteAccount(),
       ),

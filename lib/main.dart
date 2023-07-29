@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/screens/signin_screen.dart';
 import 'package:health_companion/widgets/pagecontainer.dart';
 import 'package:provider/provider.dart';
@@ -56,35 +57,51 @@ class MyApp extends StatelessWidget {
             theme: themeNotifier.isDark
                 ? ThemeData(
                     useMaterial3: true,
+                    pageTransitionsTheme: const PageTransitionsTheme(
+                      builders: <TargetPlatform, PageTransitionsBuilder>{
+                        TargetPlatform.android:
+                            CupertinoPageTransitionsBuilder(),
+                      },
+                    ),
                     fontFamily: 'Quicksand',
                     brightness: Brightness.dark,
                     colorSchemeSeed: Colors.deepPurple,
                     dividerColor: Colors.white,
+                    // cardColor: Theme.of(context).colorScheme.onTertiary,
+
                     inputDecorationTheme: const InputDecorationTheme(
                       prefixIconColor: Colors.white,
                       hintStyle: TextStyle(color: Colors.white),
                     ),
-              // scaffoldBackgroundColor: Theme.of(context).colorScheme.primary
+              // bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                // backgroundColor: Theme.of(context).colorScheme.onTertiary
+              // )
                   )
                 : ThemeData(
                     useMaterial3: true,
+                    pageTransitionsTheme: const PageTransitionsTheme(
+                      builders: <TargetPlatform, PageTransitionsBuilder>{
+                        TargetPlatform.android:
+                            CupertinoPageTransitionsBuilder(),
+                      },
+                    ),
                     fontFamily: 'Quicksand',
                     brightness: Brightness.light,
                     colorSchemeSeed: Colors.deepPurple,
-                    // colorScheme: Colors.deepPurple,
                     dividerColor: Colors.black,
-                    // iconTheme: IconThemeData(color: Colors.white),
                     inputDecorationTheme: const InputDecorationTheme(
                       prefixIconColor: Colors.black,
                       hintStyle: TextStyle(color: Colors.black),
-                      // prefixStyle: TextStyle(color: Colors.black)
                     ),
-                scaffoldBackgroundColor: Colors.deepPurple.shade50
-            ),
+                    scaffoldBackgroundColor: Colors.deepPurple.shade50,
+                  ),
             debugShowCheckedModeBanner: false,
             home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // return const LoadingScreen(message: "Loading");
+                }
                 if (!snapshot.hasData) {
                   print('User is logged out!');
                   return const SignIn();

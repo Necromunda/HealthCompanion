@@ -359,6 +359,10 @@ class _AddNewComponentState extends State<AddNewComponent> {
 
   void _setSugarAlcohol(double value) => _sugarAlcohol = value;
 
+  Color? get selectedColor => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -503,7 +507,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         selected: _category == category ? true : false,
                         selectedColor: Colors.white,
                         selectedTileColor: _category == category
-                            ? Theme.of(context).primaryColor.withOpacity(0.5)
+                            ? selectedColor
                             : null,
                         onTap: () => _categoryDropdownHandler(category),
                       ),
@@ -533,7 +537,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                           _macrosSelection == Macros.individual ? true : false,
                       selectedColor: Colors.white,
                       selectedTileColor: _macrosSelection == Macros.individual
-                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          ? selectedColor
                           : null,
                       onTap: () => _macrosDropdownHandler(Macros.individual),
                     ),
@@ -547,7 +551,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                           _macrosSelection == Macros.inherit ? true : false,
                       selectedColor: Colors.white,
                       selectedTileColor: _macrosSelection == Macros.inherit
-                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          ? selectedColor
                           : null,
                       onTap: () => _macrosDropdownHandler(Macros.inherit),
                     ),
@@ -560,7 +564,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                       selected: _macrosSelection == Macros.both ? true : false,
                       selectedColor: Colors.white,
                       selectedTileColor: _macrosSelection == Macros.both
-                          ? Theme.of(context).primaryColor.withOpacity(0.5)
+                          ? selectedColor
                           : null,
                       onTap: () => _macrosDropdownHandler(Macros.both),
                     ),

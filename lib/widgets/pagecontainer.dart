@@ -11,6 +11,7 @@ import 'package:health_companion/screens/settings_screen.dart';
 
 import '../models/appuser_model.dart';
 import '../models/component_model.dart';
+import '../util.dart';
 
 class PageContainer extends StatefulWidget {
   // final AppUser user;
@@ -97,6 +98,10 @@ class _PageContainerState extends State<PageContainer> {
     );
   }
 
+  Color? get navBarColor => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +132,8 @@ class _PageContainerState extends State<PageContainer> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
-        backgroundColor: Colors.deepPurple.shade400,
+        // backgroundColor: Colors.deepPurple.shade400,
+        backgroundColor: navBarColor,
         onTap: _onItemTapped,
       ),
       body: Padding(
