@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:health_companion/screens/settings_general_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -32,7 +33,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ListTile(
                   title: const Text("General"),
                   trailing: const Icon(Icons.keyboard_arrow_right),
-                  onTap: () {},
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsGeneral(),
+                    ),
+                  ),
                 ),
                 // const Divider(
                 //   indent: 10,

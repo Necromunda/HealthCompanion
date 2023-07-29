@@ -119,7 +119,8 @@ class _SignInState extends State<SignIn> {
             }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
-              return const PageContainer();
+              // return const PageContainer();
+              Future(() => Navigator.of(context).popUntil(ModalRoute.withName('/')));
             }
             return const LoadingScreen(message: "Logging in");
           },

@@ -55,6 +55,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
   late final Function _getWeightCallback = widget.getWeightCallback;
   late final Function _getEmailCallback = widget.getEmailCallback;
   late final Function _getPasswordCallback = widget.getPasswordCallback;
+
   // late final Function _getAgeCallback = widget.getAgeCallback;
 
   @override
@@ -193,6 +194,9 @@ class _SignUpPasswordState extends State<SignUpPassword>
         onChanged: (value) {
           setState(() {
             _isPasswordValid = _passwordRegExp.hasMatch(value);
+            if (_isPasswordValid) {
+              _inputCallback(value);
+            }
           });
         },
         decoration: InputDecoration(
