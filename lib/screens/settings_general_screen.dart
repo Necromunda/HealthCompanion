@@ -13,10 +13,11 @@ class SettingsGeneral extends StatefulWidget {
 }
 
 class _SettingsGeneralState extends State<SettingsGeneral> {
-  TextEditingController _descriptionController = TextEditingController();
+  // TextEditingController _descriptionController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     print(Util.isDark(context));
     return Consumer<ModelTheme>(
       builder: (context, ModelTheme themeNotifier, child) {
@@ -42,7 +43,8 @@ class _SettingsGeneralState extends State<SettingsGeneral> {
                   child: ListTile(
                     title: const Text("Change themes"),
                     subtitle: Text(
-                        "${themeNotifier.isDark ? "Dark mode" : "Light mode"} is currently active"),
+                      "${themeNotifier.isDark ? "Dark mode" : "Light mode"} is currently active",
+                    ),
                     // trailing: const Icon(Icons.keyboard_arrow_right),
                     trailing: ThemeSwitch(
                       themeNotifier: themeNotifier,
@@ -51,7 +53,7 @@ class _SettingsGeneralState extends State<SettingsGeneral> {
                   ),
                   // ),
                 ),
-                _descriptionTextField,
+                // _descriptionTextField,
               ],
             ),
           ),
@@ -60,70 +62,70 @@ class _SettingsGeneralState extends State<SettingsGeneral> {
     );
   }
 
-  Widget get _descriptionTextField => TextField(
-        onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-        // controller: _descriptionController,
-        keyboardType: TextInputType.text,
-        maxLength: 50,
-        onChanged: (value) {
-          setState(() {
-            // _description = value;
-          });
-        },
-        style: TextStyle(
-            color: Util.isDark(context) ? Colors.black : Colors.white),
-        decoration: InputDecoration(
-          counterText: "",
-          hintText: "Description",
-          contentPadding: const EdgeInsets.only(right: 10),
-          filled: true,
-          // fillColor: const Color(0XDEDEDEDE),
-          fillColor: Theme.of(context).colorScheme.secondaryContainer,
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.transparent,
-              width: 2.0,
-            ),
-          ),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.transparent,
-              width: 2.0,
-            ),
-          ),
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(right: 15.0),
-            decoration: BoxDecoration(
-              color: _descriptionController.text.isEmpty
-                  ? null
-                  : Colors.lightGreen,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(5.0),
-                bottomLeft: Radius.circular(5.0),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(1),
-                  spreadRadius: -1,
-                  offset: const Offset(2, 0), // changes position of shadow
-                ),
-                BoxShadow(
-                  // color: const Color(0XDEDEDEDE).withOpacity(1),
-                  // color: const Color(0x00E7E0EC).withOpacity(1),
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  spreadRadius: 0,
-                  offset: const Offset(1, 0), // changes position of shadow
-                ),
-              ],
-            ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(
-                Icons.description,
-                size: 30,
-              ),
-            ),
-          ),
-        ),
-      );
+  // Widget get _descriptionTextField => TextField(
+  //       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+  //       // controller: _descriptionController,
+  //       keyboardType: TextInputType.text,
+  //       maxLength: 50,
+  //       onChanged: (value) {
+  //         setState(() {
+  //           // _description = value;
+  //         });
+  //       },
+  //       style: TextStyle(
+  //           color: Util.isDark(context) ? Colors.black : Colors.white),
+  //       decoration: InputDecoration(
+  //         counterText: "",
+  //         hintText: "Description",
+  //         contentPadding: const EdgeInsets.only(right: 10),
+  //         filled: true,
+  //         // fillColor: const Color(0XDEDEDEDE),
+  //         fillColor: Theme.of(context).colorScheme.secondaryContainer,
+  //         focusedBorder: const OutlineInputBorder(
+  //           borderSide: BorderSide(
+  //             color: Colors.transparent,
+  //             width: 2.0,
+  //           ),
+  //         ),
+  //         enabledBorder: const OutlineInputBorder(
+  //           borderSide: BorderSide(
+  //             color: Colors.transparent,
+  //             width: 2.0,
+  //           ),
+  //         ),
+  //         prefixIcon: Container(
+  //           margin: const EdgeInsets.only(right: 15.0),
+  //           decoration: BoxDecoration(
+  //             color: _descriptionController.text.isEmpty
+  //                 ? null
+  //                 : Colors.lightGreen,
+  //             borderRadius: const BorderRadius.only(
+  //               topLeft: Radius.circular(5.0),
+  //               bottomLeft: Radius.circular(5.0),
+  //             ),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withOpacity(1),
+  //                 spreadRadius: -1,
+  //                 offset: const Offset(2, 0), // changes position of shadow
+  //               ),
+  //               BoxShadow(
+  //                 // color: const Color(0XDEDEDEDE).withOpacity(1),
+  //                 // color: const Color(0x00E7E0EC).withOpacity(1),
+  //                 color: Theme.of(context).colorScheme.secondaryContainer,
+  //                 spreadRadius: 0,
+  //                 offset: const Offset(1, 0), // changes position of shadow
+  //               ),
+  //             ],
+  //           ),
+  //           child: const Padding(
+  //             padding: EdgeInsets.symmetric(horizontal: 20),
+  //             child: Icon(
+  //               Icons.description,
+  //               size: 30,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     );
 }

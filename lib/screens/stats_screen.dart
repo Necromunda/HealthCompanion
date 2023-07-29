@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/custom_button.dart';
 import 'package:health_companion/widgets/loading_components.dart';
 
@@ -10,16 +12,35 @@ class Stats extends StatefulWidget {
 }
 
 class _StatsState extends State<Stats> {
-  final TextEditingController _textEditingController = TextEditingController();
-  bool _isInputValid = false;
-  bool _obscureText = true;
+  late final User _currentUser;
+  late final ScrollController _scrollController;
 
-  void onTap() {
-    print("Tap!");
+  @override
+  void initState() {
+    print("Overview screen init");
+    _currentUser = FirebaseAuth.instance.currentUser!;
+    _scrollController = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -27,95 +48,121 @@ class _StatsState extends State<Stats> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          color: Colors.black87,
         ),
       ),
       // body: const Center(child: Text("Stats screen"),),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Center(
-          child: TextField(
-            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-            controller: _textEditingController,
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: _obscureText,
-            maxLength: 5,
-            onChanged: (value) {
-              setState(() {
-                _isInputValid =
-                    _textEditingController.text.characters.length >= 3
-                        ? true
-                        : false;
-              });
-            },
-            decoration: InputDecoration(
-              counterText: "",
-              hintText: "Password",
-              contentPadding: EdgeInsets.zero,
-              filled: true,
-              fillColor: const Color(0XDEDEDEDE),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.transparent,
-                  width: 2.0,
-                ),
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.transparent,
-                  width: 2.0,
-                ),
-              ),
-              prefixIcon: Container(
-                margin: const EdgeInsets.only(right: 15.0),
-                // padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                decoration: BoxDecoration(
-                  color: _textEditingController.text.isEmpty
-                      ? null
-                      : _isInputValid
-                          ? Colors.lightGreen
-                          : Colors.redAccent,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(5.0),
-                    bottomLeft: Radius.circular(5.0),
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              // hasScrollBody: false,
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      "Your stats",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 24),
+                    ),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(1),
-                      spreadRadius: -1,
-                      offset: const Offset(2, 0), // changes position of shadow
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(
+                    child: FutureBuilder(
+                      future: FirebaseService.getUserStats(),
+                      builder: (BuildContext context, snapshot) {
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text("Error"),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return GridView(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    // mainAxisSpacing: 10
+                                    mainAxisExtent: 50,
+                                    crossAxisSpacing: 0),
+                            children: [
+                              const Text(
+                                "Components added",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (snapshot.data?["componentsAdded"] ?? 0)
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              const Text(
+                                "Components deleted",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (snapshot.data?["componentsDeleted"] ?? 0)
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              const Text(
+                                "Bundles added",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (snapshot.data?["bundlesAdded"] ?? 0)
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              const Text(
+                                "Bundles deleted",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (snapshot.data?["bundlesDeleted"] ?? 0)
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                              const Text(
+                                "Achievements unlocked",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                (snapshot.data?["achievementsUnlocked"] ?? 0)
+                                    .toString(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          );
+                        }
+
+                        return const Center(
+                          child: Text("Loading stats"),
+                        );
+                      },
                     ),
-                    BoxShadow(
-                      color: const Color(0XDEDEDEDE).withOpacity(1),
-                      spreadRadius: 0,
-                      offset: const Offset(1, 0), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Icon(Icons.key,
-                      size: 30,
-                      color: _textEditingController.text.isEmpty
-                          ? Colors.black87
-                          : _isInputValid
-                              ? Colors.white
-                              : Colors.black87),
-                ),
-              ),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.black87,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
+                  ),
+                ],
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

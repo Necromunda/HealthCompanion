@@ -135,6 +135,7 @@ class _OverviewState extends State<Overview> {
     });
     _userBundles.add(newBundle);
     await FirebaseService.updateDailyData(_userBundles);
+    await FirebaseService.addToStats(UserStats.addBundle, 1);
     _scrollBundles(_lastBundleIndex);
   }
 
@@ -169,6 +170,7 @@ class _OverviewState extends State<Overview> {
       }
     }
     await FirebaseService.updateDailyData(updatedBundles);
+    await FirebaseService.addToStats(UserStats.deleteBundle, 1);
   }
 
   void _showPreviousBundle() {

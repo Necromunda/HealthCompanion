@@ -67,6 +67,7 @@ class _ComponentsState extends State<Components> {
     );
     if (component != null) {
       await FirebaseService.saveUserComponents(_currentUser.uid, component);
+      await FirebaseService.addToStats(UserStats.addComponent, 1);
       if (_searchString.isNotEmpty) {
         if (component.name!.toLowerCase().contains(_searchString)) {
           setState(() {
@@ -92,7 +93,8 @@ class _ComponentsState extends State<Components> {
         _searchResults.remove(component);
       }
     }
-    FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents);
+    await FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents);
+    await FirebaseService.addToStats(UserStats.deleteComponent, 1);
   }
 
   void _showComponentBreakdown(Component component) {

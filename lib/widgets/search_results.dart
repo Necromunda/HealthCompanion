@@ -35,7 +35,10 @@ class _SearchResultsState extends State<SearchResults> {
 
   Future<void> _addComponent(Component component) async {
     FirebaseService.saveUserComponents(
-        FirebaseAuth.instance.currentUser!.uid, component);
+      FirebaseAuth.instance.currentUser!.uid,
+      component,
+    );
+    await FirebaseService.addToStats(UserStats.addComponent, 1);
   }
 
   @override
