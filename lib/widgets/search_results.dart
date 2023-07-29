@@ -92,7 +92,7 @@ class _SearchResultsState extends State<SearchResults> {
                           ? const Icon(Icons.check)
                           : const Icon(Icons.add),
                       color: _addedComponents.contains(index)
-                          ? Theme.of(context).primaryColor
+                          ? Colors.deepPurple.shade400
                           : Colors.green,
                       disabledColor: Theme.of(context).primaryColor,
                       onPressed: _addedComponents.contains(index)

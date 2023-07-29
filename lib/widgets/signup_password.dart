@@ -7,6 +7,7 @@ import 'package:health_companion/widgets/creating_user.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
 
 import '../screens/signin_screen.dart';
+import '../util.dart';
 import 'custom_button.dart';
 
 class SignUpPassword extends StatefulWidget {
@@ -199,12 +200,16 @@ class _SignUpPasswordState extends State<SignUpPassword>
             }
           });
         },
+    style: TextStyle(
+      color: Util.isDark(context) ? Colors.white : Colors.black,
+    ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Password",
           contentPadding: EdgeInsets.zero,
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -237,27 +242,24 @@ class _SignUpPasswordState extends State<SignUpPassword>
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.key,
-                  size: 30,
-                  color: _passwordController.text.isEmpty
-                      ? Colors.black87
-                      : _isPasswordValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.key,
+                size: 30,
+              ),
             ),
           ),
           suffixIcon: IconButton(
             icon: Icon(
               _obscureText ? Icons.visibility : Icons.visibility_off,
-              color: Colors.black87,
             ),
             onPressed: () {
               setState(() {

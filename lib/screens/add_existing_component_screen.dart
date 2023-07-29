@@ -137,16 +137,17 @@ class _AddExistingComponentState extends State<AddExistingComponent> {
           color: Colors.black,
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.check,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              List<Component> selected = _returnSelectedComponents();
-              Navigator.of(context).pop(selected);
-            },
-          )
+          if (_selectedComponents.isNotEmpty)
+            IconButton(
+              icon: const Icon(
+                Icons.check,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                List<Component> selected = _returnSelectedComponents();
+                Navigator.of(context).pop(selected);
+              },
+            )
         ],
       ),
       body: Padding(

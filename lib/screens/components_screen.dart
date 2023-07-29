@@ -6,6 +6,7 @@ import 'package:health_companion/services/firebase_service.dart';
 
 import '../models/appuser_model.dart';
 import '../models/component_model.dart';
+import '../util.dart';
 import '../widgets/loading_components.dart';
 import '../widgets/no_components_found.dart';
 import 'component_breakdown_screen.dart';
@@ -125,6 +126,7 @@ class _ComponentsState extends State<Components> {
   }
 
   Widget get _searchTextField => Card(
+        clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.zero,
         child: TextField(
           onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -132,12 +134,17 @@ class _ComponentsState extends State<Components> {
           keyboardType: TextInputType.text,
           maxLength: 99,
           onChanged: (value) => _onSearchTextChanged(value),
+          style: TextStyle(
+            color: Util.isDark(context) ? Colors.white : Colors.black,
+          ),
           decoration: InputDecoration(
             counterText: "",
             hintText: "Search",
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             filled: true,
-            fillColor: const Color(0XDEDEDEDE),
+            // fillColor: const Color(0XDEDEDEDE),
+            fillColor: Theme.of(context).colorScheme.secondaryContainer,
+            // fillColor: Theme.of(context).cardColor.withOpacity(0),
             focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
@@ -164,7 +171,8 @@ class _ComponentsState extends State<Components> {
                     offset: const Offset(2, 0), // changes position of shadow
                   ),
                   BoxShadow(
-                    color: const Color(0XDEDEDEDE).withOpacity(1),
+                    // color: const Color(0XDEDEDEDE).withOpacity(1),
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     spreadRadius: 0,
                     offset: const Offset(1, 0), // changes position of shadow
                   ),
@@ -172,7 +180,7 @@ class _ComponentsState extends State<Components> {
               ),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.search, size: 30, color: Colors.black87),
+                child: Icon(Icons.search, size: 30),
               ),
             ),
           ),

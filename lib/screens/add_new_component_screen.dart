@@ -393,6 +393,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
               SizedBox(
                 width: double.infinity,
                 child: Card(
+                  clipBehavior: Clip.antiAlias,
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
@@ -481,8 +482,10 @@ class _AddNewComponentState extends State<AddNewComponent> {
                 ),
               ),
               Card(
+                clipBehavior: Clip.antiAlias,
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ExpansionTile(
+                  shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
@@ -509,8 +512,10 @@ class _AddNewComponentState extends State<AddNewComponent> {
                 ),
               ),
               Card(
+                clipBehavior: Clip.antiAlias,
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ExpansionTile(
+                  shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
                   title: const Text(
@@ -565,8 +570,10 @@ class _AddNewComponentState extends State<AddNewComponent> {
               if (_macrosSelection != null &&
                   _macrosSelection != Macros.inherit)
                 Card(
+                  clipBehavior: Clip.antiAlias,
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: ExpansionTile(
+                    shape: Border.all(color: Colors.transparent),
                     onExpansionChanged: (value) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     title: const Text(
@@ -878,12 +885,16 @@ class _AddNewComponentState extends State<AddNewComponent> {
             _title = value;
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Title",
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -915,22 +926,19 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0x00E7E0EC).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Icon(
                 Icons.short_text,
                 size: 30,
-                color: _titleController.text.isEmpty
-                    ? Colors.black87
-                    : _isTitleEmpty
-                        ? Colors.black87
-                        : Colors.white,
               ),
             ),
           ),
@@ -947,12 +955,16 @@ class _AddNewComponentState extends State<AddNewComponent> {
             _description = value;
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Description",
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -982,20 +994,19 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0x00E7E0EC).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
               child: Icon(
                 Icons.description,
                 size: 30,
-                color: _descriptionController.text.isEmpty
-                    ? Colors.black87
-                    : Colors.white,
               ),
             ),
           ),
@@ -1014,17 +1025,24 @@ class _AddNewComponentState extends State<AddNewComponent> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [FilteringTextInputFormatter.allow(_macroRegExp)],
       onChanged: (value) {
+        print(value);
         setState(() {
-          setter(double.tryParse(value.replaceAll(',', '.')));
+          if (value.isNotEmpty) {
+            setter(double.tryParse(value.replaceAll(',', '.')));
+          }
         });
       },
+      style: TextStyle(
+        color: Util.isDark(context) ? Colors.white : Colors.black,
+      ),
       decoration: InputDecoration(
         counterText: "",
         hintText: hint,
         suffixText: suffixText,
         contentPadding: const EdgeInsets.only(right: 10),
         filled: true,
-        fillColor: const Color(0XDEDEDEDE),
+        // fillColor: const Color(0XDEDEDEDE),
+        fillColor: Theme.of(context).colorScheme.secondaryContainer,
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(
             color: Colors.transparent,
@@ -1052,18 +1070,19 @@ class _AddNewComponentState extends State<AddNewComponent> {
                 offset: const Offset(2, 0), // changes position of shadow
               ),
               BoxShadow(
-                color: const Color(0XDEDEDEDE).withOpacity(1),
+                // color: const Color(0XDEDEDEDE).withOpacity(1),
+                // color: const Color(0x00E7E0EC).withOpacity(1),
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 spreadRadius: 0,
                 offset: const Offset(1, 0), // changes position of shadow
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Icon(
               Icons.bar_chart,
               size: 30,
-              color: controller.text.isEmpty ? Colors.black87 : Colors.white,
             ),
           ),
         ),

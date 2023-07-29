@@ -191,6 +191,7 @@ class _ProfileState extends State<Profile> {
                 ),
                 const SizedBox(height: 30.0),
                 Card(
+                  clipBehavior: Clip.antiAlias,
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
@@ -250,7 +251,7 @@ class _ProfileState extends State<Profile> {
                     onPressed: _logout,
                     child: const Text(
                       "Log out",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 22),
                     ),
                   ),
                 )

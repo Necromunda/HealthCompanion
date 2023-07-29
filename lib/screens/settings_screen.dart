@@ -16,6 +16,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         children: [
           Card(
+            clipBehavior: Clip.antiAlias,
             margin: EdgeInsets.zero,
             child: Column(
               children: [

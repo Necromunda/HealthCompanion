@@ -223,8 +223,10 @@ class _OverviewState extends State<Overview> {
       child: Column(
         children: [
           Card(
+            clipBehavior: Clip.antiAlias,
             elevation: 3,
             child: ExpansionTile(
+              shape: Border.all(color: Colors.transparent),
               title: const Text(
                 "Add component +",
                 style: TextStyle(fontSize: 22),

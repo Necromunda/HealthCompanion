@@ -120,7 +120,8 @@ class _SignInState extends State<SignIn> {
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
               // return const PageContainer();
-              Future(() => Navigator.of(context).popUntil(ModalRoute.withName('/')));
+              Future(() =>
+                  Navigator.of(context).popUntil(ModalRoute.withName('/')));
             }
             return const LoadingScreen(message: "Logging in");
           },
@@ -186,17 +187,21 @@ class _SignInState extends State<SignIn> {
         maxLength: 99,
         onChanged: (value) {
           setState(() {
-            bool isTldValid = value.split(".").last.length >= 2;
+            bool isTLDValid = value.split(".").last.length >= 2;
             _isEmailValid =
-                (EmailValidator.validate(value) && isTldValid) ? true : false;
+                (EmailValidator.validate(value) && isTLDValid) ? true : false;
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Email",
           contentPadding: EdgeInsets.zero,
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -229,21 +234,19 @@ class _SignInState extends State<SignIn> {
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
-                  offset: const Offset(1, 0), // changes position of shadow
+                  offset: const Offset(1, 0.5), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.email,
-                  size: 30,
-                  color: _emailController.text.isEmpty
-                      ? Colors.black87
-                      : _isEmailValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.email,
+                size: 30,
+              ),
             ),
           ),
           suffixIcon: const SizedBox(),
@@ -261,12 +264,16 @@ class _SignInState extends State<SignIn> {
             _isPasswordValid = _passwordRegExp.hasMatch(value);
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Password",
           contentPadding: EdgeInsets.zero,
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -299,27 +306,25 @@ class _SignInState extends State<SignIn> {
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
-                  offset: const Offset(1, 0), // changes position of shadow
+                  offset: const Offset(1, 0.5), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.key,
-                  size: 30,
-                  color: _passwordController.text.isEmpty
-                      ? Colors.black87
-                      : _isPasswordValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.key,
+                size: 30,
+              ),
             ),
           ),
           suffixIcon: IconButton(
             icon: Icon(
               _obscureText ? Icons.visibility : Icons.visibility_off,
-              color: Colors.black87,
+              // color: Colors.black87,
             ),
             onPressed: () {
               setState(() {
@@ -462,21 +467,27 @@ class _SignInState extends State<SignIn> {
                       borderRadius: BorderRadius.circular(1.0),
                     ),
                   ),
-                  child: const Text("Log in"),
+                  child: const Text(
+                    "Log in",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               TextButton(
                 onPressed: _forgotPasswordButtonHandler,
                 child: const Text(
                   "Forgot password?",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               TextButton(
                 onPressed: _createAccountButtonHandler,
                 child: const Text(
                   "Create account",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],

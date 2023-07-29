@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'models/component_model.dart';
 
 class Util {
+  static bool isDark(context) => Theme.of(context).brightness == Brightness.dark;
+
   static Future<List<Component>?> createComponents(String food) async {
     final data = await FineliService.getFoodItem(food);
-    return data?.map((element) => FineliModel.fromJson(element).toComponent()).toList();
+    return data
+        ?.map((element) => FineliModel.fromJson(element).toComponent())
+        .toList();
   }
 
   static bool isNextDay({required DateTime now, required DateTime compareTo}) {
@@ -27,28 +31,29 @@ class Util {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-          title: title == null
-              ? null
-              : Text(
-                  title,
-                  // textAlign: TextAlign.center,
-                ),
-          content: message == null
-              ? null
-              : Text(
-                  message,
-                  // textAlign: TextAlign.center,
-                ),
-          contentPadding: const EdgeInsets.only(top: 20, left: 24, right: 24, bottom: 0),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Ok"),
-            ),
-          ],
-        ),
+        title: title == null
+            ? null
+            : Text(
+                title,
+                // textAlign: TextAlign.center,
+              ),
+        content: message == null
+            ? null
+            : Text(
+                message,
+                // textAlign: TextAlign.center,
+              ),
+        contentPadding:
+            const EdgeInsets.only(top: 20, left: 24, right: 24, bottom: 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Ok"),
+          ),
+        ],
+      ),
     );
   }
 }

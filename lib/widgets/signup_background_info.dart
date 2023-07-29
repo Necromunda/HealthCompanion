@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
 import 'package:intl/intl.dart';
 
+import '../util.dart';
 import 'custom_button.dart';
 
 class SignUpBackgroundInfo extends StatefulWidget {
@@ -154,12 +155,16 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
             }
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Date of birth",
           contentPadding: EdgeInsets.zero,
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -192,21 +197,19 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.calendar_month,
-                  size: 30,
-                  color: _dateOfBirthController.text.isEmpty
-                      ? Colors.black87
-                      : _isDateOfBirthValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.calendar_month,
+                size: 30,
+              ),
             ),
           ),
         ),
@@ -225,13 +228,17 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
             }
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Height",
           suffixText: "cm",
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -264,24 +271,21 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.height,
-                  size: 30,
-                  color: _heightController.text.isEmpty
-                      ? Colors.black87
-                      : _isHeightValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.height,
+                size: 30,
+              ),
             ),
           ),
-          // suffixIcon: Padding(padding: EdgeInsets.symmetric(horizontal: 10),),
         ),
       );
 
@@ -299,13 +303,17 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
             }
           });
         },
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
           hintText: "Weight",
           suffixText: "kg",
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
-          fillColor: const Color(0XDEDEDEDE),
+          // fillColor: const Color(0XDEDEDEDE),
+          fillColor: Theme.of(context).colorScheme.secondaryContainer,
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(
               color: Colors.transparent,
@@ -338,21 +346,19 @@ class _SignUpBackgroundInfoState extends State<SignUpBackgroundInfo>
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  color: const Color(0XDEDEDEDE).withOpacity(1),
+                  // color: const Color(0XDEDEDEDE).withOpacity(1),
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0), // changes position of shadow
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Icon(Icons.scale,
-                  size: 30,
-                  color: _weightController.text.isEmpty
-                      ? Colors.black87
-                      : _isWeightValid
-                          ? Colors.white
-                          : Colors.black87),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Icon(
+                Icons.scale,
+                size: 30,
+              ),
             ),
           ),
           // suffixIcon: Padding(padding: EdgeInsets.symmetric(horizontal: 10),),

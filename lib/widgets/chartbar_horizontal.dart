@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../util.dart';
+
 class ChartBarHorizontal extends StatelessWidget {
   final String label;
   final double value;
@@ -58,7 +60,7 @@ class ChartBarHorizontal extends StatelessWidget {
                   child: SizedBox(
                     height: 18,
                     child: FittedBox(
-                      child: Text("${value.toStringAsFixed(0)} $label"),
+                      child: Text("${value.toStringAsFixed(0)} $label", style: TextStyle(color: Colors.black),),
                     ),
                   ),
                 ),

@@ -8,6 +8,32 @@ import 'package:flutter/material.dart';
 
 import 'model_theme.dart';
 
+ThemeData get lightTheme => ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Quicksand',
+      brightness: Brightness.dark,
+      colorSchemeSeed: Colors.deepPurple,
+      dividerColor: Colors.white,
+      inputDecorationTheme: const InputDecorationTheme(
+        prefixIconColor: Colors.white,
+        hintStyle: TextStyle(color: Colors.white),
+      ),
+    );
+
+ThemeData get darkTheme => ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Quicksand',
+      brightness: Brightness.light,
+      colorSchemeSeed: Colors.deepPurple,
+      dividerColor: Colors.black,
+      // iconTheme: IconThemeData(color: Colors.white),
+      inputDecorationTheme: const InputDecorationTheme(
+        prefixIconColor: Colors.black,
+        hintStyle: TextStyle(color: Colors.black),
+        // prefixStyle: TextStyle(color: Colors.black)
+      ),
+    );
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -26,23 +52,38 @@ class MyApp extends StatelessWidget {
       child: Consumer<ModelTheme>(
         builder: (context, ModelTheme themeNotifier, child) {
           return MaterialApp(
+            // theme: themeNotifier.isDark ? lightTheme : darkTheme,
             theme: themeNotifier.isDark
                 ? ThemeData(
                     useMaterial3: true,
+                    fontFamily: 'Quicksand',
                     brightness: Brightness.dark,
-                    primarySwatch: Colors.deepPurple,
-                    primaryColor: Colors.deepPurple.shade400,
+                    colorSchemeSeed: Colors.deepPurple,
+                    dividerColor: Colors.white,
+                    inputDecorationTheme: const InputDecorationTheme(
+                      prefixIconColor: Colors.white,
+                      hintStyle: TextStyle(color: Colors.white),
+                    ),
+              // scaffoldBackgroundColor: Theme.of(context).colorScheme.primary
                   )
                 : ThemeData(
                     useMaterial3: true,
+                    fontFamily: 'Quicksand',
                     brightness: Brightness.light,
-                    primarySwatch: Colors.deepPurple,
-                    primaryColor: Colors.deepPurple.shade400,
-                  ),
+                    colorSchemeSeed: Colors.deepPurple,
+                    // colorScheme: Colors.deepPurple,
+                    dividerColor: Colors.black,
+                    // iconTheme: IconThemeData(color: Colors.white),
+                    inputDecorationTheme: const InputDecorationTheme(
+                      prefixIconColor: Colors.black,
+                      hintStyle: TextStyle(color: Colors.black),
+                      // prefixStyle: TextStyle(color: Colors.black)
+                    ),
+                scaffoldBackgroundColor: Colors.deepPurple.shade50
+            ),
             debugShowCheckedModeBanner: false,
             home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
-              // stream: FirebaseAuth.instance.idTokenChanges(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   print('User is logged out!');
