@@ -20,6 +20,8 @@ class SearchResults extends StatefulWidget {
 class _SearchResultsState extends State<SearchResults> {
   late final String _search = widget.search;
   List<int> _addedComponents = [];
+  bool _addingComponent = false;
+  int _addingComponentIndex = -1;
 
   void _showComponentBreakdown(Component component) {
     Navigator.of(context).push(
@@ -33,12 +35,25 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
-  Future<void> _addComponent(Component component) async {
-    FirebaseService.saveUserComponents(
+  Future<void> _addComponent(int index, Component component) async {
+    setState(() {
+      _addingComponentIndex = index;
+      _addingComponent = true;
+    });
+    bool isAdded = await FirebaseService.saveUserComponents(
       FirebaseAuth.instance.currentUser!.uid,
       component,
     );
-    await FirebaseService.addToStats(UserStats.addComponent, 1);
+    if (isAdded) {
+      await FirebaseService.addToStats(UserStats.addComponent, 1);
+      setState(() {
+        _addedComponents.add(index);
+      });
+    }
+    setState(() {
+      _addingComponentIndex = -1;
+      _addingComponent = false;
+    });
   }
 
   @override
@@ -93,19 +108,17 @@ class _SearchResultsState extends State<SearchResults> {
                     leading: IconButton(
                       icon: _addedComponents.contains(index)
                           ? const Icon(Icons.check)
-                          : const Icon(Icons.add),
+                          : _addingComponent && _addingComponentIndex == index
+                              ? const CircularProgressIndicator()
+                              : const Icon(Icons.add),
                       color: _addedComponents.contains(index)
                           ? Colors.deepPurple.shade400
                           : Colors.green,
                       disabledColor: Theme.of(context).primaryColor,
-                      onPressed: _addedComponents.contains(index)
-                          ? () {}
-                          : () => _addComponent(results[index]).then((value) {
-                                setState(() {
-                                  _addedComponents.add(index);
-                                });
-                                // print(_boolList);
-                              }),
+                      onPressed: !_addedComponents.contains(index) &&
+                              _addingComponentIndex != index
+                          ? () => _addComponent(index, results[index])
+                          : () {},
                     ),
                     trailing: const Icon(Icons.launch),
                     onTap: () => _showComponentBreakdown(results[index]),

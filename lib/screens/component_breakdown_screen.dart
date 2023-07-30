@@ -77,7 +77,6 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          color: Colors.black,
         ),
       ),
       body: Padding(

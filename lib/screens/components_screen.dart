@@ -10,6 +10,7 @@ import '../util.dart';
 import '../widgets/loading_components.dart';
 import '../widgets/no_components_found.dart';
 import 'component_breakdown_screen.dart';
+import 'edit_component_screen.dart';
 
 class Components extends StatefulWidget {
   const Components({Key? key}) : super(key: key);
@@ -93,7 +94,8 @@ class _ComponentsState extends State<Components> {
         _searchResults.remove(component);
       }
     }
-    await FirebaseService.deleteUserComponent(_currentUser.uid, _userComponents);
+    await FirebaseService.deleteUserComponent(
+        _currentUser.uid, _userComponents);
     await FirebaseService.addToStats(UserStats.deleteComponent, 1);
   }
 
@@ -118,7 +120,7 @@ class _ComponentsState extends State<Components> {
     }
 
     _userComponents.forEach((component) {
-      if (component.name!.toLowerCase().contains(text)) {
+      if (component.name!.toLowerCase().contains(text.toLowerCase())) {
         _searchResults.add(component);
       }
     });
@@ -127,67 +129,16 @@ class _ComponentsState extends State<Components> {
     setState(() {});
   }
 
-  Widget get _searchTextField => Card(
-        clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.zero,
-        child: TextField(
-          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-          controller: _searchController,
-          keyboardType: TextInputType.text,
-          maxLength: 99,
-          onChanged: (value) => _onSearchTextChanged(value),
-          style: TextStyle(
-            color: Util.isDark(context) ? Colors.white : Colors.black,
-          ),
-          decoration: InputDecoration(
-            counterText: "",
-            hintText: "Search",
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-            filled: true,
-            // fillColor: const Color(0XDEDEDEDE),
-            fillColor: Theme.of(context).colorScheme.secondaryContainer,
-            // fillColor: Theme.of(context).cardColor.withOpacity(0),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.transparent,
-                width: 2.0,
-              ),
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.transparent,
-                width: 2.0,
-              ),
-            ),
-            prefixIcon: Container(
-              margin: const EdgeInsets.only(right: 15.0),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  bottomLeft: Radius.circular(5.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(1),
-                    spreadRadius: -1,
-                    offset: const Offset(2, 0), // changes position of shadow
-                  ),
-                  BoxShadow(
-                    // color: const Color(0XDEDEDEDE).withOpacity(1),
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    spreadRadius: 0,
-                    offset: const Offset(1, 0), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Icon(Icons.search, size: 30),
-              ),
-            ),
-          ),
-        ),
-      );
+  void _editComponent(Component component) async {
+    Component? updatedComponent = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditComponent(component: component),
+      ),
+    );
+    if (updatedComponent != null) {
+      await FirebaseService.updateUserComponents(updatedComponent);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,16 +217,11 @@ class _ComponentsState extends State<Components> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          // onPressed: () => _deleteComponent(
-                                          //     _searchResults, index),
-                                          onPressed: () {
-                                            _deleteComponent(
-                                              _searchResults[index],
-                                            );
-                                          },
+                                          onPressed: () =>
+                                              _editComponent(components[index]),
                                           icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.redAccent,
+                                            Icons.edit,
+                                            // color: Colors.white,
                                             size: 32.0,
                                           ),
                                         ),
@@ -285,6 +231,8 @@ class _ComponentsState extends State<Components> {
                                     onTap: () => _showComponentBreakdown(
                                       _searchResults[index],
                                     ),
+                                    onLongPress: () =>
+                                        _deleteComponent(_searchResults[index]),
                                   ),
                                 );
                               },
@@ -296,6 +244,7 @@ class _ComponentsState extends State<Components> {
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 return Card(
+                                  clipBehavior: Clip.antiAlias,
                                   margin: const EdgeInsets.only(bottom: 4),
                                   child: ListTile(
                                     title: Text(
@@ -310,14 +259,12 @@ class _ComponentsState extends State<Components> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         IconButton(
-                                          // onPressed: () => _deleteComponent(
-                                          //     components, index),
-                                          onPressed: () => _deleteComponent(
-                                              components[index]),
+                                          onPressed: () =>
+                                              _editComponent(components[index]),
                                           icon: const Icon(
-                                            Icons.delete,
-                                            color: Colors.redAccent,
-                                            size: 32.0,
+                                            Icons.edit,
+                                            // color: Colors.white,
+                                            size: 30,
                                           ),
                                         ),
                                         const Icon(Icons.keyboard_arrow_right)
@@ -325,58 +272,15 @@ class _ComponentsState extends State<Components> {
                                     ),
                                     onTap: () => _showComponentBreakdown(
                                         components[index]),
+                                    onLongPress: () =>
+                                        _deleteComponent(components[index]),
                                   ),
                                 );
                               },
                             );
                     }
-                    // return Column(
-                    //   children: [
-                    //     Expanded(
-                    //       child: ListView.builder(
-                    //         padding: EdgeInsets.zero,
-                    //         controller: _listScrollController,
-                    //         itemCount: components.length,
-                    //         shrinkWrap: true,
-                    //         itemBuilder: (context, index) {
-                    //           return Card(
-                    //             margin: const EdgeInsets.only(bottom: 4),
-                    //             child: ListTile(
-                    //               title: Text(
-                    //                 components[index].name!,
-                    //                 style: const TextStyle(fontSize: 18),
-                    //               ),
-                    //               subtitle: Text(
-                    //                 components[index].description!,
-                    //                 style: const TextStyle(fontSize: 16),
-                    //               ),
-                    //               trailing: Row(
-                    //                 mainAxisSize: MainAxisSize.min,
-                    //                 children: [
-                    //                   IconButton(
-                    //                     onPressed: () =>
-                    //                         _deleteComponent(components, index),
-                    //                     icon: const Icon(
-                    //                       Icons.delete,
-                    //                       color: Colors.red,
-                    //                       size: 32.0,
-                    //                     ),
-                    //                   ),
-                    //                   const Icon(Icons.launch)
-                    //                 ],
-                    //               ),
-                    //               onTap: () => _showComponentBreakdown(
-                    //                   components[index]),
-                    //             ),
-                    //           );
-                    //         },
-                    //       ),
-                    //     ),
-                    //   ],
-                    // );
                   }
                 }
-                // return const Expanded(child: LoadingComponents());
                 return const LoadingComponents();
               },
             ),
@@ -385,4 +289,66 @@ class _ComponentsState extends State<Components> {
       ),
     );
   }
+
+  Widget get _searchTextField => Card(
+        clipBehavior: Clip.antiAlias,
+        margin: EdgeInsets.zero,
+        child: TextField(
+          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+          controller: _searchController,
+          keyboardType: TextInputType.text,
+          maxLength: 99,
+          onChanged: (value) => _onSearchTextChanged(value),
+          style: TextStyle(
+            color: Util.isDark(context) ? Colors.white : Colors.black,
+          ),
+          decoration: InputDecoration(
+            counterText: "",
+            hintText: "Search",
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            filled: true,
+            // fillColor: const Color(0XDEDEDEDE),
+            fillColor: Theme.of(context).colorScheme.secondaryContainer,
+            // fillColor: Theme.of(context).cardColor.withOpacity(0),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 2.0,
+              ),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+                width: 2.0,
+              ),
+            ),
+            prefixIcon: Container(
+              margin: const EdgeInsets.only(right: 15.0),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  bottomLeft: Radius.circular(5.0),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(1),
+                    spreadRadius: -1,
+                    offset: const Offset(2, 0), // changes position of shadow
+                  ),
+                  BoxShadow(
+                    // color: const Color(0XDEDEDEDE).withOpacity(1),
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    spreadRadius: 0,
+                    offset: const Offset(1, 0), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(Icons.search, size: 30),
+              ),
+            ),
+          ),
+        ),
+      );
 }

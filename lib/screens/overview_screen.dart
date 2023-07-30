@@ -56,16 +56,17 @@ class _OverviewState extends State<Overview> {
     _userBundles = [];
     _currentBundle = null;
     super.initState();
-    // WidgetsBinding.instance
-    //     .addPostFrameCallback((_) {
-    //       setState(() {
-    //         print("here");
-    //         // print(_userBundles);
-    //         // print(_currentBundleIndex);
-    //         if (_userBundles.isNotEmpty) {
-    //           _currentBundle = _userBundles[_currentBundleIndex];
-    //         }
-    //       });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+      // int delay = 1;
+      // if (!_bundlePageViewController.hasClients) {
+      //   Future.delayed(Duration(milliseconds: 1), () {
+      //     if (!_bundlePageViewController.hasClients) {
+      //       setState(() {});
+      //     } else {
+      //       _scrollBundles(2);
+      //     }
+      //   });
+      // }
     // });
   }
 
@@ -299,11 +300,7 @@ class _OverviewState extends State<Overview> {
                           });
                         },
                         itemBuilder: (context, pageviewIndex) {
-                          // Bundle bundle = Bundle.fromJson(
-                          //     snapshot.data["data"][pageviewIndex]);
                           Bundle bundle = _userBundles[pageviewIndex];
-                          // DateTime created = DateTime.fromMillisecondsSinceEpoch(bundle.creationDate!);
-                          // DateTime edited = DateTime.fromMillisecondsSinceEpoch(bundle.lastEdited!);
 
                           return Column(
                             mainAxisSize: MainAxisSize.max,
@@ -316,12 +313,10 @@ class _OverviewState extends State<Overview> {
                                 ),
                               const SizedBox(height: 5),
                               Text(
-                                // "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(created)}",
                                 "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(bundle.creationDate!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               Text(
-                                // "Last edited: ${DateFormat('d.M H:mm').format(edited)}",
                                 "Last edited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
@@ -350,41 +345,52 @@ class _OverviewState extends State<Overview> {
                                     itemCount: bundle.components!.length,
                                     itemBuilder: (context, listviewIndex) {
                                       // _scrollBundles(_lastBundleIndex);
-                                      return ListTile(
-                                        title: Text(
-                                          bundle
-                                              .components![listviewIndex].name!,
-                                          style: const TextStyle(
-                                            fontSize: 18,
+                                      return Card(
+                                        clipBehavior: Clip.antiAlias,
+                                        child: ListTile(
+                                          title: Text(
+                                            bundle.components![listviewIndex]
+                                                .name!,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            bundle.components?[listviewIndex]
+                                                    .description ??
+                                                "No description",
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                          ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              // IconButton(
+                                              //   onPressed: () =>
+                                              //       _deleteComponentFromBundle(
+                                              //     _userBundles,
+                                              //     pageviewIndex,
+                                              //     listviewIndex,
+                                              //   ),
+                                              //   icon: const Icon(
+                                              //     Icons.delete,
+                                              //     color: Colors.red,
+                                              //     size: 32.0,
+                                              //   ),
+                                              // ),
+                                              Icon(Icons.keyboard_arrow_right)
+                                            ],
+                                          ),
+                                          onTap: () => _showComponentBreakdown(
+                                            bundle.components![listviewIndex],
+                                          ),
+                                          onLongPress: () =>
+                                              _deleteComponentFromBundle(
+                                            _userBundles,
+                                            pageviewIndex,
+                                            listviewIndex,
                                           ),
                                         ),
-                                        subtitle: Text(
-                                          bundle.components?[listviewIndex]
-                                                  .description ??
-                                              "No description",
-                                          style: const TextStyle(fontSize: 16),
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              onPressed: () =>
-                                                  _deleteComponentFromBundle(
-                                                      _userBundles,
-                                                      pageviewIndex,
-                                                      listviewIndex),
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                                size: 32.0,
-                                              ),
-                                            ),
-                                            const Icon(
-                                                Icons.keyboard_arrow_right)
-                                          ],
-                                        ),
-                                        onTap: () => _showComponentBreakdown(
-                                            bundle.components![listviewIndex]),
                                       );
                                     },
                                   ),

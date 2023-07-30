@@ -127,7 +127,6 @@ class FirebaseService {
       case UserStats.deleteComponent:
         await userStatsDocRef.update(
             {"componentsDeleted": (json["componentsDeleted"] ?? 0) + amount});
-
         break;
     }
   }
@@ -144,6 +143,29 @@ class FirebaseService {
         List<Map<String, dynamic>> json =
             userComponents.map((item) => item.toJson()).toList();
         json.add(component.toJson());
+        await userComponentsDocRef.update({"components": json});
+        return true;
+      }
+    } catch (e, stackTrace) {
+      print("Error saving user components: $e, $stackTrace");
+      return false;
+    }
+    return false;
+  }
+
+  static Future<bool> updateUserComponents(Component component) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userComponentsDocRef =
+      db.collection("user_components").doc(user.uid);
+
+      List<Component>? userComponents = await getUserComponents(user.uid);
+      if (userComponents != null) {
+        int index = userComponents.indexWhere((element) => element == component);
+        List<Map<String, dynamic>> json =
+        userComponents.map((item) => item.toJson()).toList();
+        json[index] = component.toJson();
         await userComponentsDocRef.update({"components": json});
         return true;
       }

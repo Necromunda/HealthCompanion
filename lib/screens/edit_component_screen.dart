@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
-import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
 import '../util.dart';
@@ -10,27 +9,27 @@ import 'component_breakdown_screen.dart';
 
 enum Macros { individual, inherit, both }
 
-class AddNewComponent extends StatefulWidget {
-  const AddNewComponent({Key? key}) : super(key: key);
+class EditComponent extends StatefulWidget {
+  final Component component;
+
+  const EditComponent({Key? key, required this.component}) : super(key: key);
 
   @override
-  State<AddNewComponent> createState() => _AddNewComponentState();
+  State<EditComponent> createState() => _EditComponentState();
 }
 
-class _AddNewComponentState extends State<AddNewComponent> {
-  static final RegExp _noLeadingZeroRegexp = RegExp(r'^0[0-9]+');
+class _EditComponentState extends State<EditComponent> {
+  final RegExp _macroRegExp = RegExp(r'^[0-9]\d*((\.|,)\d?)?');
+
+  // final RegExp _macroRegExp = RegExp(r"^[0-9][1-9]*((\.|,)\d?)?");
   static final RegExp _noOnlySpacesRegexp = RegExp(r'^\s*$');
-  static const List<String> _categories = [
-    "Component",
-    "Breakfast",
-    "Lunch",
-    "Dinner",
-    "Snack"
-  ];
   static const double _kJMultiplier = 4.1855;
-  Macros? _macrosSelection;
-  String? _title, _description, _category, _macrosSelectionText;
-  late List<Component>? _subComponents, _selectedComponents;
+  late List<String> _categories;
+
+  // late Component _component;
+  late Macros _macrosSelection;
+  late String _title, _description, _category, _macrosSelectionText;
+  late List<Component> _subComponents;
   late final ScrollController _listScrollController;
   late final TextEditingController _titleController,
       _descriptionController,
@@ -45,8 +44,8 @@ class _AddNewComponentState extends State<AddNewComponent> {
       _fiberController,
       _sugarController,
       _fatController;
-  double? _salt,
-      _energy,
+  late double? _salt,
+      _energyKj,
       _energyKcal,
       _protein,
       _carbohydrate,
@@ -58,16 +57,9 @@ class _AddNewComponentState extends State<AddNewComponent> {
       _sugar,
       _fat;
   late bool _isTitleEmpty;
-  late final RegExp _macroRegExp;
 
   @override
   void initState() {
-    _isTitleEmpty = true;
-    _category = "Component";
-    _macrosSelection = Macros.individual;
-    _macrosSelectionText = "Individual";
-    _subComponents = <Component>[];
-    _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
     _titleController = TextEditingController();
     _descriptionController = TextEditingController();
@@ -82,10 +74,117 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _fiberController = TextEditingController();
     _sugarController = TextEditingController();
     _fatController = TextEditingController();
-    _macroRegExp = RegExp(r"^[0-9]\d*((\.|,)\d?)?");
-    // _macroRegExp = RegExp(r"^[0-9][1-9]*((\.|,)\d?)?");
 
+    // _component = Component.fromJson(widget.component.toJson());
+    _title = widget.component.name!;
+    _isTitleEmpty = isTitleEmpty;
+    _description = widget.component.description!;
+    _category = widget.component.category!;
+    _macrosSelectionText = widget.component.macroSelection!;
+    _macrosSelection = _getMacrosSelectionFromString(_macrosSelectionText);
+    _subComponents = List.from(widget.component.subComponents!);
+    // _subComponents = [];
+    _categories = ["Component", "Breakfast", "Lunch", "Dinner", "Snack"];
+    if (!_categories.contains(_category)) {
+      _categories.insert(0, _category);
+    }
+    _initMacros(_macrosSelection);
+    _initControllers();
     super.initState();
+  }
+
+  bool get isTitleEmpty =>
+      (_title.isEmpty || _noOnlySpacesRegexp.hasMatch(_title)) ? true : false;
+
+  void _initControllers() {
+    _titleController.text = _title;
+    _descriptionController.text = _description;
+    _energyKcalController.text = _energyKcal!.toStringAsFixed(1);
+    _proteinController.text = _protein!.toStringAsFixed(1);
+    _carbohydrateController.text = _carbohydrate!.toStringAsFixed(1);
+    _saltController.text = _salt!.toStringAsFixed(1);
+    _sugarController.text = _sugar!.toStringAsFixed(1);
+    _fatController.text = _fat!.toStringAsFixed(1);
+    _saturatedFatController.text = _saturatedFat!.toStringAsFixed(1);
+    _fiberController.text = _fiber!.toStringAsFixed(1);
+    _organicAcidsController.text = _organicAcids!.toStringAsFixed(1);
+    _alcoholController.text = _alcohol!.toStringAsFixed(1);
+    _sugarAlcoholController.text = _sugarAlcohol!.toStringAsFixed(1);
+  }
+
+  void _initMacros(Macros macrosSelection) {
+    switch (macrosSelection) {
+      case Macros.individual:
+        _energyKj = widget.component.energy!;
+        _energyKcal = widget.component.energyKcal!;
+        _salt = widget.component.salt!;
+        _protein = widget.component.protein!;
+        _carbohydrate = widget.component.carbohydrate!;
+        _alcohol = widget.component.alcohol!;
+        _organicAcids = widget.component.organicAcids!;
+        _sugarAlcohol = widget.component.sugarAlcohol!;
+        _saturatedFat = widget.component.saturatedFat!;
+        _fiber = widget.component.fiber!;
+        _sugar = widget.component.sugar!;
+        _fat = widget.component.fat!;
+        break;
+      case Macros.inherit:
+        _energyKj = 0.0;
+        _energyKcal = 0.0;
+        _salt = 0.0;
+        _protein = 0.0;
+        _carbohydrate = 0.0;
+        _alcohol = 0.0;
+        _organicAcids = 0.0;
+        _sugarAlcohol = 0.0;
+        _saturatedFat = 0.0;
+        _fiber = 0.0;
+        _sugar = 0.0;
+        _fat = 0.0;
+        break;
+      case Macros.both:
+        _energyKj = widget.component.energy! - _ingredientsTotalEnergy;
+        _energyKj = _energyKj!.isNegative ? 0.0 : _energyKj;
+
+        _energyKcal =
+            widget.component.energyKcal! - _ingredientsTotalEnergyKcal;
+        _energyKcal = _energyKcal!.isNegative ? 0.0 : _energyKcal;
+
+        _salt = widget.component.salt! - _ingredientsTotalSalt;
+        _salt = _salt!.isNegative ? 0.0 : _salt;
+
+        _protein = widget.component.protein! - _ingredientsTotalProtein;
+        _protein = _protein!.isNegative ? 0.0 : _protein;
+
+        _carbohydrate =
+            widget.component.carbohydrate! - _ingredientsTotalCarbohydrate;
+        _carbohydrate = _carbohydrate!.isNegative ? 0.0 : _carbohydrate;
+
+        _alcohol = widget.component.alcohol! - _ingredientsTotalAlcohol;
+        _alcohol = _alcohol!.isNegative ? 0.0 : _alcohol;
+
+        _organicAcids =
+            widget.component.organicAcids! - _ingredientsTotalOrganicAcids;
+        _organicAcids = _organicAcids!.isNegative ? 0.0 : _organicAcids;
+
+        _sugarAlcohol =
+            widget.component.sugarAlcohol! - _ingredientsTotalSugarAlcohol;
+        _sugarAlcohol = _sugarAlcohol!.isNegative ? 0.0 : _sugarAlcohol;
+
+        _saturatedFat =
+            widget.component.saturatedFat! - _ingredientsTotalSaturatedFat;
+        _saturatedFat = _saturatedFat!.isNegative ? 0.0 : _saturatedFat;
+
+        _fiber = widget.component.fiber! - _ingredientsTotalFiber;
+        _fiber = _fiber!.isNegative ? 0.0 : _fiber;
+
+        _sugar = widget.component.sugar! - _ingredientsTotalSugar;
+        _sugar = _sugar!.isNegative ? 0.0 : _sugar;
+
+        _fat = widget.component.fat! - _ingredientsTotalFat;
+        _fat = _fat!.isNegative ? 0.0 : _fat;
+        break;
+    }
   }
 
   @override
@@ -114,6 +213,16 @@ class _AddNewComponentState extends State<AddNewComponent> {
     super.dispose();
   }
 
+  Macros _getMacrosSelectionFromString(String macrosSelection) {
+    if (macrosSelection == 'ingredients included') {
+      return Macros.inherit;
+    } else if (macrosSelection == 'ingredients included + individual') {
+      return Macros.both;
+    } else {
+      return Macros.individual;
+    }
+  }
+
   void _categoryDropdownHandler(String category) {
     setState(() {
       _category = category;
@@ -125,44 +234,32 @@ class _AddNewComponentState extends State<AddNewComponent> {
       switch (macrosSelection) {
         case Macros.individual:
           _macrosSelection = Macros.individual;
-          _macrosSelectionText = "ingredients excluded";
+          _macrosSelectionText = 'ingredients excluded';
           break;
         case Macros.inherit:
           _macrosSelection = Macros.inherit;
-          _macrosSelectionText = "ingredients included";
+          _macrosSelectionText = 'ingredients included';
           break;
         case Macros.both:
           _macrosSelection = Macros.both;
-          _macrosSelectionText = "ingredients included + individual";
+          _macrosSelectionText = 'ingredients included + individual';
           break;
       }
     });
   }
 
   Component _createComponent() {
-    _energyKcal ??= 0.0;
-    _energy =
-        double.tryParse((_energyKcal! * _kJMultiplier).toStringAsFixed(0)) ??
-            0.0;
-    _salt ??= 0.0;
-    _protein ??= 0.0;
-    _carbohydrate ??= 0.0;
-    _alcohol ??= 0.0;
-    _organicAcids ??= 0.0;
-    _sugarAlcohol ??= 0.0;
-    _saturatedFat ??= 0.0;
-    _fiber ??= 0.0;
-    _sugar ??= 0.0;
-    _fat ??= 0.0;
+    _energyKj =
+        double.tryParse((_energyKcal! * _kJMultiplier).toStringAsFixed(0));
     Map<String, dynamic> data = {
       "name": _title,
       "description": _description,
       "category": _category,
       "macroSelection": _macrosSelectionText,
-      "creationDate": Timestamp.now(),
-      "subComponents": _subComponents?.map((e) => e.toJson()).toList(),
+      "creationDate": widget.component.creationDate,
+      "subComponents": _subComponents.map((e) => e.toJson()).toList(),
       "salt": _salt,
-      "energy": _energy,
+      "energy": _energyKj,
       "energyKcal": _energyKcal,
       "protein": _protein,
       "carbohydrate": _carbohydrate,
@@ -175,69 +272,53 @@ class _AddNewComponentState extends State<AddNewComponent> {
       "fat": _fat
     };
     if (_macrosSelection != Macros.individual) {
-      double totalEnergyKj = _ingredientsTotalEnergy ?? 0.0;
-      double totalEnergyKcal = _ingredientsTotalEnergyKcal ?? 0.0;
-      double totalSalt = _ingredientsTotalSalt ?? 0.0;
-      double totalProtein = _ingredientsTotalProtein ?? 0.0;
-      double totalCarbohydrate = _ingredientsTotalCarbohydrate ?? 0.0;
-      double totalAlcohol = _ingredientsTotalAlcohol ?? 0.0;
-      double totalOrganicAcids = _ingredientsTotalOrganicAcids ?? 0.0;
-      double totalSugarAlcohol = _ingredientsTotalSugarAlcohol ?? 0.0;
-      double totalSaturatedFat = _ingredientsTotalSaturatedFat ?? 0.0;
-      double totalFiber = _ingredientsTotalFiber ?? 0.0;
-      double totalSugar = _ingredientsTotalSugar ?? 0.0;
-      double totalFat = _ingredientsTotalFat ?? 0.0;
-
-      if (_macrosSelection == Macros.inherit) {
-        data["energy"] = totalEnergyKj;
-        data["energyKcal"] = totalEnergyKcal;
-        data["salt"] = totalSalt;
-        data["protein"] = totalProtein;
-        data["carbohydrate"] = totalCarbohydrate;
-        data["alcohol"] = totalAlcohol;
-        data["organicAcids"] = totalOrganicAcids;
-        data["sugarAlcohol"] = totalSugarAlcohol;
-        data["saturatedFat"] = totalSaturatedFat;
-        data["fiber"] = totalFiber;
-        data["sugar"] = totalSugar;
-        data["fat"] = totalFat;
-      } else {
-        data["energy"] = _energy! + totalEnergyKj;
-        data["energyKcal"] = _energyKcal! + totalEnergyKcal;
-        data["salt"] = _salt! + totalSalt;
-        data["protein"] = _protein! + totalProtein;
-        data["carbohydrate"] = _carbohydrate! + totalCarbohydrate;
-        data["alcohol"] = _alcohol! + totalAlcohol;
-        data["organicAcids"] = _organicAcids! + totalOrganicAcids;
-        data["sugarAlcohol"] = _sugarAlcohol! + totalSugarAlcohol;
-        data["saturatedFat"] = _saturatedFat! + totalSaturatedFat;
-        data["fiber"] = _fiber! + totalFiber;
-        data["sugar"] = _sugar! + totalSugar;
-        data["fat"] = _fat! + totalFat;
+      data["energy"] = _ingredientsTotalEnergy;
+      data["energyKcal"] = _ingredientsTotalEnergyKcal;
+      data["salt"] = _ingredientsTotalSalt;
+      data["protein"] = _ingredientsTotalProtein;
+      data["carbohydrate"] = _ingredientsTotalCarbohydrate;
+      data["alcohol"] = _ingredientsTotalAlcohol;
+      data["organicAcids"] = _ingredientsTotalOrganicAcids;
+      data["sugarAlcohol"] = _ingredientsTotalSugarAlcohol;
+      data["saturatedFat"] = _ingredientsTotalSaturatedFat;
+      data["fiber"] = _ingredientsTotalFiber;
+      data["sugar"] = _ingredientsTotalSugar;
+      data["fat"] = _ingredientsTotalFat;
+      if (_macrosSelection == Macros.both) {
+        data["energy"] += _energyKj!;
+        data["energyKcal"] += _energyKcal!;
+        data["salt"] += _salt!;
+        data["protein"] += _protein!;
+        data["carbohydrate"] += _carbohydrate!;
+        data["alcohol"] += _alcohol!;
+        data["organicAcids"] += _organicAcids!;
+        data["sugarAlcohol"] += _sugarAlcohol!;
+        data["saturatedFat"] += _saturatedFat!;
+        data["fiber"] += _fiber!;
+        data["sugar"] += _sugar!;
+        data["fat"] += _fat!;
       }
-    } else {
-      data["energy"] = _energy;
     }
     return Component.fromJson(data);
   }
 
   void _addIngredientHandler() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    _selectedComponents = await Navigator.of(context).push(
+    List<Component>? selected = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const AddExistingComponent(),
       ),
     );
     setState(() {
-      if (_selectedComponents != null) {
-        _subComponents?.addAll(_selectedComponents!.cast<Component>());
+      if (selected != null) {
+        _subComponents.addAll(selected.cast<Component>());
       }
     });
   }
 
   void _removeIngredient(Component component) {
     setState(() {
-      _subComponents!.remove(component);
+      _subComponents.remove(component);
     });
   }
 
@@ -254,113 +335,43 @@ class _AddNewComponentState extends State<AddNewComponent> {
     );
   }
 
-  // InputDecoration _textfieldInputDecoration(String hintText) {
-  //   return InputDecoration(
-  //     suffix: const Text("g"),
-  //     errorBorder: OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Theme.of(context).primaryColor,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     focusedBorder: OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Theme.of(context).primaryColor,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     enabledBorder: const OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Colors.grey,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     prefixIcon: Icon(
-  //       Icons.title,
-  //       color: Theme.of(context).primaryColor,
-  //     ),
-  //     hintText: hintText,
-  //     border: OutlineInputBorder(
-  //       borderRadius: BorderRadius.circular(5.0),
-  //       borderSide: const BorderSide(
-  //         width: 2.0,
-  //         style: BorderStyle.none,
-  //       ),
-  //     ),
-  //   );
-  // }
+  double get _ingredientsTotalEnergy =>
+      _subComponents.map((e) => e.energy!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalEnergy => _selectedComponents
-      ?.map((e) => (e.energy ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalEnergyKcal =>
+      _subComponents.map((e) => e.energyKcal!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalEnergyKcal => _selectedComponents
-      ?.map((e) => (e.energyKcal ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalSalt =>
+      _subComponents.map((e) => e.salt!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalSalt => _selectedComponents
-      ?.map((e) => (e.salt ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalProtein =>
+      _subComponents.map((e) => e.protein!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalProtein => _selectedComponents
-      ?.map((e) => (e.protein ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalCarbohydrate =>
+      _subComponents.map((e) => e.carbohydrate!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalCarbohydrate => _selectedComponents
-      ?.map((e) => (e.carbohydrate ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalAlcohol =>
+      _subComponents.map((e) => e.alcohol!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalAlcohol => _selectedComponents
-      ?.map((e) => (e.alcohol ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalOrganicAcids =>
+      _subComponents.map((e) => e.organicAcids!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalOrganicAcids => _selectedComponents
-      ?.map((e) => (e.organicAcids ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalSugarAlcohol =>
+      _subComponents.map((e) => e.sugarAlcohol!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalSugarAlcohol => _selectedComponents
-      ?.map((e) => (e.sugarAlcohol ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalSaturatedFat =>
+      _subComponents.map((e) => e.saturatedFat!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalSaturatedFat => _selectedComponents
-      ?.map((e) => (e.saturatedFat ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalFiber =>
+      _subComponents.map((e) => e.fiber!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalFiber => _selectedComponents
-      ?.map((e) => (e.fiber ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalSugar =>
+      _subComponents.map((e) => e.sugar!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalSugar => _selectedComponents
-      ?.map((e) => (e.sugar ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
+  double get _ingredientsTotalFat =>
+      _subComponents.map((e) => e.fat!).fold(0.0, (a, b) => a + b);
 
-  double? get _ingredientsTotalFat => _selectedComponents
-      ?.map((e) => (e.fat ?? 0.0))
-      .fold(0.0, (a, b) => (a ?? 0.0) + b);
-
-  void _setEnergyKcal(double value) => _energyKcal = value;
-
-  void _setProtein(double value) => _protein = value;
-
-  void _setCarbohydrate(double value) => _carbohydrate = value;
-
-  void _setSalt(double value) => _salt = value;
-
-  void _setSugar(double value) => _sugar = value;
-
-  void _setFat(double value) => _fat = value;
-
-  void _setSaturatedFat(double value) => _saturatedFat = value;
-
-  void _setFiber(double value) => _fiber = value;
-
-  void _setOrganicAcids(double value) => _organicAcids = value;
-
-  void _setAlcohol(double value) => _alcohol = value;
-
-  void _setSugarAlcohol(double value) => _sugarAlcohol = value;
-
-  Color? get selectedColor => Util.isDark(context)
+  Color get selectedColor => Util.isDark(context)
       ? Theme.of(context).colorScheme.onTertiary
       : Theme.of(context).colorScheme.tertiary;
 
@@ -405,81 +416,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         height: 5.0,
                       ),
                       _descriptionTextField,
-                      // TextField(
-                      //   controller: _titleController,
-                      //   keyboardType: TextInputType.text,
-                      //   onChanged: (value) => setState(() {
-                      //     _isTitleEmpty = _noOnlySpacesRegexp.hasMatch(value);
-                      //     print("TITLE IS EMPTY: $_isTitleEmpty");
-                      //     _title = value;
-                      //   }),
-                      //   decoration: InputDecoration(
-                      //     errorText: (_titleController.text.isEmpty || !_isTitleEmpty)
-                      //         ? null
-                      //         : "Title must not be empty",
-                      //     errorBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: _titleController.text.isEmpty ? Colors.grey : Colors.red,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     prefixIcon: Icon(
-                      //       Icons.title,
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     hintText: "Title",
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(5.0),
-                      //       borderSide: const BorderSide(
-                      //         width: 2.0,
-                      //         style: BorderStyle.none,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 5.0,
-                      // ),
-                      // TextField(
-                      //   maxLength: 99,
-                      //   controller: _descriptionController,
-                      //   keyboardType: TextInputType.text,
-                      //   onChanged: (value) => setState(() {
-                      //     _description = value;
-                      //   }),
-                      //   decoration: InputDecoration(
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     prefixIcon: Icon(
-                      //       Icons.description,
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     hintText: "Description",
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(5.0),
-                      //       borderSide: const BorderSide(
-                      //         width: 2.0,
-                      //         style: BorderStyle.none,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -505,9 +441,8 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         trailing: const Icon(Icons.category),
                         selected: _category == category ? true : false,
                         selectedColor: Colors.white,
-                        selectedTileColor: _category == category
-                            ? selectedColor
-                            : null,
+                        selectedTileColor:
+                            _category == category ? selectedColor : null,
                         onTap: () => _categoryDropdownHandler(category),
                       ),
                     ),
@@ -570,8 +505,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   ],
                 ),
               ),
-              if (_macrosSelection != null &&
-                  _macrosSelection != Macros.inherit)
+              if (_macrosSelection != Macros.inherit)
                 Card(
                   clipBehavior: Clip.antiAlias,
                   margin: const EdgeInsets.symmetric(vertical: 4),
@@ -590,224 +524,70 @@ class _AddNewComponentState extends State<AddNewComponent> {
                       ),
                       _macroTextField(
                         controller: _energyKcalController,
-                        setter: _setEnergyKcal,
+                        setter: (value) => _energyKcal = value,
                         hint: "Kcal",
                         suffixText: null,
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _proteinController,
-                        setter: _setProtein,
+                        setter: (value) => _protein = value,
                         hint: "Protein",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _carbohydrateController,
-                        setter: _setCarbohydrate,
+                        setter: (value) => _carbohydrate = value,
                         hint: "Carbohydrate",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saltController,
-                        setter: _setSalt,
+                        setter: (value) => _salt = value,
                         hint: "Salt",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarController,
-                        setter: _setSugar,
+                        setter: (value) => _sugar = value,
                         hint: "Sugar",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fatController,
-                        setter: _setFat,
+                        setter: (value) => _fat = value,
                         hint: "Fat",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saturatedFatController,
-                        setter: _setSaturatedFat,
+                        setter: (value) => _saturatedFat = value,
                         hint: "Saturated fat",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fiberController,
-                        setter: _setFiber,
+                        setter: (value) => _fiber = value,
                         hint: "Fiber",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _organicAcidsController,
-                        setter: _setOrganicAcids,
+                        setter: (value) => _organicAcids = value,
                         hint: "Organic acids",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _alcoholController,
-                        setter: _setAlcohol,
+                        setter: (value) => _alcohol = value,
                         hint: "Alcohol",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarAlcoholController,
-                        setter: _setSugarAlcohol,
+                        setter: (value) => _sugarAlcohol = value,
                         hint: "Sugar alcohol",
                       ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _energyKcalController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _energyKcalController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _energyKcal = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Kcal"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _proteinController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _proteinController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _protein = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Protein"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _carbohydrateController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _carbohydrateController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _carbohydrate = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Carbohydrates"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _saltController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _saltController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _salt = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Salt"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _sugarController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _sugarController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _sugar = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Sugar"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _fatController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _fatController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _fat = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Fat"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _saturatedFatController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _saturatedFatController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _saturatedFat = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Saturated fat"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _fiberController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _fiberController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _fiber = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Fiber"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _organicAcidsController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _organicAcidsController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _organicAcids = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Organic acids"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _alcoholController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _alcoholController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _alcohol = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Alcohol"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _sugarAlcoholController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _sugarAlcoholController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _sugarAlcohol = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Sugar alcohol"),
-                      // ),
                     ],
                   ),
                 ),
@@ -823,7 +603,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   onTap: _addIngredientHandler,
                 ),
               ),
-              if (_subComponents != null && _subComponents!.isNotEmpty)
+              if (_subComponents.isNotEmpty)
                 Card(
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
@@ -834,17 +614,17 @@ class _AddNewComponentState extends State<AddNewComponent> {
                       ),
                       ListView.builder(
                         controller: _listScrollController,
-                        itemCount: _subComponents!.length,
+                        itemCount: _subComponents.length,
                         // itemCount: 11,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(
-                              _subComponents![index].name!,
+                              _subComponents[index].name!,
                               style: const TextStyle(fontSize: 18),
                             ),
                             subtitle: Text(
-                              _subComponents![index].description!,
+                              _subComponents[index].description!,
                               style: const TextStyle(fontSize: 16),
                             ),
                             trailing: Row(
@@ -852,7 +632,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                               children: [
                                 IconButton(
                                   onPressed: () =>
-                                      _removeIngredient(_subComponents![index]),
+                                      _removeIngredient(_subComponents[index]),
                                   icon: const Icon(
                                     Icons.delete,
                                     color: Colors.red,
@@ -863,7 +643,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
                               ],
                             ),
                             onTap: () =>
-                                _showComponentBreakdown(_subComponents![index]),
+                                _showComponentBreakdown(_subComponents[index]),
                           );
                         },
                       )
@@ -1028,11 +808,12 @@ class _AddNewComponentState extends State<AddNewComponent> {
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [FilteringTextInputFormatter.allow(_macroRegExp)],
       onChanged: (value) {
-        print(value);
         setState(() {
-          if (value.isNotEmpty) {
-            setter(double.tryParse(value.replaceAll(',', '.')));
+          if (value.isEmpty) {
+            value = '0.0';
           }
+          setter(double.tryParse(value.replaceAll(',', '.')));
+          print(value);
         });
       },
       style: TextStyle(

@@ -97,5 +97,6 @@ class Component extends Equatable {
 
   @override
   List<Object?> get props =>
-      [name, description, category, macroSelection, subComponents?.length];
+      // [name, description, category, macroSelection, subComponents?.length];
+      [creationDate];
 }
