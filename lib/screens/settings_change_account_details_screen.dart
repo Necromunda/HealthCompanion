@@ -10,6 +10,21 @@ class ChangeAccountDetails extends StatefulWidget {
 class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.close),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Placeholder(),
+      ),
+    );
   }
 }

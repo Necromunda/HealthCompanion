@@ -5,14 +5,41 @@ import '../util.dart';
 class ChartBarHorizontal extends StatelessWidget {
   final String label;
   final double value;
-  final double totalValuePct;
+  final int goal;
 
-  const ChartBarHorizontal(
-      {Key? key,
-      required this.label,
-      required this.value,
-      required this.totalValuePct})
-      : super(key: key);
+  const ChartBarHorizontal({
+    Key? key,
+    required this.label,
+    required this.value,
+    required this.goal,
+  }) : super(key: key);
+
+  double get totalValuePct {
+    double pct = value.ceil() / goal;
+    return pct;
+    // return pct > 1.0 ? 1.0 : pct;
+  }
+
+  double get widthFactor {
+    return totalValuePct > 1.0 ? 1.0 : totalValuePct;
+  }
+
+  Color chartColor(context) {
+    ThemeData theme = Theme.of(context);
+
+    if (isGoalZero || totalValuePct < 1.0) {
+      // return theme.colorScheme.onPrimary;
+      return Util.isDark(context)
+          ? theme.colorScheme.onPrimary
+          : theme.colorScheme.primary;
+    } else if (totalValuePct == 1.0) {
+      return Colors.green;
+    } else {
+      return Colors.redAccent;
+    }
+  }
+
+  bool get isGoalZero => goal == 0 ? true : false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,15 +47,6 @@ class ChartBarHorizontal extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 0.0),
       child: Column(
         children: <Widget>[
-          // SizedBox(
-          //   height: 18,
-          //   child: FittedBox(
-          //     child: Text("${value.toStringAsFixed(0)} $label"),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 5,
-          // ),
           SizedBox(
             height: 20,
             width: MediaQuery.of(context).size.width * 0.8,
@@ -45,12 +63,10 @@ class ChartBarHorizontal extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: FractionallySizedBox(
                     // heightFactor: totalValuePct,
-                    widthFactor: totalValuePct,
+                    widthFactor: widthFactor,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: totalValuePct == 1.0
-                            ? Colors.green
-                            : Theme.of(context).primaryColor,
+                        color: chartColor(context),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -60,34 +76,25 @@ class ChartBarHorizontal extends StatelessWidget {
                   child: SizedBox(
                     height: 18,
                     child: FittedBox(
-                      child: Text("${value.toStringAsFixed(0)} $label", style: TextStyle(color: Colors.black),),
+                      child: isGoalZero
+                          ? Text("${value.ceil()} $label")
+                          : Text(
+                              "$goal $label / ${value.ceil()} $label",
+                              style: TextStyle(
+                                color: Colors.black
+                                  // color: Util.isDark(context)
+                                  //     ? Colors.white
+                                  //     : Colors.black
+                              ),
+                            ),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          // const SizedBox(
-          //   // height: constraints.maxHeight * 0.05,
-          //   height: 5,
-          // ),
-          // SizedBox(
-          //   height: 18,
-          //   child: FittedBox(
-          //     child: Text("${value.toStringAsFixed(0)} $label"),
-          //   ),
-          // ),
-          // SizedBox(
-          //   // height: constraints.maxHeight * 0.15,
-          //   height: 15,
-          //   child: FittedBox(
-          //     child: Text(label),
-          //   ),
-          // ),
         ],
       ),
     );
-    // },
-    // );
   }
 }

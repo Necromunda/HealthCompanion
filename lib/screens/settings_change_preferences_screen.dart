@@ -20,7 +20,7 @@ class _EditPreferencesState extends State<EditPreferences> {
   late final Map<String, String> _preferences;
   late final Stream _userPreferencesDocStream;
   late final User _currentUser;
-  late final RegExp _macroRegExp;
+  late DateTime? _buttonPressed;
 
   @override
   void initState() {
@@ -45,7 +45,6 @@ class _EditPreferencesState extends State<EditPreferences> {
     };
     _listScrollController = ScrollController();
     _macroTextFieldController = TextEditingController();
-    _macroRegExp = RegExp(r"^[0-9]\d*((\.|,)\d?)?");
     super.initState();
   }
 
@@ -62,9 +61,17 @@ class _EditPreferencesState extends State<EditPreferences> {
     super.dispose();
   }
 
+  Duration? get timeBetweenButtonPresses => _buttonPressed?.difference(DateTime.now());
+
   void _updatePreferences(Map<String, int> data) {
-    print(_macroTextFieldController.text);
-    FirebaseService.updateUserPreferences(data);
+    Duration? time = timeBetweenButtonPresses;
+
+    if (time != null && time.inSeconds < 10) {
+      print(time);
+    } else {
+      _buttonPressed = DateTime.now();
+      FirebaseService.updateUserPreferences(data);
+    }
   }
 
   Future<int?> _dialogBuilder(BuildContext context, String title) {
@@ -209,21 +216,28 @@ class _EditPreferencesState extends State<EditPreferences> {
                 child: ListView.builder(
                   controller: _listScrollController,
                   itemCount: _preferences.keys.length,
-                  // itemCount: data.keys.length,
                   itemBuilder: (context, index) {
                     String title = _preferences.keys.elementAt(index);
                     String dataKey = _preferences.values.elementAt(index);
                     int goal = data[dataKey];
+                    String suffix = 'g';
+                    if (title.toLowerCase().contains('energy')) {
+                      suffix =
+                          title.toLowerCase().contains('kcal') ? 'kcal' : 'kJ';
+                    }
 
                     return ListTile(
                       title: Text(title),
-                      subtitle: Text("Current goal is $goal"),
+                      subtitle: Text("Current goal is $goal $suffix"),
                       onTap: () async {
                         int? value = await _dialogBuilder(context, title);
                         if (value != null) {
                           _updatePreferences({dataKey: value});
                         }
-                      }
+                      },
+                      trailing: TextButton(
+                          onPressed: () => _updatePreferences({dataKey: 0}),
+                          child: const Text("Reset")),
                     );
                   },
                 ),

@@ -35,7 +35,20 @@ class FirebaseService {
       await FirebaseFirestore.instance
           .collection('user_preferences')
           .doc(user.uid)
-          .set({"kcalGoal": null, "darkMode": false});
+          .set({
+        "energyKcal": 0,
+        "energyKj": 0,
+        "salt": 0,
+        "protein": 0,
+        "carbohydrate": 0,
+        "alcohol": 0,
+        "organicAcids": 0,
+        "sugarAlcohol": 0,
+        "saturatedFat": 0,
+        "fiber": 0,
+        "sugar": 0,
+        "fat": 0
+      });
       await FirebaseFirestore.instance
           .collection('user_stats')
           .doc(user.uid)
@@ -237,18 +250,18 @@ class FirebaseService {
 
       userPreferencesDocRef.update(data);
       // userPreferencesDocRef.update({
-        // "energyKcal": 0,
-        // "energyKj": 0,
-        // "salt": 0,
-        // "protein": 0,
-        // "carbohydrate": 0,
-        // "alcohol": 0,
-        // "organicAcids": 0,
-        // "sugarAlcohol": 0,
-        // "saturatedFat": 0,
-        // "fiber": 0,
-        // "sugar": 0,
-        // "fat": 0
+      //   "energyKcal": 0,
+      //   "energyKj": 0,
+      //   "salt": 0,
+      //   "protein": 0,
+      //   "carbohydrate": 0,
+      //   "alcohol": 0,
+      //   "organicAcids": 0,
+      //   "sugarAlcohol": 0,
+      //   "saturatedFat": 0,
+      //   "fiber": 0,
+      //   "sugar": 0,
+      //   "fat": 0
       // });
     } catch (e) {
       print(e);

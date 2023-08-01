@@ -1,23 +1,14 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
-import 'package:health_companion/widgets/bundle_button_bar.dart';
-import 'package:health_companion/widgets/bundles.dart';
 import 'package:health_companion/widgets/chart.dart';
-import 'package:health_companion/widgets/custom_button.dart';
 import 'package:health_companion/widgets/loading_components.dart';
 import 'package:intl/intl.dart';
 
-import '../models/appuser_model.dart';
 import '../models/component_model.dart';
 import '../services/firebase_service.dart';
-import '../util.dart';
 import 'add_new_component_screen.dart';
 import 'component_breakdown_screen.dart';
 
@@ -38,7 +29,6 @@ class _OverviewState extends State<Overview> {
   late List<Bundle> _userBundles;
   late int _currentBundleIndex, _lastBundleIndex;
   late PageController _bundlePageViewController;
-  late Bundle? _currentBundle;
 
   @override
   void initState() {
@@ -49,25 +39,12 @@ class _OverviewState extends State<Overview> {
     _bundlePageViewController = PageController();
     _currentBundleIndex = 0;
     _lastBundleIndex = 0;
+    _userBundles = [];
     _userDailyDataDocStream = FirebaseFirestore.instance
         .collection("user_daily_data")
         .doc(_currentUser.uid)
         .snapshots();
-    _userBundles = [];
-    _currentBundle = null;
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // int delay = 1;
-    // if (!_bundlePageViewController.hasClients) {
-    //   Future.delayed(Duration(milliseconds: 1), () {
-    //     if (!_bundlePageViewController.hasClients) {
-    //       setState(() {});
-    //     } else {
-    //       _scrollBundles(2);
-    //     }
-    //   });
-    // }
-    // });
   }
 
   @override
@@ -299,8 +276,8 @@ class _OverviewState extends State<Overview> {
                             _currentBundleIndex = index;
                           });
                         },
-                        itemBuilder: (context, pageviewIndex) {
-                          Bundle bundle = _userBundles[pageviewIndex];
+                        itemBuilder: (context, pageViewIndex) {
+                          Bundle bundle = _userBundles[pageViewIndex];
 
                           return Column(
                             mainAxisSize: MainAxisSize.max,
@@ -313,7 +290,7 @@ class _OverviewState extends State<Overview> {
                                 ),
                               const SizedBox(height: 5),
                               Text(
-                                "#${pageviewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(bundle.creationDate!)}",
+                                "#${pageViewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(bundle.creationDate!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               Text(
@@ -387,7 +364,7 @@ class _OverviewState extends State<Overview> {
                                           onLongPress: () =>
                                               _deleteComponentFromBundle(
                                             _userBundles,
-                                            pageviewIndex,
+                                                pageViewIndex,
                                             listviewIndex,
                                           ),
                                         ),
