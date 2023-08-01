@@ -158,13 +158,14 @@ class FirebaseService {
       final User user = FirebaseAuth.instance.currentUser!;
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userComponentsDocRef =
-      db.collection("user_components").doc(user.uid);
+          db.collection("user_components").doc(user.uid);
 
       List<Component>? userComponents = await getUserComponents(user.uid);
       if (userComponents != null) {
-        int index = userComponents.indexWhere((element) => element == component);
+        int index =
+            userComponents.indexWhere((element) => element == component);
         List<Map<String, dynamic>> json =
-        userComponents.map((item) => item.toJson()).toList();
+            userComponents.map((item) => item.toJson()).toList();
         json[index] = component.toJson();
         await userComponentsDocRef.update({"components": json});
         return true;
@@ -224,6 +225,33 @@ class FirebaseService {
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  static Future<void> updateUserPreferences(Map<String, int> data) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userPreferencesDocRef =
+          db.collection("user_preferences").doc(user.uid);
+
+      userPreferencesDocRef.update(data);
+      // userPreferencesDocRef.update({
+        // "energyKcal": 0,
+        // "energyKj": 0,
+        // "salt": 0,
+        // "protein": 0,
+        // "carbohydrate": 0,
+        // "alcohol": 0,
+        // "organicAcids": 0,
+        // "sugarAlcohol": 0,
+        // "saturatedFat": 0,
+        // "fiber": 0,
+        // "sugar": 0,
+        // "fat": 0
+      // });
+    } catch (e) {
+      print(e);
     }
   }
 

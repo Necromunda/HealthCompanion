@@ -57,16 +57,16 @@ class _OverviewState extends State<Overview> {
     _currentBundle = null;
     super.initState();
     // WidgetsBinding.instance.addPostFrameCallback((_) {
-      // int delay = 1;
-      // if (!_bundlePageViewController.hasClients) {
-      //   Future.delayed(Duration(milliseconds: 1), () {
-      //     if (!_bundlePageViewController.hasClients) {
-      //       setState(() {});
-      //     } else {
-      //       _scrollBundles(2);
-      //     }
-      //   });
-      // }
+    // int delay = 1;
+    // if (!_bundlePageViewController.hasClients) {
+    //   Future.delayed(Duration(milliseconds: 1), () {
+    //     if (!_bundlePageViewController.hasClients) {
+    //       setState(() {});
+    //     } else {
+    //       _scrollBundles(2);
+    //     }
+    //   });
+    // }
     // });
   }
 

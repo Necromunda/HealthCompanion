@@ -99,4 +99,6 @@ class Component extends Equatable {
   List<Object?> get props =>
       // [name, description, category, macroSelection, subComponents?.length];
       [creationDate];
+
+  static List<String> get macros => ["Alcohol", "Carbohydrate", "Energy kJ", "Energy kcal", "Fat", "Fiber", "Organic acids", "Protein", "Salt", "Saturated fat", "Sugar alcohol", "Sugar"];
 }

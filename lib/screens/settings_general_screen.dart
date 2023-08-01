@@ -17,8 +17,8 @@ class _SettingsGeneralState extends State<SettingsGeneral> {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
-    print(Util.isDark(context));
+    // print("build");
+    // print(Util.isDark(context));
     return Consumer<ModelTheme>(
       builder: (context, ModelTheme themeNotifier, child) {
         return Scaffold(
