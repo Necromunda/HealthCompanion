@@ -117,7 +117,7 @@ class _SignUpState extends State<SignUp> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          color: Colors.black,
+          // color: Colors.black,
         ),
         centerTitle: true,
         title: Text(

@@ -217,9 +217,6 @@ class _SignUpUsernameState extends State<SignUpUsername>
               child: CustomButton(
                 onPressed: _isUsernameValid
                     ? () {
-                        // if (FocusScope.of(context).hasFocus) {
-                        //   FocusScope.of(context).unfocus();
-                        // }
                         FocusManager.instance.primaryFocus?.unfocus();
                         _switchPageCallback(_pageIndex + 1);
                       }
