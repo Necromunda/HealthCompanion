@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/models/user_achievements_model.dart';
 
 import '../models/appuser_model.dart';
+import '../util.dart';
 
 enum UserStats {
   addBundle,
@@ -11,6 +14,17 @@ enum UserStats {
   addAchievement,
   deleteBundle,
   deleteComponent,
+}
+
+enum UserAchievementType {
+  components10,
+  components50,
+  components100,
+  components250,
+  member7,
+  member28,
+  member165,
+  member365,
 }
 
 class FirebaseService {
@@ -69,6 +83,17 @@ class FirebaseService {
         "email": email,
         "joinDate": user.metadata.creationTime,
       });
+      await FirebaseFirestore.instance
+          .collection('user_achievements')
+          .doc(user.uid)
+          .set({
+        'components': {
+          'data': [],
+        },
+        'member': {
+          'data': [],
+        },
+      });
       return AppUser(
         email: email,
         uid: user.uid,
@@ -81,6 +106,59 @@ class FirebaseService {
       return null;
     }
   }
+
+  static Future<void> setAchievments() async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userAchievements =
+          db.collection('user_achievements').doc(user.uid);
+
+      // await userAchievements.set({
+      //   'achievements': {
+      //     'components': [],
+      //     'member': [],
+      //   },
+      // });
+      await userAchievements.update({
+        'achievements': {
+          'components': [
+            {
+              'name': 'achievement-10-components',
+              'unlockDate': DateTime.now(),
+            },
+          ],
+          'member': [],
+        },
+      });
+    } catch (e, stackTrace) {
+      // print("error creating user");
+      print("$e, $stackTrace");
+    }
+  }
+
+  //
+  // static Future<void> setUserInfo() async {
+  //   try {
+  //     final User user = FirebaseAuth.instance.currentUser!;
+  //     final FirebaseFirestore db = FirebaseFirestore.instance;
+  //     final DocumentReference userAchievements =
+  //     db.collection('users').doc(user.uid);
+  //
+  //     await userAchievements.set({
+  //       "username": 'jrantapaa',
+  //       // "age": age,
+  //       "dateOfBirth": DateTime(2000, 3, 6),
+  //       "height": 180,
+  //       "weight": 104.9,
+  //       "email": 'johannes.rantapaa@gmail.com',
+  //       "joinDate": user.metadata.creationTime,
+  //     });
+  //   } catch (e, stackTrace) {
+  //     // print("error creating user");
+  //     print("$e, $stackTrace");
+  //   }
+  // }
 
   static Future<AppUser?> createUser(String uid) async {
     try {
@@ -110,6 +188,17 @@ class FirebaseService {
     return json;
   }
 
+  static Future<Map<String, dynamic>> getUserAchievements() async {
+    final User user = FirebaseAuth.instance.currentUser!;
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    final DocumentReference userAchievementsDocRef =
+        db.collection("user_achievements").doc(user.uid);
+
+    var userAchievementsDocSnapshot = await userAchievementsDocRef.get();
+    var data = userAchievementsDocSnapshot.data() as Map<String, dynamic>;
+    return data;
+  }
+
   static Future<void> addToStats(UserStats operation, int amount) async {
     final User user = FirebaseAuth.instance.currentUser!;
     final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -117,8 +206,7 @@ class FirebaseService {
         db.collection("user_stats").doc(user.uid);
     final DocumentSnapshot data = await userStatsDocRef.get();
     Map<String, dynamic> json = data.data() as Map<String, dynamic>;
-    print(json);
-    // return;
+
     switch (operation) {
       case UserStats.addBundle:
         await userStatsDocRef
@@ -242,6 +330,104 @@ class FirebaseService {
     }
   }
 
+  static Future<List<Achievement>?> getAchievements(String doc) async {
+    try {
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference achievementsDocRef =
+          db.collection('achievements').doc(doc);
+
+      var achievementsDocSnapshot = await achievementsDocRef.get();
+      var data = achievementsDocSnapshot.data() as Map<String, dynamic>;
+      List<Achievement> achievements =
+          (data['data'] as List).map((e) => Achievement.fromJson(e)).toList();
+
+      return achievements;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  static Future<void> addAchievement(context, UserAchievementType type) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userAchievementsDocRef =
+          db.collection('user_achievements').doc(user.uid);
+
+      final Map<String, dynamic> json = await getUserAchievements();
+      final UserAchievements userAchievements = UserAchievements.fromJson(json);
+
+      switch (type) {
+        case UserAchievementType.components10:
+          Util.showSnackBar(context, "Achievement unlocked, 10 components added!");
+          break;
+        case UserAchievementType.components50:
+          Util.showSnackBar(context, "Achievement unlocked, 50 components added!");
+          break;
+        case UserAchievementType.components100:
+          Util.showSnackBar(context, "Achievement unlocked, 100 components added!");
+          break;
+        case UserAchievementType.components250:
+          Util.showSnackBar(context, "Achievement unlocked, 250 components added!");
+          break;
+        case UserAchievementType.member7:
+          if (userAchievements.memberAchievements!
+              .map((e) => e.name == 'achievement-7-days')
+              .toList()
+              .isEmpty) {
+            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
+              'name': 'achievement-7-days',
+              'unlockDate': DateTime.now(),
+            }));
+            Util.showSnackBar(context, "Achievement unlocked, member for 7 days!");
+          }
+          break;
+        case UserAchievementType.member28:
+          if (userAchievements.memberAchievements!
+              .map((e) => e.name == 'achievement-1-month')
+              .toList()
+              .isEmpty) {
+            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
+              'name': 'achievement-1-month',
+              'unlockDate': DateTime.now(),
+            }));
+            Util.showSnackBar(context, "Achievement unlocked, member for 1 month!");
+          }
+          break;
+        case UserAchievementType.member165:
+          if (userAchievements.memberAchievements!
+              .map((e) => e.name == 'achievement-6-months')
+              .toList()
+              .isEmpty) {
+            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
+              'name': 'achievement-6-months',
+              'unlockDate': DateTime.now(),
+            }));
+            Util.showSnackBar(context, "Achievement unlocked, member for 6 months!");
+          }
+          break;
+        case UserAchievementType.member365:
+          if (userAchievements.memberAchievements!
+              .map((e) => e.name == 'achievement-1-year')
+              .toList()
+              .isEmpty) {
+            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
+              'name': 'achievement-1-year',
+              'unlockDate': DateTime.now(),
+            }));
+            Util.showSnackBar(context, "Achievement unlocked, member for 1 year!");
+          }
+          break;
+      }
+
+      Map<String, dynamic> data = userAchievements.toJson();
+      await userAchievementsDocRef.update({'achievements': data});
+    } catch (e, stackTrace) {
+      print("Error adding achievements: $e, $stackTrace");
+    }
+  }
+
   static Future<void> updateUserPreferences(Map<String, int> data) async {
     try {
       final User user = FirebaseAuth.instance.currentUser!;
@@ -294,12 +480,15 @@ class FirebaseService {
           db.collection("user_stats").doc(uid);
       final DocumentReference userDailyDataDocRef =
           db.collection("user_daily_data").doc(uid);
+      final DocumentReference userAchievementsDocRef =
+      db.collection("user_achievements").doc(uid);
 
-      await userDocRef.delete();
       await userComponentsDocRef.delete();
       await userPreferencesDocRef.delete();
       await userStatsDocRef.delete();
       await userDailyDataDocRef.delete();
+      await userAchievementsDocRef.delete();
+      await userDocRef.delete();
 
       await FirebaseAuth.instance.currentUser?.delete();
     } catch (e, stackTrace) {

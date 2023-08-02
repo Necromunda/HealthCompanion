@@ -16,9 +16,6 @@ import 'add_new_component_screen.dart';
 import 'component_breakdown_screen.dart';
 
 class Overview extends StatefulWidget {
-  // final AppUser user;
-
-  // const Overview({Key? key, required this.user}) : super(key: key);
   const Overview({Key? key}) : super(key: key);
 
   @override

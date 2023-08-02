@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/screens/components_screen.dart';
 import 'package:health_companion/screens/overview_screen.dart';
 import 'package:health_companion/screens/profile_screen.dart';
 import 'package:health_companion/screens/search_screen.dart';
 import 'package:health_companion/screens/settings_screen.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 import '../util.dart';
 
@@ -15,8 +18,10 @@ class PageContainer extends StatefulWidget {
 }
 
 class _PageContainerState extends State<PageContainer> {
+  late final User _currentUser;
   late final PageController _pageController;
   late int _currentPageIndex, _maxPageDistance;
+  late Stream _statsDocumentReference;
 
   @override
   void initState() {
@@ -24,7 +29,36 @@ class _PageContainerState extends State<PageContainer> {
     _pageController = PageController(initialPage: 2);
     _currentPageIndex = 2;
     _maxPageDistance = 1;
+    _currentUser = FirebaseAuth.instance.currentUser!;
+    _checkAccountCreationDate();
+    // _statsDocumentReference = FirebaseFirestore.instance.collection('user_stats').doc(_currentUser.uid).snapshots();
+    // FirebaseAuth.instance.authStateChanges().listen((event) {
+    //   if (event != null) {
+    //     _statsDocumentReference.listen((event) {
+    //
+    //     });
+    //   }
+    // });
     super.initState();
+  }
+
+  void _checkAccountCreationDate() {
+    int days =
+        DateTime.now().difference(_currentUser.metadata.creationTime!).inDays;
+
+    if (days >= 365) {
+      print("Account  is 1 year old");
+      FirebaseService.addAchievement(context, UserAchievementType.member365);
+    } else if (days >= 165) {
+      print("Account  is 6 months old");
+      FirebaseService.addAchievement(context, UserAchievementType.member165);
+    } else if (days >= 28) {
+      print("Account  is 1 month old");
+      FirebaseService.addAchievement(context, UserAchievementType.member28);
+    } else if (days >= 7) {
+      print("Account  is 7 days old");
+      FirebaseService.addAchievement(context, UserAchievementType.member7);
+    }
   }
 
   @override

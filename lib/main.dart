@@ -93,7 +93,7 @@ class MyApp extends StatelessWidget {
                       prefixIconColor: Colors.black,
                       hintStyle: TextStyle(color: Colors.black),
                     ),
-                    scaffoldBackgroundColor: Colors.deepPurple.shade50,
+                    // scaffoldBackgroundColor: Colors.deepPurple.shade50,
                   ),
             debugShowCheckedModeBanner: false,
             home: StreamBuilder(

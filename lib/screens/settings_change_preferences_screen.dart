@@ -126,7 +126,6 @@ class _EditPreferencesState extends State<EditPreferences> {
     }
 
     if (!isSameData) {
-      ScaffoldMessenger.of(context).clearSnackBars();
       FirebaseService.updateUserPreferences(data);
     }
   }
