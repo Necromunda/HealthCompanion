@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/services/firebase_service.dart';
 
 import '../util.dart';
@@ -22,6 +23,7 @@ class _EditPreferencesState extends State<EditPreferences> {
   late final Stream _userPreferencesDocStream;
   late final User _currentUser;
   DateTime? _buttonPressed;
+  late UserPreferences _userPreferences;
 
   @override
   void initState() {
@@ -65,17 +67,66 @@ class _EditPreferencesState extends State<EditPreferences> {
   Duration? get timeBetweenButtonPresses =>
       _buttonPressed?.difference(DateTime.now());
 
-  void _updatePreferences(Map<String, int> data) {
-    Duration? time = timeBetweenButtonPresses?.abs();
+  // void _updatePreferences(Map<String, int> data) {
+  //   Duration? time = timeBetweenButtonPresses?.abs();
+  //
+  //   if (time != null && time.inSeconds <= 10) {
+  //     int duration = 10 - time.inSeconds;
+  //     String message =
+  //         "Slow down! Wait ${10 - time.inSeconds} ${duration <= 1 ? "second" : "seconds"}";
+  //     Util.showSnackBar(context, message);
+  //   } else {
+  //     ScaffoldMessenger.of(context).clearSnackBars();
+  //     _buttonPressed = DateTime.now();
+  //     FirebaseService.updateUserPreferences(data);
+  //   }
+  // }
 
-    if (time != null && time.inSeconds <= 10) {
-      int duration = 10 - time.inSeconds;
-      String message =
-          "Slow down! Wait ${10 - time.inSeconds} ${duration <= 1 ? "second" : "seconds"}";
-      Util.showSnackBar(context, message);
-    } else {
+  void _updatePreferences(Map<String, int> data) {
+    int value = data.values.first;
+    bool isSameData = false;
+
+    switch (data.keys.first) {
+      case 'alcohol':
+        isSameData = value == _userPreferences.alcohol;
+        break;
+      case 'carbohydrate':
+        isSameData = value == _userPreferences.carbohydrate;
+        break;
+      case 'energyKj':
+        isSameData = value == _userPreferences.energyKj;
+        break;
+      case 'energyKcal':
+        isSameData = value == _userPreferences.energyKcal;
+        break;
+      case 'fat':
+        isSameData = value == _userPreferences.fat;
+        break;
+      case 'fiber':
+        isSameData = value == _userPreferences.fiber;
+        break;
+      case 'organicAcids':
+        isSameData = value == _userPreferences.organicAcids;
+        break;
+      case 'protein':
+        isSameData = value == _userPreferences.protein;
+        break;
+      case 'salt':
+        isSameData = value == _userPreferences.salt;
+        break;
+      case 'saturatedFat':
+        isSameData = value == _userPreferences.saturatedFat;
+        break;
+      case 'sugarAlcohol':
+        isSameData = value == _userPreferences.sugarAlcohol;
+        break;
+      case 'sugar':
+        isSameData = value == _userPreferences.sugar;
+        break;
+    }
+
+    if (!isSameData) {
       ScaffoldMessenger.of(context).clearSnackBars();
-      _buttonPressed = DateTime.now();
       FirebaseService.updateUserPreferences(data);
     }
   }
@@ -216,6 +267,7 @@ class _EditPreferencesState extends State<EditPreferences> {
             }
             if (snapshot.hasData) {
               Map<String, dynamic> data = snapshot.data.data();
+              _userPreferences = UserPreferences.fromJson(data);
 
               return Card(
                 clipBehavior: Clip.antiAlias,
@@ -225,7 +277,7 @@ class _EditPreferencesState extends State<EditPreferences> {
                   itemBuilder: (context, index) {
                     String title = _preferences.keys.elementAt(index);
                     String dataKey = _preferences.values.elementAt(index);
-                    int goal = data[dataKey];
+                    int limit = data[dataKey];
                     String suffix = 'g';
                     if (title.toLowerCase().contains('energy')) {
                       suffix =
@@ -234,7 +286,7 @@ class _EditPreferencesState extends State<EditPreferences> {
 
                     return ListTile(
                       title: Text(title),
-                      subtitle: Text("Current goal is $goal $suffix"),
+                      subtitle: Text("Current limit is $limit $suffix"),
                       onTap: () async {
                         int? value = await _dialogBuilder(context, title);
                         if (value != null) {
