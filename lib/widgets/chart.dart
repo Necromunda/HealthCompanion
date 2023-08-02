@@ -63,7 +63,7 @@ class _ChartState extends State<Chart> {
             if (snapshot.hasData) {
               UserPreferences prefs =
                   UserPreferences.fromJson(snapshot.data.data());
-              print(prefs.alcohol);
+              // print(prefs.alcohol);
 
               return Column(
                 children: [
