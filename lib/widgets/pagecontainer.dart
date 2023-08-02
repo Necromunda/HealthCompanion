@@ -1,7 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/screens/components_screen.dart';
 import 'package:health_companion/screens/overview_screen.dart';
@@ -9,14 +5,9 @@ import 'package:health_companion/screens/profile_screen.dart';
 import 'package:health_companion/screens/search_screen.dart';
 import 'package:health_companion/screens/settings_screen.dart';
 
-import '../models/appuser_model.dart';
-import '../models/component_model.dart';
 import '../util.dart';
 
 class PageContainer extends StatefulWidget {
-  // final AppUser user;
-
-  // const PageContainer({Key? key, required this.user}) : super(key: key);
   const PageContainer({Key? key}) : super(key: key);
 
   @override
@@ -25,55 +16,16 @@ class PageContainer extends StatefulWidget {
 
 class _PageContainerState extends State<PageContainer> {
   late final PageController _pageController;
-  // late final AppUser _user;
-  late int _selectedIndex;
-  late final FirebaseFirestore _firestore;
-  // late final DocumentReference _documentRef;
-  // late List<Component> _userComponents;
-  // late StreamSubscription<DocumentSnapshot> _documentSubscription;
-  // late StreamSubscription<User?> _userSubscription;
+  late int _currentPageIndex, _maxPageDistance;
 
   @override
   void initState() {
     print("Pagcontainer init");
-    // _user = widget.user;
-    // _firestore = FirebaseFirestore.instance;
-    // _documentRef = _firestore.collection("user_components").doc(_user.uid);
     _pageController = PageController(initialPage: 2);
-    _selectedIndex = 2;
-    // _userComponents = [];
-    // _subscribeToDocumentChanges();
+    _currentPageIndex = 2;
+    _maxPageDistance = 1;
     super.initState();
   }
-
-  // void _subscribeToDocumentChanges() {
-  //   _userSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //     if (user == null) {
-  //       print("Logged out");
-  //       _documentSubscription.cancel();
-  //       _userSubscription.cancel();
-  //       // setState(() {
-  //       //   widget._firebaseUser = user;
-  //       //   print(widget._firebaseUser);
-  //       // });
-  //     } else {
-  //       print('User is signed in!');
-  //     }
-  //   });
-  //   _documentSubscription = _documentRef.snapshots().listen((DocumentSnapshot snapshot) {
-  //     if (snapshot.exists) {
-  //       final data = snapshot.data();
-  //       print("Components updated");
-  //       setState(() {
-  //         _userComponents =
-  //             ((data as Map)["components"] as List).map((e) => Component.fromJson(e)).toList();
-  //         print(_userComponents.length);
-  //       });
-  //     }
-  //   }, onError: (e, stackTrace) {
-  //     print("ERROR: $e");
-  //   });
-  // }
 
   @override
   void setState(fn) {
@@ -88,14 +40,17 @@ class _PageContainerState extends State<PageContainer> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    int distance = (index - _currentPageIndex).abs();
+
+    if (distance <= _maxPageDistance) {
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _pageController.jumpToPage(index);
+    }
   }
 
   Color? get navBarColor => Util.isDark(context)
@@ -129,10 +84,9 @@ class _PageContainerState extends State<PageContainer> {
             icon: Icon(Icons.person),
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: _currentPageIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
-        // backgroundColor: Colors.deepPurple.shade400,
         backgroundColor: navBarColor,
         onTap: _onItemTapped,
       ),
@@ -144,15 +98,13 @@ class _PageContainerState extends State<PageContainer> {
           children: const <Widget>[
             SettingsScreen(),
             Search(),
-            // Overview(user: _user,),
             Overview(),
-            // Components(user: _user,
             Components(),
-            Profile()
+            Profile(),
           ],
           onPageChanged: (index) {
             setState(() {
-              _selectedIndex = index;
+              _currentPageIndex = index;
             });
           },
         ),

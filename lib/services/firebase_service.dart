@@ -226,11 +226,12 @@ class FirebaseService {
     }
   }
 
-  static Future<Map<String, dynamic>?> getUserPreferences(String uid) async {
+  static Future<Map<String, dynamic>?> getUserPreferences() async {
     try {
+      final User user = FirebaseAuth.instance.currentUser!;
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userPreferencesDocRef =
-          db.collection("user_preferences").doc(uid);
+          db.collection("user_preferences").doc(user.uid);
 
       var userPreferencesDocSnapshot = await userPreferencesDocRef.get();
       var data = userPreferencesDocSnapshot.data() as Map<String, dynamic>;

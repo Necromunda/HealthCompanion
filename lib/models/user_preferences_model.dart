@@ -12,6 +12,8 @@ class UserPreferences {
       sugar = 0,
       sugarAlcohol = 0;
 
+  UserPreferences();
+
   UserPreferences.fromJson(Map<String, dynamic> json) {
     alcohol = json['alcohol'];
     carbohydrate = json['carbohydrate'];

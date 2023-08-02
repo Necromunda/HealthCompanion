@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_companion/models/component_model.dart';
@@ -20,7 +21,7 @@ class _EditPreferencesState extends State<EditPreferences> {
   late final Map<String, String> _preferences;
   late final Stream _userPreferencesDocStream;
   late final User _currentUser;
-  late DateTime? _buttonPressed;
+  DateTime? _buttonPressed;
 
   @override
   void initState() {
@@ -61,14 +62,19 @@ class _EditPreferencesState extends State<EditPreferences> {
     super.dispose();
   }
 
-  Duration? get timeBetweenButtonPresses => _buttonPressed?.difference(DateTime.now());
+  Duration? get timeBetweenButtonPresses =>
+      _buttonPressed?.difference(DateTime.now());
 
   void _updatePreferences(Map<String, int> data) {
-    Duration? time = timeBetweenButtonPresses;
+    Duration? time = timeBetweenButtonPresses?.abs();
 
-    if (time != null && time.inSeconds < 10) {
-      print(time);
+    if (time != null && time.inSeconds <= 10) {
+      int duration = 10 - time.inSeconds;
+      String message =
+          "Slow down! Wait ${10 - time.inSeconds} ${duration <= 1 ? "second" : "seconds"}";
+      Util.showSnackBar(context, message);
     } else {
+      ScaffoldMessenger.of(context).clearSnackBars();
       _buttonPressed = DateTime.now();
       FirebaseService.updateUserPreferences(data);
     }

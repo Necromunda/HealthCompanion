@@ -21,8 +21,8 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
           icon: const Icon(Icons.close),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Placeholder(),
       ),
     );

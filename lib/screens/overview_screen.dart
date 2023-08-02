@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:health_companion/widgets/loading_components.dart';
@@ -29,6 +32,7 @@ class _OverviewState extends State<Overview> {
   late List<Bundle> _userBundles;
   late int _currentBundleIndex, _lastBundleIndex;
   late PageController _bundlePageViewController;
+  UserPreferences? _userPreferences;
 
   @override
   void initState() {
@@ -44,7 +48,21 @@ class _OverviewState extends State<Overview> {
         .collection("user_daily_data")
         .doc(_currentUser.uid)
         .snapshots();
+    print(_userPreferences);
+    userPreferences.then((value) => setState(() {
+          _userPreferences = value;
+          print(_userPreferences);
+    }));
+    // _userPreferences = UserPreferences();
     super.initState();
+  }
+
+  Future<UserPreferences> get userPreferences async {
+    final json = await FirebaseService.getUserPreferences();
+    if (json == null) {
+      return UserPreferences();
+    }
+    return UserPreferences.fromJson(json);
   }
 
   @override
@@ -177,10 +195,11 @@ class _OverviewState extends State<Overview> {
 
   void _scrollBundles(int index) {
     print("Scroll to $index");
-    _bundlePageViewController.animateToPage(
+    // _bundlePageViewController.animateToPage(
+    _bundlePageViewController.jumpToPage(
       index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      // duration: const Duration(milliseconds: 300),
+      // curve: Curves.easeInOut,
     );
   }
 
@@ -246,6 +265,7 @@ class _OverviewState extends State<Overview> {
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
                     if (snapshot.data?.data() == null) {
+                      print("here");
                       return const LoadingComponents(
                         message: "Loading your data",
                       );
@@ -280,13 +300,15 @@ class _OverviewState extends State<Overview> {
                           Bundle bundle = _userBundles[pageViewIndex];
 
                           return Column(
-                            mainAxisSize: MainAxisSize.max,
+                            // mainAxisSize: MainAxisSize.max,
                             children: [
                               if (bundle.components!.isNotEmpty)
                                 Chart(
                                   // key: Key("${Random().nextDouble() * 1000}"),
-                                  key: Key("${bundle.components?.length}"),
+                                  // key: Key("${bundle.components?.length}"),
+                                  key: UniqueKey(),
                                   bundle: bundle,
+                                  userPreferences: _userPreferences,
                                 ),
                               const SizedBox(height: 5),
                               Text(
@@ -364,7 +386,7 @@ class _OverviewState extends State<Overview> {
                                           onLongPress: () =>
                                               _deleteComponentFromBundle(
                                             _userBundles,
-                                                pageViewIndex,
+                                            pageViewIndex,
                                             listviewIndex,
                                           ),
                                         ),
@@ -389,22 +411,29 @@ class _OverviewState extends State<Overview> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                    onPressed: _showFirstBundle,
-                    icon: const Icon(Icons.keyboard_double_arrow_left)),
+                  onPressed: _showFirstBundle,
+                  icon: const Icon(Icons.keyboard_double_arrow_left),
+                ),
                 IconButton(
-                    onPressed: _showPreviousBundle,
-                    icon: const Icon(Icons.keyboard_arrow_left)),
+                  onPressed: _showPreviousBundle,
+                  icon: const Icon(Icons.keyboard_arrow_left),
+                ),
                 IconButton(
-                    onPressed: _addNewBundle, icon: const Icon(Icons.add)),
+                  onPressed: _addNewBundle,
+                  icon: const Icon(Icons.add),
+                ),
                 IconButton(
-                    onPressed: () => _deleteBundle(_currentBundleIndex),
-                    icon: const Icon(Icons.delete_forever)),
+                  onPressed: () => _deleteBundle(_currentBundleIndex),
+                  icon: const Icon(Icons.delete_forever),
+                ),
                 IconButton(
-                    onPressed: _showNextBundle,
-                    icon: const Icon(Icons.keyboard_arrow_right)),
+                  onPressed: _showNextBundle,
+                  icon: const Icon(Icons.keyboard_arrow_right),
+                ),
                 IconButton(
-                    onPressed: _showLastBundle,
-                    icon: const Icon(Icons.keyboard_double_arrow_right)),
+                  onPressed: _showLastBundle,
+                  icon: const Icon(Icons.keyboard_double_arrow_right),
+                ),
               ],
             ),
           ),
