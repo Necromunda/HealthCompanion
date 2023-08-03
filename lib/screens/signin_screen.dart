@@ -348,107 +348,16 @@ class _SignInState extends State<SignIn> {
           // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisSize: MainAxisSize.max,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: Image.asset("assets/images/placeholder_logo.png"),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Image.asset("assets/images/HealthCompanion-Logo2.png"),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.only(bottom: 10.0),
-              //   child:
-              //   TextField(
-              //     controller: _emailController,
-              //     keyboardType: TextInputType.emailAddress,
-              //     onChanged: (value) => setState(() {
-              //       _isEmailValid =
-              //           EmailValidator.validate(value) ? true : false;
-              //     }),
-              //     decoration: InputDecoration(
-              //       errorBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _emailController.text.isEmpty
-              //               ? Colors.grey
-              //               : Colors.red,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       focusedBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _emailColor,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       enabledBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _emailColor,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       prefixIcon: Icon(
-              //         Icons.email,
-              //         color: _emailColor,
-              //       ),
-              //       hintText: "Email",
-              //       border: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(5.0),
-              //         borderSide: const BorderSide(
-              //           width: 2.0,
-              //           style: BorderStyle.none,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(bottom: 10.0),
-              //   child: TextField(
-              //     controller: _passwordController,
-              //     keyboardType: TextInputType.visiblePassword,
-              //     obscureText: true,
-              //     onChanged: (value) => setState(() {
-              //       if (_passwordRegExp.hasMatch(value)) {
-              //         _isPasswordValid = true;
-              //       } else {
-              //         _isPasswordValid = false;
-              //       }
-              //     }),
-              //     decoration: InputDecoration(
-              //       errorBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _passwordController.text.isEmpty
-              //               ? Colors.grey
-              //               : Colors.red,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       focusedBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _passwordColor,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       enabledBorder: OutlineInputBorder(
-              //         borderSide: BorderSide(
-              //           color: _passwordColor,
-              //           width: 2.0,
-              //         ),
-              //       ),
-              //       prefixIcon: Icon(
-              //         Icons.password,
-              //         color: _passwordColor,
-              //       ),
-              //       // label: Text("Password"),
-              //       hintText: "Password",
-              //       border: OutlineInputBorder(
-              //         borderRadius: BorderRadius.circular(5.0),
-              //         borderSide: const BorderSide(
-              //           width: 2.0,
-              //           style: BorderStyle.none,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              const SizedBox(
+                height: 100,
+              ),
               _emailTextField,
               const SizedBox(
                 height: 10,
