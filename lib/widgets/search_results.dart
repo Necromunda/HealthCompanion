@@ -40,11 +40,11 @@ class _SearchResultsState extends State<SearchResults> {
       _addingComponentIndex = index;
       _addingComponent = true;
     });
-    bool isAdded = await FirebaseService.saveUserComponents(
-      FirebaseAuth.instance.currentUser!.uid,
+    int userComponentsLength = await FirebaseService.saveUserComponents(
+      // FirebaseAuth.instance.currentUser!.uid,
       component,
     );
-    if (isAdded) {
+    if (userComponentsLength != 0) {
       await FirebaseService.addToStats(UserStats.addComponent, 1);
       setState(() {
         _addedComponents.add(index);
@@ -54,6 +54,21 @@ class _SearchResultsState extends State<SearchResults> {
       _addingComponentIndex = -1;
       _addingComponent = false;
     });
+    _addComponentAchievement(userComponentsLength);
+  }
+
+  void _addComponentAchievement(int userComponentsLength) {
+    if (userComponentsLength >= 250) {
+      FirebaseService.addAchievement(
+          context, UserAchievementType.components250);
+    } else if (userComponentsLength >= 100) {
+      FirebaseService.addAchievement(
+          context, UserAchievementType.components100);
+    } else if (userComponentsLength >= 50) {
+      FirebaseService.addAchievement(context, UserAchievementType.components50);
+    } else if (userComponentsLength >= 10) {
+      FirebaseService.addAchievement(context, UserAchievementType.components10);
+    }
   }
 
   @override

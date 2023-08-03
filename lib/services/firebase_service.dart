@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/bundle_model.dart';
@@ -232,26 +233,27 @@ class FirebaseService {
     }
   }
 
-  static Future<bool> saveUserComponents(
-      String? uid, Component component) async {
+  // static Future<bool> saveUserComponents(Component component) async {
+  static Future<int> saveUserComponents(Component component) async {
     try {
+      final User user = FirebaseAuth.instance.currentUser!;
       final FirebaseFirestore db = FirebaseFirestore.instance;
       final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(uid);
+          db.collection("user_components").doc(user.uid);
 
-      List<Component>? userComponents = await getUserComponents(uid);
+      List<Component>? userComponents = await getUserComponents(user.uid);
       if (userComponents != null) {
         List<Map<String, dynamic>> json =
             userComponents.map((item) => item.toJson()).toList();
         json.add(component.toJson());
         await userComponentsDocRef.update({"components": json});
-        return true;
+        return json.length;
       }
     } catch (e, stackTrace) {
       print("Error saving user components: $e, $stackTrace");
-      return false;
+      return 0;
     }
-    return false;
+    return 0;
   }
 
   static Future<bool> updateUserComponents(Component component) async {
@@ -360,63 +362,119 @@ class FirebaseService {
 
       switch (type) {
         case UserAchievementType.components10:
-          Util.showSnackBar(context, "Achievement unlocked, 10 components added!");
+          if (!Util.userHasAchievement(
+            userAchievements.componentAchievements!,
+            'achievement-10-components',
+          )) {
+            userAchievements.componentAchievements
+                ?.add(UserAchievement.fromJson({
+              'name': 'achievement-10-components',
+              'unlockDate': DateTime.now(),
+            }));
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, 10 components added!");
+          }
           break;
         case UserAchievementType.components50:
-          Util.showSnackBar(context, "Achievement unlocked, 50 components added!");
+          if (!Util.userHasAchievement(
+            userAchievements.componentAchievements!,
+            'achievement-50-components',
+          )) {
+            userAchievements.componentAchievements
+                ?.add(UserAchievement.fromJson({
+              'name': 'achievement-50-components',
+              'unlockDate': DateTime.now(),
+            }));
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, 50 components added!");
+          }
           break;
         case UserAchievementType.components100:
-          Util.showSnackBar(context, "Achievement unlocked, 100 components added!");
+          if (!Util.userHasAchievement(
+            userAchievements.componentAchievements!,
+            'achievement-100-components',
+          )) {
+            userAchievements.componentAchievements
+                ?.add(UserAchievement.fromJson({
+              'name': 'achievement-100-components',
+              'unlockDate': DateTime.now(),
+            }));
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, 100 components added!");
+          }
           break;
         case UserAchievementType.components250:
-          Util.showSnackBar(context, "Achievement unlocked, 250 components added!");
+          if (!Util.userHasAchievement(
+            userAchievements.componentAchievements!,
+            'achievement-250-components',
+          )) {
+            userAchievements.componentAchievements
+                ?.add(UserAchievement.fromJson({
+              'name': 'achievement-250-components',
+              'unlockDate': DateTime.now(),
+            }));
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, 250 components added!");
+          }
           break;
         case UserAchievementType.member7:
-          if (userAchievements.memberAchievements!
-              .map((e) => e.name == 'achievement-7-days')
-              .toList()
-              .isEmpty) {
+          if (!Util.userHasAchievement(
+            userAchievements.memberAchievements!,
+            'achievement-7-days',
+          )) {
             userAchievements.memberAchievements?.add(UserAchievement.fromJson({
               'name': 'achievement-7-days',
               'unlockDate': DateTime.now(),
             }));
-            Util.showSnackBar(context, "Achievement unlocked, member for 7 days!");
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, member for 7 days!");
           }
           break;
         case UserAchievementType.member28:
-          if (userAchievements.memberAchievements!
-              .map((e) => e.name == 'achievement-1-month')
-              .toList()
-              .isEmpty) {
+          if (!Util.userHasAchievement(
+            userAchievements.memberAchievements!,
+            'achievement-1-month',
+          )) {
             userAchievements.memberAchievements?.add(UserAchievement.fromJson({
               'name': 'achievement-1-month',
               'unlockDate': DateTime.now(),
             }));
-            Util.showSnackBar(context, "Achievement unlocked, member for 1 month!");
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, member for 1 month!");
           }
           break;
         case UserAchievementType.member165:
-          if (userAchievements.memberAchievements!
-              .map((e) => e.name == 'achievement-6-months')
-              .toList()
-              .isEmpty) {
+          if (!Util.userHasAchievement(
+            userAchievements.memberAchievements!,
+            'achievement-6-months',
+          )) {
             userAchievements.memberAchievements?.add(UserAchievement.fromJson({
               'name': 'achievement-6-months',
               'unlockDate': DateTime.now(),
             }));
-            Util.showSnackBar(context, "Achievement unlocked, member for 6 months!");
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, member for 6 months!");
           }
           break;
         case UserAchievementType.member365:
-          if (userAchievements.memberAchievements!
-              .map((e) => e.name == 'achievement-1-year')
-              .toList()
-              .isEmpty) {
+          if (!Util.userHasAchievement(
+            userAchievements.memberAchievements!,
+            'achievement-1-year',
+          )) {
             userAchievements.memberAchievements?.add(UserAchievement.fromJson({
               'name': 'achievement-1-year',
               'unlockDate': DateTime.now(),
             }));
-            Util.showSnackBar(context, "Achievement unlocked, member for 1 year!");
+            addToStats(UserStats.addAchievement, 1);
+            Util.showSnackBar(
+                context, "Achievement unlocked, member for 1 year!");
           }
           break;
       }
@@ -481,7 +539,7 @@ class FirebaseService {
       final DocumentReference userDailyDataDocRef =
           db.collection("user_daily_data").doc(uid);
       final DocumentReference userAchievementsDocRef =
-      db.collection("user_achievements").doc(uid);
+          db.collection("user_achievements").doc(uid);
 
       await userComponentsDocRef.delete();
       await userPreferencesDocRef.delete();

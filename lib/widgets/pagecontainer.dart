@@ -21,7 +21,7 @@ class _PageContainerState extends State<PageContainer> {
   late final User _currentUser;
   late final PageController _pageController;
   late int _currentPageIndex, _maxPageDistance;
-  late Stream _statsDocumentReference;
+  // late Stream _statsDocumentReference;
 
   @override
   void initState() {
@@ -32,10 +32,10 @@ class _PageContainerState extends State<PageContainer> {
     _currentUser = FirebaseAuth.instance.currentUser!;
     _checkAccountCreationDate();
     // _statsDocumentReference = FirebaseFirestore.instance.collection('user_stats').doc(_currentUser.uid).snapshots();
-    // FirebaseAuth.instance.authStateChanges().listen((event) {
+    // FirebaseAuth.instance.idTokenChanges().listen((event) {
     //   if (event != null) {
     //     _statsDocumentReference.listen((event) {
-    //
+    //       print(event);
     //     });
     //   }
     // });

@@ -28,33 +28,65 @@ class _SettingsAccountState extends State<SettingsAccount> {
         child: Column(
           children: [
             Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
-                title: const Text("Preferences"),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const EditPreferences(),
+              clipBehavior: Clip.antiAlias,
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text("Preferences"),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const EditPreferences(),
+                      ),
+                    ),
                   ),
-                ),
+                  const Divider(
+                    height: 0,
+                    indent: 10,
+                    endIndent: 10,
+                    color: Colors.black,
+                  ),
+                  ListTile(
+                    title: const Text("Account details"),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ChangeAccountDetails(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
-                title: const Text("Account details"),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ChangeAccountDetails(),
-                  ),
-                ),
-              ),
-            ),
+            // Card(
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(10),
+            //   ),
+            //   child: ListTile(
+            //     title: const Text("Preferences"),
+            //     trailing: const Icon(Icons.keyboard_arrow_right),
+            //     onTap: () => Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const EditPreferences(),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // Card(
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(10),
+            //   ),
+            //   child: ListTile(
+            //     title: const Text("Account details"),
+            //     trailing: const Icon(Icons.keyboard_arrow_right),
+            //     onTap: () => Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const ChangeAccountDetails(),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

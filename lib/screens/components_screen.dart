@@ -67,7 +67,8 @@ class _ComponentsState extends State<Components> {
       ),
     );
     if (component != null) {
-      await FirebaseService.saveUserComponents(_currentUser.uid, component);
+      // await FirebaseService.saveUserComponents(_currentUser.uid, component);
+      await FirebaseService.saveUserComponents(component);
       await FirebaseService.addToStats(UserStats.addComponent, 1);
       if (_searchString.isNotEmpty) {
         if (component.name!.toLowerCase().contains(_searchString)) {
@@ -77,7 +78,20 @@ class _ComponentsState extends State<Components> {
         }
       }
     }
+    _addComponentAchievement();
     print(component);
+  }
+
+  void _addComponentAchievement() {
+    if (_userComponents.length >= 250) {
+      FirebaseService.addAchievement(context, UserAchievementType.components250);
+    } else if (_userComponents.length >= 100) {
+      FirebaseService.addAchievement(context, UserAchievementType.components100);
+    } else if (_userComponents.length >= 50) {
+      FirebaseService.addAchievement(context, UserAchievementType.components50);
+    } else if (_userComponents.length >= 10) {
+      FirebaseService.addAchievement(context, UserAchievementType.components10);
+    }
   }
 
   void _deleteComponent(Component component) async {

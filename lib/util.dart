@@ -1,11 +1,13 @@
 import 'package:health_companion/models/fineli_model.dart';
+import 'package:health_companion/models/user_achievements_model.dart';
 import 'package:health_companion/services/fineli_service.dart';
 import 'package:flutter/material.dart';
 
 import 'models/component_model.dart';
 
 class Util {
-  static bool isDark(context) => Theme.of(context).brightness == Brightness.dark;
+  static bool isDark(context) =>
+      Theme.of(context).brightness == Brightness.dark;
 
   static Future<List<Component>?> createComponents(String food) async {
     final data = await FineliService.getFoodItem(food);
@@ -74,5 +76,7 @@ class Util {
     );
   }
 
-
+  static bool userHasAchievement(List<UserAchievement> achievements, String name) {
+    return achievements.map((e) => e.name == name).toList().isNotEmpty;
+  }
 }
