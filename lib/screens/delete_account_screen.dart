@@ -239,7 +239,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           borderRadius: BorderRadius.circular(1.0),
                         ),
                       ),
-                      child: const Text("Delete my account"),
+                      child: const Text("Delete my account", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],

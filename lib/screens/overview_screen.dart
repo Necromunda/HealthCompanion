@@ -34,6 +34,7 @@ class _OverviewState extends State<Overview> {
   @override
   void initState() {
     print("Overview screen init");
+    // FirebaseAuth.instance.signOut();
     _currentUser = FirebaseAuth.instance.currentUser!;
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
@@ -45,21 +46,18 @@ class _OverviewState extends State<Overview> {
         .collection("user_daily_data")
         .doc(_currentUser.uid)
         .snapshots();
-    print(_userPreferences);
     userPreferences.then((value) => setState(() {
+      // print(object)
           _userPreferences = value;
-          print(_userPreferences);
+          // print(_userPreferences);
     }));
     // _userPreferences = UserPreferences();
     super.initState();
   }
 
   Future<UserPreferences> get userPreferences async {
-    final json = await FirebaseService.getUserPreferences();
-    if (json == null) {
-      return UserPreferences();
-    }
-    return UserPreferences.fromJson(json);
+    UserPreferences prefs = await FirebaseService.getUserPreferences();
+    return prefs;
   }
 
   @override
@@ -89,7 +87,7 @@ class _OverviewState extends State<Overview> {
     if (component != null) {
       _addComponentToBundle(_userBundles, _currentBundleIndex, [component]);
     }
-    print(component);
+    print('COMPONENT $component');
   }
 
   void _addExistingComponentButtonHandler() async {
@@ -118,7 +116,7 @@ class _OverviewState extends State<Overview> {
   }
 
   void _addNewBundle() async {
-    print(_currentBundleIndex);
+    // print(_currentBundleIndex);
     Bundle newBundle = Bundle.fromJson({
       // "creationDate": DateTime.now().millisecondsSinceEpoch,
       "creationDate": DateTime.now(),
@@ -273,6 +271,7 @@ class _OverviewState extends State<Overview> {
                       );
                     }
                     if (snapshot.hasData) {
+                      // print("ERROR!!");
                       List<Map<String, dynamic>> data =
                           snapshot.data["data"].cast<Map<String, dynamic>>();
                       _userBundles =
@@ -281,7 +280,7 @@ class _OverviewState extends State<Overview> {
                       if (_userBundles.isEmpty) {
                         _addNewBundle();
                       }
-                      print(_userBundles);
+                      // print('USERBUNDLES $_userBundles');
                       _lastBundleIndex = _userBundles.length - 1;
 
                       return PageView.builder(

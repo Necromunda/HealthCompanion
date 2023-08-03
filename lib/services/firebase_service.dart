@@ -5,6 +5,7 @@ import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/models/user_achievements_model.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
 
 import '../models/appuser_model.dart';
 import '../util.dart';
@@ -29,28 +30,41 @@ enum UserAchievementType {
 }
 
 class FirebaseService {
+  static FirebaseFirestore get db => FirebaseFirestore.instance;
+
+  static User get user => FirebaseAuth.instance.currentUser!;
+
+  static String get uid => FirebaseAuth.instance.currentUser!.uid;
+
+  static DocumentReference get userDocRef => db.collection('users').doc(uid);
+
+  static DocumentReference get userBundlesDocRef =>
+      db.collection('user_daily_data').doc(uid);
+
+  static DocumentReference get userStatsDocRef =>
+      db.collection('user_stats').doc(uid);
+
+  static DocumentReference get userComponentsDocRef =>
+      db.collection('user_components').doc(uid);
+
+  static DocumentReference get userPreferencesDocRef =>
+      db.collection('user_preferences').doc(uid);
+
+  static DocumentReference get userAchievementsDocRef =>
+      db.collection('user_achievements').doc(uid);
+
   static Future<AppUser?> createUserOnSignup({
     required User user,
     required String username,
-    // required int age,
     required DateTime dateOfBirth,
     required double height,
     required double weight,
     required String email,
   }) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('user_components')
-          .doc(user.uid)
-          .set({"components": []});
-      await FirebaseFirestore.instance
-          .collection('user_daily_data')
-          .doc(user.uid)
-          .set({"data": []});
-      await FirebaseFirestore.instance
-          .collection('user_preferences')
-          .doc(user.uid)
-          .set({
+      await userComponentsDocRef.set({"components": []});
+      await userBundlesDocRef.set({"data": []});
+      await userPreferencesDocRef.set({
         "energyKcal": 0,
         "energyKj": 0,
         "salt": 0,
@@ -64,10 +78,7 @@ class FirebaseService {
         "sugar": 0,
         "fat": 0
       });
-      await FirebaseFirestore.instance
-          .collection('user_stats')
-          .doc(user.uid)
-          .set({
+      await userStatsDocRef.set({
         "joinDate": user.metadata.creationTime,
         "componentsAdded": 0,
         "componentsDeleted": 0,
@@ -75,29 +86,23 @@ class FirebaseService {
         "bundlesDeleted": 0,
         "achievementsUnlocked": 0,
       });
-      await FirebaseFirestore.instance.collection("users").doc(user.uid).set({
+      await userDocRef.set({
         "username": username,
-        // "age": age,
         "dateOfBirth": dateOfBirth,
         "height": height,
         "weight": weight,
         "email": email,
         "joinDate": user.metadata.creationTime,
       });
-      await FirebaseFirestore.instance
-          .collection('user_achievements')
-          .doc(user.uid)
-          .set({
-        'components': {
-          'data': [],
-        },
-        'member': {
-          'data': [],
-        },
+      await userAchievementsDocRef.set({
+        'achievements': {
+          'components': [],
+          'member': [],
+        }
       });
       return AppUser(
         email: email,
-        uid: user.uid,
+        uid: uid,
         username: username,
         joinDate: user.metadata.creationTime,
       );
@@ -108,140 +113,75 @@ class FirebaseService {
     }
   }
 
-  static Future<void> setAchievments() async {
-    try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userAchievements =
-          db.collection('user_achievements').doc(user.uid);
-
-      // await userAchievements.set({
-      //   'achievements': {
-      //     'components': [],
-      //     'member': [],
-      //   },
-      // });
-      await userAchievements.update({
-        'achievements': {
-          'components': [
-            {
-              'name': 'achievement-10-components',
-              'unlockDate': DateTime.now(),
-            },
-          ],
-          'member': [],
-        },
-      });
-    } catch (e, stackTrace) {
-      // print("error creating user");
-      print("$e, $stackTrace");
-    }
-  }
-
-  //
-  // static Future<void> setUserInfo() async {
+  // static Future<AppUser?> createUser(String uid) async {
   //   try {
-  //     final User user = FirebaseAuth.instance.currentUser!;
   //     final FirebaseFirestore db = FirebaseFirestore.instance;
-  //     final DocumentReference userAchievements =
-  //     db.collection('users').doc(user.uid);
+  //     final DocumentReference userDocument = db.collection("users").doc(uid);
   //
-  //     await userAchievements.set({
-  //       "username": 'jrantapaa',
-  //       // "age": age,
-  //       "dateOfBirth": DateTime(2000, 3, 6),
-  //       "height": 180,
-  //       "weight": 104.9,
-  //       "email": 'johannes.rantapaa@gmail.com',
-  //       "joinDate": user.metadata.creationTime,
-  //     });
+  //     var userDocumentSnapshot = await userDocument.get();
+  //     var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
+  //     firestoreUser["uid"] = userDocumentSnapshot.id;
+  //
+  //     return AppUser.fromJson(firestoreUser);
   //   } catch (e, stackTrace) {
-  //     // print("error creating user");
+  //     print("error creating user");
   //     print("$e, $stackTrace");
+  //     return null;
   //   }
   // }
 
-  static Future<AppUser?> createUser(String uid) async {
-    try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userDocument = db.collection("users").doc(uid);
-
-      var userDocumentSnapshot = await userDocument.get();
-      var firestoreUser = userDocumentSnapshot.data() as Map<String, dynamic>;
-      firestoreUser["uid"] = userDocumentSnapshot.id;
-
-      return AppUser.fromJson(firestoreUser);
-    } catch (e, stackTrace) {
-      print("error creating user");
-      print("$e, $stackTrace");
-      return null;
-    }
-  }
-
   static Future<Map<String, dynamic>> getUserStats() async {
-    final User user = FirebaseAuth.instance.currentUser!;
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    final DocumentReference userStatsDocRef =
-        db.collection("user_stats").doc(user.uid);
-
-    final DocumentSnapshot data = await userStatsDocRef.get();
-    Map<String, dynamic> json = data.data() as Map<String, dynamic>;
+    final DocumentSnapshot userStatsDocSnapshot = await userStatsDocRef.get();
+    Map<String, dynamic> json =
+        userStatsDocSnapshot.data() as Map<String, dynamic>;
     return json;
   }
 
   static Future<Map<String, dynamic>> getUserAchievements() async {
-    final User user = FirebaseAuth.instance.currentUser!;
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    final DocumentReference userAchievementsDocRef =
-        db.collection("user_achievements").doc(user.uid);
+    final DocumentSnapshot userAchievementsDocSnapshot =
+        await userAchievementsDocRef.get();
+    final data = userAchievementsDocSnapshot.data() as Map<String, dynamic>;
 
-    var userAchievementsDocSnapshot = await userAchievementsDocRef.get();
-    var data = userAchievementsDocSnapshot.data() as Map<String, dynamic>;
     return data;
   }
 
   static Future<void> addToStats(UserStats operation, int amount) async {
-    final User user = FirebaseAuth.instance.currentUser!;
-    final FirebaseFirestore db = FirebaseFirestore.instance;
-    final DocumentReference userStatsDocRef =
-        db.collection("user_stats").doc(user.uid);
-    final DocumentSnapshot data = await userStatsDocRef.get();
-    Map<String, dynamic> json = data.data() as Map<String, dynamic>;
+    final DocumentSnapshot userStatsDocSnapshot = await userStatsDocRef.get();
+    Map<String, dynamic> json =
+        userStatsDocSnapshot.data() as Map<String, dynamic>;
 
     switch (operation) {
       case UserStats.addBundle:
-        await userStatsDocRef
-            .update({"bundlesAdded": (json["bundlesAdded"] ?? 0) + amount});
+        await userStatsDocRef.update({
+          "bundlesAdded": (json["bundlesAdded"] ?? 0) + amount,
+        });
         break;
       case UserStats.addComponent:
-        await userStatsDocRef.update(
-            {"componentsAdded": (json["componentsAdded"] ?? 0) + amount});
+        await userStatsDocRef.update({
+          "componentsAdded": (json["componentsAdded"] ?? 0) + amount,
+        });
         break;
       case UserStats.addAchievement:
         await userStatsDocRef.update({
-          "achievementsUnlocked": (json["achievementsUnlocked"] ?? 0) + amount
+          "achievementsUnlocked": (json["achievementsUnlocked"] ?? 0) + amount,
         });
         break;
       case UserStats.deleteBundle:
-        await userStatsDocRef
-            .update({"bundlesDeleted": (json["bundlesDeleted"] ?? 0) + amount});
+        await userStatsDocRef.update({
+          "bundlesDeleted": (json["bundlesDeleted"] ?? 0) + amount,
+        });
         break;
       case UserStats.deleteComponent:
-        await userStatsDocRef.update(
-            {"componentsDeleted": (json["componentsDeleted"] ?? 0) + amount});
+        await userStatsDocRef.update({
+          "componentsDeleted": (json["componentsDeleted"] ?? 0) + amount,
+        });
         break;
     }
   }
 
-  // static Future<bool> saveUserComponents(Component component) async {
   static Future<int> saveUserComponents(Component component) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(user.uid);
-
-      List<Component>? userComponents = await getUserComponents(user.uid);
+      List<Component>? userComponents = await getUserComponents();
       if (userComponents != null) {
         List<Map<String, dynamic>> json =
             userComponents.map((item) => item.toJson()).toList();
@@ -258,12 +198,7 @@ class FirebaseService {
 
   static Future<bool> updateUserComponents(Component component) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(user.uid);
-
-      List<Component>? userComponents = await getUserComponents(user.uid);
+      List<Component>? userComponents = await getUserComponents();
       if (userComponents != null) {
         int index =
             userComponents.indexWhere((element) => element == component);
@@ -280,13 +215,8 @@ class FirebaseService {
     return false;
   }
 
-  static Future<bool> deleteUserComponent(
-      String? uid, List<Component> components) async {
+  static Future<bool> deleteUserComponent(List<Component> components) async {
     try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(uid);
-
       List<Map<String, dynamic>> json =
           components.map((item) => item.toJson()).toList();
       await userComponentsDocRef.update({"components": json});
@@ -297,14 +227,11 @@ class FirebaseService {
     }
   }
 
-  static Future<List<Component>?> getUserComponents(String? uid) async {
+  static Future<List<Component>?> getUserComponents() async {
     try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(uid);
-
-      var userComponentsDocSnapshot = await userComponentsDocRef.get();
-      var data = userComponentsDocSnapshot.data() as Map<String, dynamic>;
+      final DocumentSnapshot userComponentsDocSnapshot =
+          await userComponentsDocRef.get();
+      final data = userComponentsDocSnapshot.data() as Map<String, dynamic>;
       List<Component> components = (data["components"] as List)
           .map((e) => Component.fromJson(e))
           .toList();
@@ -316,47 +243,24 @@ class FirebaseService {
     }
   }
 
-  static Future<Map<String, dynamic>?> getUserPreferences() async {
+  static Future<UserPreferences> getUserPreferences() async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userPreferencesDocRef =
-          db.collection("user_preferences").doc(user.uid);
-
-      var userPreferencesDocSnapshot = await userPreferencesDocRef.get();
-      var data = userPreferencesDocSnapshot.data() as Map<String, dynamic>;
-      return data;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  static Future<List<Achievement>?> getAchievements(String doc) async {
-    try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference achievementsDocRef =
-          db.collection('achievements').doc(doc);
-
-      var achievementsDocSnapshot = await achievementsDocRef.get();
-      var data = achievementsDocSnapshot.data() as Map<String, dynamic>;
-      List<Achievement> achievements =
-          (data['data'] as List).map((e) => Achievement.fromJson(e)).toList();
-
-      return achievements;
-    } catch (e) {
-      print(e);
-      return null;
+      final DocumentSnapshot userPreferencesDocSnapshot =
+          await userPreferencesDocRef.get();
+      final data = userPreferencesDocSnapshot.data();
+      if (data == null) {
+        return UserPreferences();
+      } else {
+        return UserPreferences.fromJson(data as Map<String, dynamic>);
+      }
+    } catch (e, stackTrace) {
+      print("Error getting preferences: $e, $stackTrace");
+      return UserPreferences();
     }
   }
 
   static Future<void> addAchievement(context, UserAchievementType type) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userAchievementsDocRef =
-          db.collection('user_achievements').doc(user.uid);
-
       final Map<String, dynamic> json = await getUserAchievements();
       final UserAchievements userAchievements = UserAchievements.fromJson(json);
 
@@ -488,67 +392,34 @@ class FirebaseService {
 
   static Future<void> updateUserPreferences(Map<String, int> data) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userPreferencesDocRef =
-          db.collection("user_preferences").doc(user.uid);
-
       userPreferencesDocRef.update(data);
-      // userPreferencesDocRef.update({
-      //   "energyKcal": 0,
-      //   "energyKj": 0,
-      //   "salt": 0,
-      //   "protein": 0,
-      //   "carbohydrate": 0,
-      //   "alcohol": 0,
-      //   "organicAcids": 0,
-      //   "sugarAlcohol": 0,
-      //   "saturatedFat": 0,
-      //   "fiber": 0,
-      //   "sugar": 0,
-      //   "fat": 0
-      // });
     } catch (e) {
       print(e);
     }
   }
 
   static Future<bool> reauthenticateWithCredential(
-      AuthCredential credential) async {
+    AuthCredential credential,
+  ) async {
     try {
-      await FirebaseAuth.instance.currentUser
-          ?.reauthenticateWithCredential(credential);
+      await user.reauthenticateWithCredential(credential);
       return true;
     } catch (e, stackTrace) {
       if (e is FirebaseAuthException) return false;
-      print("Error reauthenticating user: $e, $stackTrace");
+      print("Error authenticating user: $e, $stackTrace");
       return false;
     }
   }
 
   static Future<void> deleteAccount(String uid) async {
     try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userDocRef = db.collection("users").doc(uid);
-      final DocumentReference userComponentsDocRef =
-          db.collection("user_components").doc(uid);
-      final DocumentReference userPreferencesDocRef =
-          db.collection("user_preferences").doc(uid);
-      final DocumentReference userStatsDocRef =
-          db.collection("user_stats").doc(uid);
-      final DocumentReference userDailyDataDocRef =
-          db.collection("user_daily_data").doc(uid);
-      final DocumentReference userAchievementsDocRef =
-          db.collection("user_achievements").doc(uid);
-
       await userComponentsDocRef.delete();
       await userPreferencesDocRef.delete();
       await userStatsDocRef.delete();
-      await userDailyDataDocRef.delete();
+      await userBundlesDocRef.delete();
       await userAchievementsDocRef.delete();
       await userDocRef.delete();
-
-      await FirebaseAuth.instance.currentUser?.delete();
+      await user.delete();
     } catch (e, stackTrace) {
       print("Error deleting user: $e, $stackTrace");
     }
@@ -556,14 +427,10 @@ class FirebaseService {
 
   static Future<void> updateDailyData(List<Bundle> bundles) async {
     try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      String uid = FirebaseAuth.instance.currentUser!.uid;
-      final DocumentReference userDailyDataDocRef =
-          db.collection("user_daily_data").doc(uid);
       List<Map<String, dynamic>> updatedDataJson =
           bundles.map((e) => e.toJson()).toList();
 
-      await userDailyDataDocRef.update({"data": updatedDataJson});
+      await userBundlesDocRef.update({"data": updatedDataJson});
     } catch (e, stackTrace) {
       print("Error adding daily data: $e, $stackTrace");
     }
@@ -571,9 +438,6 @@ class FirebaseService {
 
   static Future<bool> changeUsername(String username) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-      final DocumentReference userDocRef = db.collection("users").doc(user.uid);
       final DocumentSnapshot userDocSnapshot = await userDocRef.get();
       Map<String, dynamic> json =
           userDocSnapshot.data() as Map<String, dynamic>;
@@ -589,7 +453,6 @@ class FirebaseService {
 
   static Future<bool> changeEmail(String email) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
       await user.updateEmail(email);
       return true;
     } catch (e, stackTrace) {
@@ -600,7 +463,6 @@ class FirebaseService {
 
   static Future<bool> changePassword(String password) async {
     try {
-      final User user = FirebaseAuth.instance.currentUser!;
       await user.updatePassword(password);
       return true;
     } catch (e, stackTrace) {

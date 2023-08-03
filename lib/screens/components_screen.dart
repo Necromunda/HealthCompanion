@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/screens/add_new_component_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
 
-import '../models/appuser_model.dart';
 import '../models/component_model.dart';
 import '../util.dart';
 import '../widgets/loading_components.dart';
@@ -84,9 +83,11 @@ class _ComponentsState extends State<Components> {
 
   void _addComponentAchievement() {
     if (_userComponents.length >= 250) {
-      FirebaseService.addAchievement(context, UserAchievementType.components250);
+      FirebaseService.addAchievement(
+          context, UserAchievementType.components250);
     } else if (_userComponents.length >= 100) {
-      FirebaseService.addAchievement(context, UserAchievementType.components100);
+      FirebaseService.addAchievement(
+          context, UserAchievementType.components100);
     } else if (_userComponents.length >= 50) {
       FirebaseService.addAchievement(context, UserAchievementType.components50);
     } else if (_userComponents.length >= 10) {
@@ -108,8 +109,7 @@ class _ComponentsState extends State<Components> {
         _searchResults.remove(component);
       }
     }
-    await FirebaseService.deleteUserComponent(
-        _currentUser.uid, _userComponents);
+    await FirebaseService.deleteUserComponent(_userComponents);
     await FirebaseService.addToStats(UserStats.deleteComponent, 1);
   }
 
