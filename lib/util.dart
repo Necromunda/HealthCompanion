@@ -79,4 +79,28 @@ class Util {
   static bool userHasAchievement(List<UserAchievement> achievements, String name) {
     return achievements.map((e) => e.name == name).toList().isNotEmpty;
   }
+
+//   static Future<void> showDialog(BuildContext context, String title, String message) {
+//     return showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         title: Text(
+//           title,
+//           textAlign: TextAlign.center,
+//         ),
+//         content: Text(
+//           message,
+//           textAlign: TextAlign.center,
+//         ),
+//         actions: <Widget>[
+//           TextButton(
+//             onPressed: () {
+//               Navigator.pop(context);
+//             },
+//             child: const Text("Dismiss"),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
 }

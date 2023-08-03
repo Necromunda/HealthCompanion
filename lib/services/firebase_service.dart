@@ -568,4 +568,44 @@ class FirebaseService {
       print("Error adding daily data: $e, $stackTrace");
     }
   }
+
+  static Future<bool> changeUsername(String username) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      final FirebaseFirestore db = FirebaseFirestore.instance;
+      final DocumentReference userDocRef = db.collection("users").doc(user.uid);
+      final DocumentSnapshot userDocSnapshot = await userDocRef.get();
+      Map<String, dynamic> json =
+          userDocSnapshot.data() as Map<String, dynamic>;
+      json['username'] = username;
+      print(json);
+      await userDocRef.update(json);
+      return true;
+    } catch (e, stackTrace) {
+      print("Error updating username: $e, $stackTrace");
+      return false;
+    }
+  }
+
+  static Future<bool> changeEmail(String email) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      await user.updateEmail(email);
+      return true;
+    } catch (e, stackTrace) {
+      print("Error updating email: $e, $stackTrace");
+      return false;
+    }
+  }
+
+  static Future<bool> changePassword(String password) async {
+    try {
+      final User user = FirebaseAuth.instance.currentUser!;
+      await user.updatePassword(password);
+      return true;
+    } catch (e, stackTrace) {
+      print("Error updating email: $e, $stackTrace");
+      return false;
+    }
+  }
 }
