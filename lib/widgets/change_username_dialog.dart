@@ -62,7 +62,7 @@ class _ChangeUsernameDialogState extends State<ChangeUsernameDialog> {
             ),
             decoration: InputDecoration(
               counterText: "",
-              hintText: "Username",
+              hintText: AppLocalizations.of(context)!.username,
               contentPadding: EdgeInsets.zero,
               filled: true,
               // fillColor: const Color(0XDEDEDEDE),
@@ -123,7 +123,7 @@ class _ChangeUsernameDialogState extends State<ChangeUsernameDialog> {
                 style: TextButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.labelLarge,
                 ),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _usernameController.clear();

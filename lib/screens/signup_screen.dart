@@ -58,12 +58,6 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  // void _setAgeCallback(int age) {
-  //   setState(() {
-  //     _age = age;
-  //   });
-  // }
-
   void _setDateOBirthCallback(DateTime dateOfBirth) {
     setState(() {
       _dateOfBirth = dateOfBirth;
@@ -100,8 +94,6 @@ class _SignUpState extends State<SignUp> {
 
   String? _getPassword() => _password;
 
-  // int? _getAge() => _age;
-
   DateTime? _getDateOfBirth() => _dateOfBirth;
 
   double? _getHeight() => _height;
@@ -111,14 +103,12 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          // color: Colors.black,
         ),
         centerTitle: true,
         title: Text(
@@ -137,7 +127,6 @@ class _SignUpState extends State<SignUp> {
           ),
           SignUpBackgroundInfo(
             pageIndex: 1,
-            // inputCallbackAge: _setAgeCallback,
             inputCallbackDateOfBirth: _setDateOBirthCallback,
             inputCallbackHeight: _setHeightCallback,
             inputCallbackWeight: _setWeightCallback,
@@ -153,7 +142,6 @@ class _SignUpState extends State<SignUp> {
             inputCallback: _setPasswordCallback,
             switchPageCallback: _switchPage,
             getUsernameCallback: _getUsername,
-            // getAgeCallback: _setAgeCallback,
             getDateOfBirthCallback: _getDateOfBirth,
             getHeightCallback: _getHeight,
             getWeightCallback: _getWeight,

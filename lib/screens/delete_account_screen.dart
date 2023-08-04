@@ -92,7 +92,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Password",
+          hintText: AppLocalizations.of(context)!.hintPassword,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -179,53 +179,6 @@ class _DeleteAccountState extends State<DeleteAccount> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // TextField(
-                  //   controller: _passwordController,
-                  //   keyboardType: TextInputType.visiblePassword,
-                  //   obscureText: true,
-                  //   onChanged: (value) => setState(() {
-                  //     if (_passwordRegExp.hasMatch(value)) {
-                  //       _isPasswordValid = true;
-                  //     } else {
-                  //       _isPasswordValid = false;
-                  //     }
-                  //   }),
-                  //   decoration: InputDecoration(
-                  //     errorBorder: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: _passwordController.text.isEmpty
-                  //             ? Colors.grey
-                  //             : Colors.red,
-                  //         width: 2.0,
-                  //       ),
-                  //     ),
-                  //     focusedBorder: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: _passwordColor,
-                  //         width: 2.0,
-                  //       ),
-                  //     ),
-                  //     enabledBorder: OutlineInputBorder(
-                  //       borderSide: BorderSide(
-                  //         color: _passwordColor,
-                  //         width: 2.0,
-                  //       ),
-                  //     ),
-                  //     prefixIcon: Icon(
-                  //       Icons.password,
-                  //       color: _passwordColor,
-                  //     ),
-                  //     // label: Text("Password"),
-                  //     hintText: "Password",
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(5.0),
-                  //       borderSide: const BorderSide(
-                  //         width: 2.0,
-                  //         style: BorderStyle.none,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   _passwordTextField,
                   const SizedBox(height: 10.0),
                   SizedBox(
@@ -240,7 +193,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
                           borderRadius: BorderRadius.circular(1.0),
                         ),
                       ),
-                      child: const Text("Delete my account", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                      child: Text(AppLocalizations.of(context)!.deleteAccount, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -249,9 +202,8 @@ class _DeleteAccountState extends State<DeleteAccount> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Are you sure you want to delete your account?\nThis action is permanent and cannot be undone.",
-                    style: TextStyle(fontSize: 20),
+                  Text(AppLocalizations.of(context)!.deleteAccountWarning,
+                    style: const TextStyle(fontSize: 20),
                     textAlign: TextAlign.center,
                   ),
                   Row(
@@ -267,9 +219,9 @@ class _DeleteAccountState extends State<DeleteAccount> {
                               borderRadius: BorderRadius.circular(1.0),
                             ),
                           ),
-                          child: const Text(
-                            "No, take me back",
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.cancel,
+                            style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -286,9 +238,9 @@ class _DeleteAccountState extends State<DeleteAccount> {
                               borderRadius: BorderRadius.circular(1.0),
                             ),
                           ),
-                          child: const Text(
-                            "Proceed",
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)!.proceed,
+                            style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),

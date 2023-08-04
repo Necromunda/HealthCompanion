@@ -67,50 +67,9 @@ class _ProfileState extends State<Profile> {
   }
 
   void _deleteAccountButtonHandler() async {
-    // bool? res = await _showDeleteAccountConfirm();
-    // print("Delete account: $res");
-    // if (res is bool && res) {
-    //   FirebaseAuth.instance.currentUser!.reauthenticateWithCredential()
-    //   print("deleting account");
-    // }
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const DeleteAccount(),
-      ),
-    );
-  }
-
-  Future<bool?> _showDeleteAccountConfirm() {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          "Delete account",
-          textAlign: TextAlign.center,
-        ),
-        content: const Text(
-          "Are you sure you want to delete your account?\nAccount deletion is permanent.",
-          textAlign: TextAlign.center,
-        ),
-        actions: <Widget>[
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: [
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: const Text("Cancel"),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text("Delete"),
-              ),
-            ],
-          )
-        ],
       ),
     );
   }
@@ -155,18 +114,18 @@ class _ProfileState extends State<Profile> {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          "Username",
-                          style: TextStyle(fontSize: 18),
+                          AppLocalizations.of(context)!.username,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         Text(
-                          "Joined",
-                          style: TextStyle(fontSize: 18),
+                          AppLocalizations.of(context)!.joined,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         Text(
-                          "Date of birth",
-                          style: TextStyle(fontSize: 18),
+                          AppLocalizations.of(context)!.dateOfBirth,
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ],
                     ),
@@ -197,15 +156,13 @@ class _ProfileState extends State<Profile> {
                   child: Column(
                     children: [
                       ListTile(
-                        title: const Text(
-                          "Stats",
-                          style: TextStyle(fontSize: 18),
+                        title: Text(
+                          AppLocalizations.of(context)!.stats,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         trailing: const Icon(Icons.keyboard_arrow_right),
-                        // onTap: _statsButtonHandler,
                         onTap: _statsButtonHandler,
                         minVerticalPadding: 0.0,
-                        // shape: const Border(bottom: BorderSide()),
                       ),
                       const Divider(
                         height: 0,
@@ -214,15 +171,13 @@ class _ProfileState extends State<Profile> {
                         color: Colors.black,
                       ),
                       ListTile(
-                        title: const Text(
-                          "Achievements",
-                          style: TextStyle(fontSize: 18),
+                        title: Text(
+                          AppLocalizations.of(context)!.achievements,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         trailing: const Icon(Icons.keyboard_arrow_right),
-                        // onTap: _statsButtonHandler,
                         onTap: _achievementsButtonHandler,
                         minVerticalPadding: 0.0,
-                        // shape: const Border(bottom: BorderSide()),
                       ),
                       const Divider(
                         height: 0,
@@ -231,15 +186,13 @@ class _ProfileState extends State<Profile> {
                         color: Colors.black,
                       ),
                       ListTile(
-                        title: const Text(
-                          "Delete account",
-                          style: TextStyle(fontSize: 18),
+                        title: Text(
+                          AppLocalizations.of(context)!.deleteAccount,
+                          style: const TextStyle(fontSize: 18),
                         ),
                         trailing: const Icon(Icons.keyboard_arrow_right),
-                        // onTap: _statsButtonHandler,
                         onTap: _deleteAccountButtonHandler,
                         minVerticalPadding: 0.0,
-                        // shape: const Border(bottom: BorderSide()),
                       ),
                     ],
                   ),
@@ -250,9 +203,9 @@ class _ProfileState extends State<Profile> {
                   // alignment: ,
                   child: TextButton(
                     onPressed: _logout,
-                    child: const Text(
-                      "Log out",
-                      style: TextStyle(fontSize: 22),
+                    child: Text(
+                      AppLocalizations.of(context)!.signOut,
+                      style: const TextStyle(fontSize: 22),
                     ),
                   ),
                 )
@@ -260,7 +213,9 @@ class _ProfileState extends State<Profile> {
             ),
           );
         }
-        return const LoadingScreen(message: "Loading profile");
+        return LoadingScreen(
+          message: AppLocalizations.of(context)!.loadingProfile,
+        );
       },
     );
   }

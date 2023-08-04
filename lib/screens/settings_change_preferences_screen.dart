@@ -20,11 +20,13 @@ class EditPreferences extends StatefulWidget {
 class _EditPreferencesState extends State<EditPreferences> {
   late final ScrollController _listScrollController;
   late final TextEditingController _macroTextFieldController;
-  late final Map<String, String> _preferences;
+
+  // late final Map<String, String> _preferences;
   late final Stream _userPreferencesDocStream;
   late final User _currentUser;
   DateTime? _buttonPressed;
   late UserPreferences _userPreferences;
+  late final List<String> _keys;
 
   @override
   void initState() {
@@ -33,20 +35,48 @@ class _EditPreferencesState extends State<EditPreferences> {
         .collection("user_preferences")
         .doc(_currentUser.uid)
         .snapshots();
-    _preferences = {
-      "Alcohol": "alcohol",
-      "Carbohydrate": "carbohydrate",
-      "Energy kJ": "energyKj",
-      "Energy kcal": "energyKcal",
-      "Fat": "fat",
-      "Fiber": "fiber",
-      "Organic acids": "organicAcids",
-      "Protein": "protein",
-      "Salt": "salt",
-      "Saturated fat": "saturatedFat",
-      "Sugar alcohol": "sugarAlcohol",
-      "Sugar": "sugar",
-    };
+    // _preferences = {
+    //   "Alcohol": "alcohol",
+    //   "Carbohydrate": "carbohydrate",
+    //   "Energy kJ": "energyKj",
+    //   "Energy kcal": "energyKcal",
+    //   "Fat": "fat",
+    //   "Fiber": "fiber",
+    //   "Organic acids": "organicAcids",
+    //   "Protein": "protein",
+    //   "Salt": "salt",
+    //   "Saturated fat": "saturatedFat",
+    //   "Sugar alcohol": "sugarAlcohol",
+    //   "Sugar": "sugar",
+    // };
+    // _preferences = {
+    //   "alcohol": "alcohol",
+    //   "carbohydrate": "carbohydrate",
+    //   "energykj": "energyKj",
+    //   "energykcal": "energyKcal",
+    //   "fat": "fat",
+    //   "fiber": "fiber",
+    //   "organicAcids": "organicAcids",
+    //   "protein": "protein",
+    //   "salt": "salt",
+    //   "saturatedFat": "saturatedFat",
+    //   "sugarAlcohol": "sugarAlcohol",
+    //   "sugar": "sugar",
+    // };
+    _keys = [
+      'alcohol',
+      'carbohydrate',
+      'energyKj',
+      'energyKcal',
+      'fat',
+      'fiber',
+      'organicAcids',
+      'protein',
+      'salt',
+      'saturatedFat',
+      'sugarAlcohol',
+      'sugar'
+    ];
     _listScrollController = ScrollController();
     _macroTextFieldController = TextEditingController();
     super.initState();
@@ -64,24 +94,6 @@ class _EditPreferencesState extends State<EditPreferences> {
     _listScrollController.dispose();
     super.dispose();
   }
-
-  Duration? get timeBetweenButtonPresses =>
-      _buttonPressed?.difference(DateTime.now());
-
-  // void _updatePreferences(Map<String, int> data) {
-  //   Duration? time = timeBetweenButtonPresses?.abs();
-  //
-  //   if (time != null && time.inSeconds <= 10) {
-  //     int duration = 10 - time.inSeconds;
-  //     String message =
-  //         "Slow down! Wait ${10 - time.inSeconds} ${duration <= 1 ? "second" : "seconds"}";
-  //     Util.showSnackBar(context, message);
-  //   } else {
-  //     ScaffoldMessenger.of(context).clearSnackBars();
-  //     _buttonPressed = DateTime.now();
-  //     FirebaseService.updateUserPreferences(data);
-  //   }
-  // }
 
   void _updatePreferences(Map<String, int> data) {
     int value = data.values.first;
@@ -131,17 +143,16 @@ class _EditPreferencesState extends State<EditPreferences> {
     }
   }
 
-  Future<int?> _dialogBuilder(BuildContext context, String title) {
+  Future<int?> _dialogBuilder(BuildContext context, String title, String suffix) {
     return showDialog<int?>(
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         var width = MediaQuery.of(context).size.width;
-        String? suffix = title.toLowerCase().contains("energy") ? null : "g";
 
         return AlertDialog(
           insetPadding: const EdgeInsets.all(10),
-          title: Text('Change ${title.toLowerCase()}'),
+          title: Text('${AppLocalizations.of(context)!.set} ${title.toLowerCase()}'),
           content: SizedBox(
             width: width,
             child: _macroTextField(suffixText: suffix),
@@ -156,7 +167,7 @@ class _EditPreferencesState extends State<EditPreferences> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 _macroTextFieldController.clear();
                 Navigator.of(context).pop();
@@ -166,7 +177,7 @@ class _EditPreferencesState extends State<EditPreferences> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Confirm'),
+              child: Text(AppLocalizations.of(context)!.confirm),
               onPressed: () {
                 int value = int.tryParse(_macroTextFieldController.text) ?? 0;
                 _macroTextFieldController.clear();
@@ -273,29 +284,38 @@ class _EditPreferencesState extends State<EditPreferences> {
                 clipBehavior: Clip.antiAlias,
                 child: ListView.builder(
                   controller: _listScrollController,
-                  itemCount: _preferences.keys.length,
+                  // itemCount: _preferences.keys.length,
+                  itemCount: _keys.length,
                   itemBuilder: (context, index) {
-                    String title = _preferences.keys.elementAt(index);
-                    String dataKey = _preferences.values.elementAt(index);
-                    int limit = data[dataKey];
+                    // String title = _preferences.keys.elementAt(index);
+                    // String title = _keys[index];
+                    String title = AppLocalizations.of(context)!.macro(_keys[index].toLowerCase());
+                    // String dataKey = _preferences.values.elementAt(index);
+                    int limit = data[_keys[index]];
                     String suffix = 'g';
-                    if (title.toLowerCase().contains('energy')) {
+                    // print(title.contains('energy'));
+                    if (_keys[index].toLowerCase().contains('energy')) {
                       suffix =
-                          title.toLowerCase().contains('kcal') ? 'kcal' : 'kJ';
+                          _keys[index].toLowerCase().contains('kcal') ? 'kcal' : 'kJ';
                     }
 
                     return ListTile(
                       title: Text(title),
-                      subtitle: Text("Current limit is $limit $suffix"),
+                      // subtitle: Text("Current limit is $limit $suffix"),
+                      subtitle: Text(AppLocalizations.of(context)!
+                          .currentLimitIs("$limit $suffix")),
                       onTap: () async {
-                        int? value = await _dialogBuilder(context, title);
+                        int? value = await _dialogBuilder(context, title, suffix);
                         if (value != null) {
-                          _updatePreferences({dataKey: value});
+                          // _updatePreferences({dataKey: value});
+                          _updatePreferences({_keys[index]: value});
                         }
                       },
                       trailing: TextButton(
-                          onPressed: () => _updatePreferences({dataKey: 0}),
-                          child: const Text("Reset")),
+                        // onPressed: () => _updatePreferences({dataKey: 0}),
+                        onPressed: () => _updatePreferences({_keys[index]: 0}),
+                        child: Text(AppLocalizations.of(context)!.reset),
+                      ),
                     );
                   },
                 ),

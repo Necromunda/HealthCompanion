@@ -60,7 +60,7 @@ class _ReAuthenticateState extends State<ReAuthenticate> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Password",
+          hintText: AppLocalizations.of(context)!.hintPassword,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -143,7 +143,7 @@ class _ReAuthenticateState extends State<ReAuthenticate> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text("Dismiss"),
+            child: const Text('Ok'),
           ),
         ],
       ),
@@ -182,14 +182,16 @@ class _ReAuthenticateState extends State<ReAuthenticate> {
             ? Center(
                 child: FutureBuilder(
                   future:
-                  // Future.delayed(Duration(seconds: 2), () => true),
-                  FirebaseService.reauthenticateWithCredential(_credential),
+                      // Future.delayed(Duration(seconds: 2), () => true),
+                      FirebaseService.reauthenticateWithCredential(_credential),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       Future(() {
                         Navigator.of(context).pop(false);
                         _showDialog(
-                            "Authentication failed", "Something went wrong");
+                          AppLocalizations.of(context)!.authFailed,
+                          AppLocalizations.of(context)!.somethingWentWrong,
+                        );
                       });
                     }
                     if (snapshot.hasData) {
@@ -199,21 +201,23 @@ class _ReAuthenticateState extends State<ReAuthenticate> {
                         Future(() {
                           Navigator.of(context).pop(false);
                           _showDialog(
-                              "Authentication failed", "Password is incorrect");
+                            AppLocalizations.of(context)!.authFailed,
+                            AppLocalizations.of(context)!.incorrectPassword,
+                          );
                         });
                       }
                     }
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
-                          'Authenticating',
-                          style: TextStyle(fontSize: 18),
+                          AppLocalizations.of(context)!.authenticating,
+                          style: const TextStyle(fontSize: 18),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(),
@@ -239,9 +243,9 @@ class _ReAuthenticateState extends State<ReAuthenticate> {
                           borderRadius: BorderRadius.circular(1.0),
                         ),
                       ),
-                      child: const Text(
-                        'Authenticate',
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.authenticate,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),

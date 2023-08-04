@@ -63,7 +63,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
             ),
             decoration: InputDecoration(
               counterText: "",
-              hintText: "Password",
+              hintText: AppLocalizations.of(context)!.password,
               contentPadding: EdgeInsets.zero,
               filled: true,
               // fillColor: const Color(0XDEDEDEDE),
@@ -135,7 +135,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 style: TextButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.labelLarge,
                 ),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _passwordController.clear();

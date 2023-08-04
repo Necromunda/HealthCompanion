@@ -8,7 +8,8 @@ import '../services/firebase_service.dart';
 class DeletingAccount extends StatefulWidget {
   final AuthCredential authCredential;
 
-  const DeletingAccount({Key? key, required this.authCredential}) : super(key: key);
+  const DeletingAccount({Key? key, required this.authCredential})
+      : super(key: key);
 
   @override
   State<DeletingAccount> createState() => _DeletingAccountState();
@@ -42,7 +43,7 @@ class _DeletingAccountState extends State<DeletingAccount> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text("Dismiss"),
+            child: const Text('Ok'),
           ),
         ],
       ),
@@ -54,10 +55,12 @@ class _DeletingAccountState extends State<DeletingAccount> {
     return Scaffold(
       body: _authSuccessful
           ? FutureBuilder(
-              future: FirebaseService.deleteAccount(FirebaseAuth.instance.currentUser!.uid)
+              future: FirebaseService.deleteAccount(
+                      FirebaseAuth.instance.currentUser!.uid)
                   .then((value) {
                 print("Account deleted");
-                Future(() => Navigator.of(context).popUntil(ModalRoute.withName("/")));
+                Future(() =>
+                    Navigator.of(context).popUntil(ModalRoute.withName("/")));
               }),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -69,12 +72,12 @@ class _DeletingAccountState extends State<DeletingAccount> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Authenticated",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.authenticated,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: Icon(
                               Icons.check,
@@ -86,15 +89,17 @@ class _DeletingAccountState extends State<DeletingAccount> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Deleting account",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.deletingAccount,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
-                            child:
-                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                            child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator()),
                           ),
                         ],
                       ),
@@ -104,8 +109,8 @@ class _DeletingAccountState extends State<DeletingAccount> {
               },
             )
           : FutureBuilder(
-              future: FirebaseService.reauthenticateWithCredential(_authCredential),
-              // future: Future.delayed(const Duration(seconds: 4), () => false),
+              future:
+                  FirebaseService.reauthenticateWithCredential(_authCredential),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   Future(() => Navigator.of(context).pop());
@@ -120,7 +125,10 @@ class _DeletingAccountState extends State<DeletingAccount> {
                   } else {
                     Future(() {
                       Navigator.of(context).pop();
-                      _showDialog("Authentication failed", "Password is incorrect");
+                      _showDialog(
+                        AppLocalizations.of(context)!.authFailed,
+                        AppLocalizations.of(context)!.incorrectPassword,
+                      );
                     });
                   }
                 }
@@ -130,15 +138,17 @@ class _DeletingAccountState extends State<DeletingAccount> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Authenticating",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.authenticating,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
-                            child:
-                                SizedBox(height: 20, width: 20, child: CircularProgressIndicator()),
+                            child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator()),
                           ),
                         ],
                       ),

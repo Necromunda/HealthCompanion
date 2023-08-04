@@ -16,7 +16,7 @@ class SharedPreferencesHelper {
 
   setLocale(String value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString(themeKey, value);
+    sharedPreferences.setString(localeKey, value);
   }
 
   getLocale() async {

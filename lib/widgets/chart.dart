@@ -74,7 +74,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Alcohol",
+                              label: AppLocalizations.of(context)!.macro('alcohol'),
                               value: _bundle.totalAlcohol!,
                               goal: prefs?.alcohol ?? 0,
                             ),
@@ -83,7 +83,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Carbs",
+                              label: AppLocalizations.of(context)!.macro('carbohydrate'),
                               value: _bundle.totalCarbohydrate!,
                               goal: prefs?.carbohydrate ?? 0,
                             ),
@@ -92,7 +92,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Fat",
+                              label: AppLocalizations.of(context)!.macro('fat'),
                               value: _bundle.totalFat!,
                               goal: prefs?.fat ?? 0,
                             ),
@@ -101,7 +101,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Fiber",
+                              label: AppLocalizations.of(context)!.macro('fiber'),
                               value: _bundle.totalFiber!,
                               goal: prefs?.fiber ?? 0,
                             ),
@@ -110,7 +110,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Organic acids",
+                              label: AppLocalizations.of(context)!.macro('organicacids'),
                               value: _bundle.totalOrganicAcids!,
                               goal: prefs?.organicAcids ?? 0,
                             ),
@@ -119,7 +119,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Protein",
+                              label: AppLocalizations.of(context)!.macro('protein'),
                               value: _bundle.totalProtein!,
                               goal: prefs?.protein ?? 0,
                             ),
@@ -128,7 +128,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Salt",
+                              label: AppLocalizations.of(context)!.macro('salt'),
                               value: _bundle.totalSalt!,
                               goal: prefs?.salt ?? 0,
                             ),
@@ -138,7 +138,7 @@ class _ChartState extends State<Chart> {
                             width: 75,
                             // height: 15,
                             child: ChartBar(
-                              label: "Saturated fat",
+                              label: AppLocalizations.of(context)!.macro('saturatedfat'),
                               value: _bundle.totalSaturatedFat!,
                               goal: prefs?.saturatedFat ?? 0,
                             ),
@@ -147,7 +147,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Sugar",
+                              label: AppLocalizations.of(context)!.macro('sugar'),
                               value: _bundle.totalSugar!,
                               goal: prefs?.sugar ?? 0,
                             ),
@@ -156,7 +156,7 @@ class _ChartState extends State<Chart> {
                           SizedBox(
                             width: 75,
                             child: ChartBar(
-                              label: "Sugar alcohol",
+                              label: AppLocalizations.of(context)!.macro('sugaralcohol'),
                               value: _bundle.totalSugarAlcohol!,
                               goal: prefs?.sugarAlcohol ?? 0,
                             ),

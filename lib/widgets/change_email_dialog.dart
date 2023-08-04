@@ -63,7 +63,7 @@ class _ChangeEmailDialogState extends State<ChangeEmailDialog> {
             ),
             decoration: InputDecoration(
                 counterText: "",
-                hintText: "Email",
+                hintText: AppLocalizations.of(context)!.email,
                 contentPadding: EdgeInsets.zero,
                 filled: true,
                 // fillColor: const Color(0XDEDEDEDE),
@@ -126,7 +126,7 @@ class _ChangeEmailDialogState extends State<ChangeEmailDialog> {
                 style: TextButton.styleFrom(
                   textStyle: Theme.of(context).textTheme.labelLarge,
                 ),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.cancel),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _emailController.clear();

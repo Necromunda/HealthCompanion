@@ -58,57 +58,67 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
     if (_isAuthenticated) {
       switch (operation) {
         case Account.username:
-          String? username =
-              await _dialogBuilder(context, 'Username', operation);
+          String? username = await _dialogBuilder(
+              context, AppLocalizations.of(context)!.changeUsername, operation);
           if (username != null) {
             bool updateSuccessful =
                 await FirebaseService.changeUsername(username);
             if (updateSuccessful) {
               Util.showNotification(
-                  context: context,
-                  title: 'Username updated',
-                  message: 'Your new username is $username');
+                context: context,
+                title: AppLocalizations.of(context)!.usernameUpdated,
+                message: AppLocalizations.of(context)!.newUsernameIs(username),
+              );
             } else {
               Util.showNotification(
-                  context: context,
-                  title: 'Update failed',
-                  message: 'Username could not be updated. Try again later');
+                context: context,
+                title: AppLocalizations.of(context)!.updateFailed,
+                message:
+                    AppLocalizations.of(context)!.usernameCouldNotBeUpdated,
+              );
             }
           }
           break;
         case Account.email:
-          String? email = await _dialogBuilder(context, 'Email', operation);
+          String? email = await _dialogBuilder(
+              context, AppLocalizations.of(context)!.changeEmail, operation);
           if (email != null) {
             bool updateSuccessful = await FirebaseService.changeEmail(email);
             if (updateSuccessful) {
               Util.showNotification(
-                  context: context,
-                  title: 'Email updated',
-                  message: 'Your new email is $email');
+                context: context,
+                title: AppLocalizations.of(context)!.emailUpdated,
+                message: AppLocalizations.of(context)!.newEmailIs(email),
+              );
             } else {
               Util.showNotification(
-                  context: context,
-                  title: 'Update failed',
-                  message: 'Email could not be updated. Try again later');
+                context: context,
+                title: AppLocalizations.of(context)!.updateFailed,
+                message: AppLocalizations.of(context)!.emailCouldNotBeUpdated,
+              );
             }
           }
           break;
         case Account.password:
-          String? password =
-              await _dialogBuilder(context, 'Username', operation);
+          String? password = await _dialogBuilder(
+              context, AppLocalizations.of(context)!.changePassword, operation);
           if (password != null) {
             bool updateSuccessful =
                 await FirebaseService.changePassword(password);
             if (updateSuccessful) {
               Util.showNotification(
-                  context: context,
-                  title: 'Password updated',
-                  message: 'Your password was updated successfully');
+                context: context,
+                title: AppLocalizations.of(context)!.passwordUpdated,
+                message:
+                    AppLocalizations.of(context)!.passwordUpdatedSuccessfully,
+              );
             } else {
               Util.showNotification(
-                  context: context,
-                  title: 'Update failed',
-                  message: 'Password could not be updated. Try again later');
+                context: context,
+                title: AppLocalizations.of(context)!.updateFailed,
+                message:
+                    AppLocalizations.of(context)!.passwordCouldNotBeUpdated,
+              );
             }
           }
           break;
@@ -126,7 +136,7 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
 
         return AlertDialog(
           insetPadding: const EdgeInsets.all(10),
-          title: Text('Change ${title.toLowerCase()}'),
+          title: Text(title),
           content: SizedBox(
             width: width,
             child: operation == Account.username
@@ -168,7 +178,7 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
               child: Column(
                 children: [
                   ListTile(
-                    title: const Text('Change username'),
+                    title: Text(AppLocalizations.of(context)!.changeUsername),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => onTapHandler(context, Account.username),
                   ),
@@ -179,7 +189,7 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
                     color: Colors.black,
                   ),
                   ListTile(
-                    title: const Text('Change email'),
+                    title: Text(AppLocalizations.of(context)!.changeEmail),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => onTapHandler(context, Account.email),
                   ),
@@ -190,7 +200,7 @@ class _ChangeAccountDetailsState extends State<ChangeAccountDetails> {
                     color: Colors.black,
                   ),
                   ListTile(
-                    title: const Text('Change password'),
+                    title: Text(AppLocalizations.of(context)!.changePassword),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => onTapHandler(context, Account.password),
                   ),

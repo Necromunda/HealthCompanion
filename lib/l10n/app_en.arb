@@ -1,4 +1,191 @@
 {
+	"joined": "Joined",
+	"dateOfBirth": "Date of birth",
 	"signIn": "Sign in",
-	"generalTitle": "in english"
+	"signOut": "Sign out",
+	"stats": "Statistics",
+	"achievements": "Achievements",
+	"generalTitle": "in english",
+	"loadingProfile": "Loading profile",
+	"loadingStats": "Loading statistics",
+	"loadingBundles": "Loading bundles",
+	"errorLoadingBundles": "Bundles could not be loaded",
+	"lastEdited": "Last edited",
+	"account": "Account",
+	"general": "General",
+	"changeTheme": "Change theme",
+	"changeLocale": "Change language",
+	"emptyBundle": "This bundle is empty",
+	"yourStats": "Your statistics",
+	"statsComponentsAdded": "Components added",
+	"statsComponentsDeleted": "Components deleted",
+	"statsBundlesAdded": "Bundles added",
+	"statsBundlesDeleted": "Bundles deleted",
+	"statsAchievementsUnlocked": "Achievements unlocked",
+	"hintEmail": "Email",
+	"hintPassword": "Password",
+	"hintTitle": "Title",
+	"hintDescription": "Description",
+	"forgotPassword": "Forgot password?",
+	"createAccount": "Create account",
+	"error": "Error",
+	"more": "More",
+	"member": "Member",
+	"loading": "Loading",
+	"addComponent": "Add component +",
+	"addNewComponent": "Add new component",
+	"addExistingComponent": "Add existing component",
+	"addIngredient": "Add ingredient +",
+	"addedIngredients": "Your added ingredients",
+	"search": "Search",
+	"searchNoMatches": "No matches",
+	"loadingComponents": "Loading components",
+	"authenticate": "Authenticate",
+	"authenticated": "Authenticated",
+	"authenticating": "Authenticating",
+	"authFailed": "Authentication failed",
+	"somethingWentWrong": "Something went wrong",
+	"incorrectPassword": "Password is incorrect",
+	"incorrectEmail": "Email is incorrect",
+	"incorrectUsername": "Username is incorrect",
+	"incorrectEmailAndOrPassword": "Incorrect email and/or password",
+	"noDescription": "No description",
+	"created": "Created",
+	"noIngredients": "No ingredients",
+	"deleteAccountWarning": "Are you sure you want to delete your account? This action is permanent and cannot be undone",
+	"proceed": "Proceed",
+	"cancel": "Cancel",
+	"deleteAccount": "Delete account",
+	"deletingAccount": "Deleting account",
+	"accountDeleted": "Account deleted",
+	"titleMustNotBeEmpty": "Title must not be empty",
+	"forgotPasswordInfo": "Please enter your email below and we will send you instructions on how to change it",
+	"forgotPasswordInstructions": "Instructions on how to change your password have been sent to",
+	"send": "Send",
+	"loggingIn": "Logging in",
+	"userNotFoundWithEmail": "Could not find a user with that email address",
+	"darkThemeSelected": "Dark theme is selected",
+	"lightThemeSelected": "Light theme is selected",
+	"macroLimits": "Macro limits",
+	"accountDetails": "Account details",
+	"locale": "English",
+	"updateFailed": "Update failed",
+	"username": "Username",
+	"email": "Email",
+	"password": "Password",
+	"changeUsername": "Change username",
+	"changeEmail": "Change email",
+	"changePassword": "Change password",
+	"usernameUpdated": "Username updated",
+	"emailUpdated": "Email updated",
+	"passwordUpdated": "Password updated",
+	"passwordUpdatedSuccessfully": "Your password was updated successfully",
+	"usernameCouldNotBeUpdated": "Username could not be updated",
+	"emailCouldNotBeUpdated": "Email could not be updated",
+	"passwordCouldNotBeUpdated": "Password could not be updated",
+	"reset": "Reset",
+	"confirm": "Confirm",
+	"set": "Set",
+	"emailAlreadyInUse": "Email address is already in use",
+	"signInToContinue": "Sign in to continue using the app",
+	"invalidUsername": "Username is invalid",
+	"invalidEmail": "Email is invalid",
+	"invalidPassword": "Password is invalid",
+	"registering": "Registering",
+	"registerSuccessful": "Registering successful",
+	"errorCreatingAccount": "Account could not be created",
+	"creatingAccount": "Creating account",
+	"noComponents": "You dont have any components",
+	"settings": "Settings",
+	"search": "Search",
+	"overview": "Overview",
+	"components": "Components",
+	"profile": "Profile",
+	"signUpUsernameInfo": "Username must start with a letter, contain only letters and numbers & be between 3 - 30 characters long. Username is not used for signing in",
+	"signUpBackgroundInfo": "Date of birth, height and weight are needed in order to accurately calculate daily nutrition intake values",
+	"signUpEmailInfo": "Email must be a valid email address. Email is used for sign in",
+	"signUpPasswordInfo": "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8 - 64 characters long",
+	"height": "Height",
+	"weight": "Weight",
+	"currentLimitIs": "Current limit is {limit}",
+	"@currentLimitIs": {
+		"placeholders": {
+			"limit": {
+				"type": "String"
+			}
+		}
+	},
+	"newUsernameIs": "Your new username is {username}",
+	"@newUsernameIs": {
+		"placeholders": {
+			"username": {
+				"type": "String"
+			}
+		}
+	},
+	"newEmailIs": "Your new email is {email}",
+	"@newEmailIs": {
+		"placeholders": {
+			"email": {
+				"type": "String"
+			}
+		}
+	},
+	"locales": "{locale, select, finnish{Finnish} english{English} other{Unsupported}}",
+	"@locales": {
+		"placeholders": {
+			"locale": {
+				"type": "String"
+			}
+		}
+	},
+	"currentLocale": "Current language is {locale}",
+	"@currentLocale": {
+		"placeholders": {
+			"locale": {
+				"type": "String"
+			}
+		}
+	},
+	"component": "{count, plural, =1{Component} other{Components}}",
+	"@component": {
+		"placeholders": {
+			"count": {
+				"type": "num",
+				"format": "compact"
+			}
+		}
+	},
+	"categories": "{type, select, title{Category} component{Component} breakfast{Breakfast} lunch{Lunch} dinner{Dinner} snack{Snack} other{ERROR!}}",
+	"@categories": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},
+	"macroType": "{type, select, title{Macro calculation} individual{Individual} inherit{Inherit from ingredients} both{Both} other{ERROR!}}",
+	"@macroType": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},	
+	"macro": "{type, select, title{Macros} energykj{Energy kJ} energykcal{Energy Kcal} kcal{Kcal} protein{Protein} carbohydrate{Carbohydrate} salt{Salt} sugar{Sugar} fat{Fat} saturatedfat{Saturated fat} fiber{Fiber} organicacids{Organic acids} alcohol{Alcohol} sugaralcohol{Sugar alcohol} other{ERROR!}}",
+	"@macro": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},
+	"breakdownMacroTitle": "{type, select, individual{Makrot '(individual)'} inherit{Makrot '(inherited from ingredients)'} both{Makrot '(inherited from ingredients + individual)'} other{ERROR!}}",
+	"@breakdownMacroTitle": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	}
 }

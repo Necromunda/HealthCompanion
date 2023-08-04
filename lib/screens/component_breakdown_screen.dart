@@ -18,19 +18,34 @@ class ComponentBreakdown extends StatefulWidget {
 class _ComponentBreakdownState extends State<ComponentBreakdown> {
   late final ScrollController _scrollController, _listScrollController;
   late final Component _component;
+
+  // static const List<String> _labels = [
+  //   "EnergyKJ",
+  //   "EnergyKcal",
+  //   "Alcohol",
+  //   "Carbohydrates",
+  //   "Fat",
+  //   "Fiber",
+  //   "Organic acids",
+  //   "Protein",
+  //   "Salt",
+  //   "Saturated fat",
+  //   "Sugar",
+  //   "Sugar alcohol"
+  // ];
   static const List<String> _labels = [
-    "EnergyKJ",
-    "EnergyKcal",
-    "Alcohol",
-    "Carbohydrates",
-    "Fat",
-    "Fiber",
-    "Organic acids",
-    "Protein",
-    "Salt",
-    "Saturated fat",
-    "Sugar",
-    "Sugar alcohol"
+    'energykj',
+    'energykcal',
+    'alcohol',
+    'carbohydrate',
+    'fat',
+    'fiber',
+    'organicAcids',
+    'protein',
+    'salt',
+    'saturatedFat',
+    'sugar',
+    'sugarAlcohol'
   ];
 
   @override
@@ -38,8 +53,6 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
     _component = widget.component;
     _scrollController = ScrollController();
     _listScrollController = ScrollController();
-    // print(DateTime.now().ti);
-    // print(Timestamp.fromMillisecondsSinceEpoch(DateTime.now()))
     super.initState();
   }
 
@@ -69,6 +82,18 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
     );
   }
 
+  String _getBreakdownTitle(String value) {
+    // print(value);
+    // return value;
+    if (value == 'individual') {
+      return AppLocalizations.of(context)!.breakdownMacroTitle('individual');
+    } else if (value == 'ingredients included') {
+      return AppLocalizations.of(context)!.breakdownMacroTitle('inherit');
+    } else {
+      return AppLocalizations.of(context)!.breakdownMacroTitle('both');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,9 +117,9 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                 mainAxisSize: MainAxisSize.min,
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Title",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.hintTitle,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -104,9 +129,9 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                     style: const TextStyle(fontSize: 18),
                     // textAlign: TextAlign.center,
                   ),
-                  const Text(
-                    "Description",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.hintDescription,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -114,25 +139,28 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                   Text(
                     _component.description!.isNotEmpty
                         ? _component.description!
-                        : "No description",
+                        : AppLocalizations.of(context)!.noDescription,
                     style: const TextStyle(fontSize: 18),
                     // textAlign: TextAlign.center,
                   ),
-                  const Text(
-                    "Category",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.categories('title'),
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    _component.category!,
+                    AppLocalizations.of(context)!.categories(
+                      _component.category!.toLowerCase(),
+                    ),
+                    // _component.category!,
                     style: const TextStyle(fontSize: 18),
                     // textAlign: TextAlign.center,
                   ),
-                  const Text(
-                    "Created",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.created,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -151,7 +179,9 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Macros (${_component.macroSelection!.toLowerCase()})",
+                    _getBreakdownTitle(
+                      _component.macroSelection!.toLowerCase(),
+                    ),
                     style: const TextStyle(fontSize: 22),
                   ),
                   const SizedBox(
@@ -166,7 +196,8 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                             return Column(
                               children: [
                                 Text(
-                                  e,
+                                  // e,
+                                  AppLocalizations.of(context)!.macro(e),
                                   style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
@@ -280,11 +311,11 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
               ),
               if (_component.subComponents == null ||
                   _component.subComponents!.isEmpty)
-                const SizedBox(
+                SizedBox(
                   child: Center(
                     child: Text(
-                      "No sub components",
-                      style: TextStyle(fontSize: 20),
+                      AppLocalizations.of(context)!.noIngredients,
+                      style: const TextStyle(fontSize: 20),
                     ),
                   ),
                 )

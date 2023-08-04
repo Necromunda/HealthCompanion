@@ -139,12 +139,25 @@ class FineliModel {
     return data;
   }
 
-  Component toComponent() {
+  Component toComponent(String locale) {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name?.en;
-    data['description'] = ingredientClass?.description?.en ?? "Component";
-    data['category'] = type?.description?.en;
-    // data['creationDate'] = Timestamp.now();
+    switch (locale) {
+      case 'fi':
+        data['name'] = name?.fi;
+        data['description'] = ingredientClass?.description?.fi ?? "";
+        data['category'] = type?.description?.fi ?? "";
+        break;
+      case 'en':
+        data['name'] = name?.en;
+        data['description'] = ingredientClass?.description?.en ?? "";
+        data['category'] = type?.description?.en ?? "";
+        break;
+      default:
+        data['name'] = name?.en;
+        data['description'] = ingredientClass?.description?.en ?? "";
+        data['category'] = type?.description?.en ?? "";
+        break;
+    }
     data['creationDate'] = DateTime.now();
     data['macroSelection'] = 'Individual';
     data['subComponents'] = [];

@@ -51,7 +51,7 @@ class _SearchState extends State<Search> {
 
           decoration: InputDecoration(
             counterText: "",
-            hintText: "Search",
+            hintText: AppLocalizations.of(context)!.search,
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             filled: true,
             // fillColor: const Color(0XDEDEDEDE),
@@ -68,31 +68,6 @@ class _SearchState extends State<Search> {
                 width: 2.0,
               ),
             ),
-            // prefixIcon: Container(
-            //   margin: const EdgeInsets.only(right: 15.0),
-            //   decoration: BoxDecoration(
-            //     borderRadius: const BorderRadius.only(
-            //       topLeft: Radius.circular(5.0),
-            //       bottomLeft: Radius.circular(5.0),
-            //     ),
-            //     boxShadow: [
-            //       BoxShadow(
-            //         color: Colors.black.withOpacity(1),
-            //         spreadRadius: -1,
-            //         offset: const Offset(2, 0), // changes position of shadow
-            //       ),
-            //       BoxShadow(
-            //         color: const Color(0XDEDEDEDE).withOpacity(1),
-            //         spreadRadius: 0,
-            //         offset: const Offset(1, 0), // changes position of shadow
-            //       ),
-            //     ],
-            //   ),
-            //   child: const Padding(
-            //     padding: EdgeInsets.symmetric(horizontal: 20),
-            //     child: Icon(Icons.search, size: 30, color: Colors.black87),
-            //   ),
-            // ),
             suffixIcon: IconButton(
               icon: const Icon(Icons.search, size: 30),
               onPressed: () {
@@ -116,38 +91,8 @@ class _SearchState extends State<Search> {
           const SizedBox(
             height: 10,
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(bottom: 10.0),
-          //   child: TextField(
-          //     focusNode: _focusNode,
-          //     // onChanged: (value) => setState(() {}),
-          //     controller: _searchController,
-          //     keyboardType: TextInputType.text,
-          //     decoration: InputDecoration(
-          //       prefixIcon: Icon(
-          //         Icons.search,
-          //         color: Colors.deepPurple.shade400,
-          //       ),
-          //       suffixIcon: IconButton(
-          //         icon: const Icon(Icons.search),
-          //         onPressed: () {
-          //           FocusManager.instance.primaryFocus?.unfocus();
-          //           setState(() {
-          //             _searchString = _searchController.text;
-          //           });
-          //         },
-          //       ),
-          //       hintText: "Food item",
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(5.0),
-          //         borderSide: const BorderSide(
-          //             width: 3, style: BorderStyle.solid, color: Colors.black),
-          //       ),
-          //     ),
-          //   ),
-          // ),
           if (_searchString.isNotEmpty)
-            SearchResults(key: Key(_searchString), search: _searchString),
+            SearchResults(key: UniqueKey(), search: _searchString),
         ],
       ),
     );

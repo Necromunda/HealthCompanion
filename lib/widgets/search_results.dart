@@ -85,15 +85,16 @@ class _SearchResultsState extends State<SearchResults> {
           );
         }
         if (snapshot.hasData) {
+          Locale myLocale = Localizations.localeOf(context);
           List<Component> results = snapshot.data!
-              .map((e) => FineliModel.fromJson(e).toComponent())
+              .map((e) => FineliModel.fromJson(e).toComponent(myLocale.languageCode))
               .toList();
 
           if (results.isEmpty) {
             return Expanded(
               child: Center(
                 child: Text(
-                  "No results with $_search",
+                  AppLocalizations.of(context)!.searchNoMatches,
                   style: const TextStyle(
                     fontSize: 18,
                   ),

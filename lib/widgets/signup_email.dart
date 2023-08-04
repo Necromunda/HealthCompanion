@@ -45,12 +45,6 @@ class _SignUpEmailState extends State<SignUpEmail>
     super.didUpdateWidget(oldWidget);
   }
 
-  Color get _emailColor => _emailController.text.isEmpty
-      ? Colors.grey
-      : _isEmailValid
-          ? Colors.green
-          : Colors.red;
-
   Widget get _emailTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         controller: _emailController,
@@ -72,7 +66,7 @@ class _SignUpEmailState extends State<SignUpEmail>
         ),
         decoration: InputDecoration(
             counterText: "",
-            hintText: "Email",
+            hintText: AppLocalizations.of(context)!.email,
             contentPadding: EdgeInsets.zero,
             filled: true,
             // fillColor: const Color(0XDEDEDEDE),
@@ -134,13 +128,6 @@ class _SignUpEmailState extends State<SignUpEmail>
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.only(bottom: 125.0),
-          //   child: Text(
-          //     "Page ${_pageIndex + 1} / 4",
-          //     textAlign: TextAlign.center,
-          //   ),
-          // ),
           const SizedBox(
             height: 50.0,
           ),
@@ -148,66 +135,8 @@ class _SignUpEmailState extends State<SignUpEmail>
           const SizedBox(
             height: 20.0,
           ),
-          // TextField(
-          //   controller: _emailController,
-          //   keyboardType: TextInputType.emailAddress,
-          //   onChanged: (value) {
-          //     setState(() {
-          //       _isEmailValid = EmailValidator.validate(value);
-          //       _inputCallback(value);
-          //     });
-          //   },
-          //   decoration: InputDecoration(
-          //     errorText: _isEmailValid || _emailController.text.isEmpty ? null : 'Invalid email',
-          //     errorBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _emailController.text.isEmpty ? Colors.grey : Colors.red,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     focusedBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _emailColor,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     enabledBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _emailColor,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     prefixIcon: Icon(
-          //       Icons.email,
-          //       color: _emailColor,
-          //     ),
-          //     suffixIcon: _emailController.text.isEmpty
-          //         ? null
-          //         : _isEmailValid
-          //             ? const Icon(
-          //                 Icons.check,
-          //                 color: Colors.green,
-          //               )
-          //             : const Icon(
-          //                 Icons.close,
-          //                 color: Colors.red,
-          //               ),
-          //     hintText: "Email",
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(5.0),
-          //       borderSide: const BorderSide(
-          //         width: 2.0,
-          //         style: BorderStyle.none,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 10.0,
-          // ),
-          const SignUpInfoCard(
-            hint:
-                "Email must be a valid email address.\nEmail is used for sign in.",
+          SignUpInfoCard(
+            hint: AppLocalizations.of(context)!.signUpEmailInfo,
           ),
           const Expanded(
             child: SizedBox(),
@@ -224,7 +153,6 @@ class _SignUpEmailState extends State<SignUpEmail>
                       FocusManager.instance.primaryFocus?.unfocus();
                       _switchPageCallback(_pageIndex - 1);
                     },
-                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
                     child: const Icon(
                       Icons.arrow_back,
                       color: Colors.white,
@@ -238,43 +166,12 @@ class _SignUpEmailState extends State<SignUpEmail>
                             _switchPageCallback(_pageIndex + 1);
                           }
                         : null,
-                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
                     child: const Icon(
                       Icons.arrow_forward,
                       color: Colors.white,
                       size: 26,
                     ),
                   ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     if (FocusScope.of(context).hasFocus) {
-                  //       FocusScope.of(context).unfocus();
-                  //     }
-                  //     _switchPageCallback(_pageIndex - 1);
-                  //   },
-                  //   icon: Icon(
-                  //     Icons.arrow_circle_left,
-                  //     size: 48,
-                  //     color: Theme.of(context).primaryColor,
-                  //   ),
-                  // ),
-                  // IconButton(
-                  //   onPressed: _isEmailValid
-                  //       ? () {
-                  //           if (FocusScope.of(context).hasFocus) {
-                  //             FocusScope.of(context).unfocus();
-                  //           }
-                  //           _switchPageCallback(_pageIndex + 1);
-                  //         }
-                  //       : null,
-                  //   icon: Icon(
-                  //     Icons.arrow_circle_right,
-                  //     size: 48,
-                  //     color: _isEmailValid
-                  //         ? Theme.of(context).primaryColor
-                  //         : Colors.grey,
-                  //   ),
-                  // )
                 ],
               ),
             ),

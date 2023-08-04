@@ -16,7 +16,6 @@ class SignUpPassword extends StatefulWidget {
   final Function inputCallback,
       switchPageCallback,
       getUsernameCallback,
-      // getAgeCallback,
       getDateOfBirthCallback,
       getHeightCallback,
       getWeightCallback,
@@ -29,7 +28,6 @@ class SignUpPassword extends StatefulWidget {
     required this.inputCallback,
     required this.switchPageCallback,
     required this.getUsernameCallback,
-    // required this.getAgeCallback,
     required this.getDateOfBirthCallback,
     required this.getHeightCallback,
     required this.getWeightCallback,
@@ -57,8 +55,6 @@ class _SignUpPasswordState extends State<SignUpPassword>
   late final Function _getWeightCallback = widget.getWeightCallback;
   late final Function _getEmailCallback = widget.getEmailCallback;
   late final Function _getPasswordCallback = widget.getPasswordCallback;
-
-  // late final Function _getAgeCallback = widget.getAgeCallback;
 
   @override
   bool get wantKeepAlive => true;
@@ -92,7 +88,6 @@ class _SignUpPasswordState extends State<SignUpPassword>
           message,
           textAlign: TextAlign.center,
         ),
-        // alignment: Alignment.center,
         actions: <Widget>[
           ButtonBar(
             alignment: MainAxisAlignment.center,
@@ -109,7 +104,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
                     ),
                   ),
                 ),
-                child: const Text("Cancel"),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               FilledButton(
                 onPressed: () {
@@ -123,7 +118,7 @@ class _SignUpPasswordState extends State<SignUpPassword>
                     ),
                   ),
                 ),
-                child: const Text("Login"),
+                child: Text(AppLocalizations.of(context)!.signIn),
               ),
             ],
           ),
@@ -139,53 +134,13 @@ class _SignUpPasswordState extends State<SignUpPassword>
           email: _getEmailCallback(),
           password: _getPasswordCallback(),
           username: _getUsernameCallback(),
-          // age: _getAgeCallback(),
           dateOfBirth: _getDateOfBirthCallback(),
           height: _getHeightCallback(),
           weight: _getWeightCallback(),
         ),
       ),
     );
-    // FirebaseAuth.instance
-    //     .createUserWithEmailAndPassword(
-    //         email: _getEmailCallback()!, password: _getPasswordCallback()!)
-    //     .then(
-    //   (responseData) async {
-    //     // await FirebaseAuth.instance.signOut();
-    //     // Navigator.of(context).popUntil(ModalRoute.withName("/"));
-    //     FirebaseService.createUserOnSignup(
-    //       user: responseData.user!,
-    //       username: _getUsernameCallback(),
-    //       age: _getAgeCallback(),
-    //       height: _getHeightCallback(),
-    //       weight: _getWeightCallback(),
-    //       email: _getEmailCallback(),
-    //     ).then((_) {
-    //       FocusManager.instance.primaryFocus?.unfocus();
-    //       Navigator.of(context).popUntil(ModalRoute.withName("/"));
-    //       // Navigator.of(context).pop({
-    //       //   'email': _getEmailCallback(),
-    //       //   'password': _getPasswordCallback()
-    //       // });
-    //     });
-    //   },
-    // ).onError(
-    //   (error, stackTrace) {
-    //     if (error is FirebaseAuthException) {
-    //       if (error.code == 'email-already-in-use') {
-    //         showAlertDialog(context, "There is already an account with this email address",
-    //             "${_getEmailCallback()} is already in use. Login to continue using HealthCompanion.");
-    //       }
-    //     }
-    //   },
-    // );
   }
-
-  Color get _passwordColor => _passwordController.text.isEmpty
-      ? Colors.grey
-      : _isPasswordValid
-          ? Colors.green
-          : Colors.red;
 
   Widget get _passwordTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -201,12 +156,12 @@ class _SignUpPasswordState extends State<SignUpPassword>
             }
           });
         },
-    style: TextStyle(
-      color: Util.isDark(context) ? Colors.white : Colors.black,
-    ),
+        style: TextStyle(
+          color: Util.isDark(context) ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Password",
+          hintText: AppLocalizations.of(context)!.password,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -225,7 +180,6 @@ class _SignUpPasswordState extends State<SignUpPassword>
           ),
           prefixIcon: Container(
             margin: const EdgeInsets.only(right: 15.0),
-            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
               color: _passwordController.text.isEmpty
                   ? null
@@ -278,13 +232,6 @@ class _SignUpPasswordState extends State<SignUpPassword>
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.only(bottom: 125.0),
-          //   child: Text(
-          //     "Page ${_pageIndex + 1} / 4",
-          //     textAlign: TextAlign.center,
-          //   ),
-          // ),
           const SizedBox(
             height: 50,
           ),
@@ -292,76 +239,8 @@ class _SignUpPasswordState extends State<SignUpPassword>
           const SizedBox(
             height: 20,
           ),
-          // TextField(
-          //   controller: _passwordController,
-          //   keyboardType: TextInputType.visiblePassword,
-          //   obscureText: true,
-          //   maxLength: 64,
-          //   onChanged: (value) {
-          //     setState(() {
-          //       if (_passwordRegExp.hasMatch(value)) {
-          //         _inputCallback(value);
-          //         _isPasswordValid = true;
-          //       } else {
-          //         _isPasswordValid = false;
-          //       }
-          //     });
-          //   },
-          //   decoration: InputDecoration(
-          //     errorText: _isPasswordValid || _passwordController.text.isEmpty
-          //         ? null
-          //         : 'Invalid password',
-          //     errorBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _passwordController.text.isEmpty
-          //             ? Colors.grey
-          //             : Colors.red,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     focusedBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _passwordColor,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     enabledBorder: OutlineInputBorder(
-          //       borderSide: BorderSide(
-          //         color: _passwordColor,
-          //         width: 2.0,
-          //       ),
-          //     ),
-          //     prefixIcon: Icon(
-          //       Icons.password,
-          //       color: _passwordColor,
-          //     ),
-          //     suffixIcon: _passwordController.text.isEmpty
-          //         ? null
-          //         : _isPasswordValid
-          //             ? const Icon(
-          //                 Icons.check,
-          //                 color: Colors.green,
-          //               )
-          //             : const Icon(
-          //                 Icons.close,
-          //                 color: Colors.red,
-          //               ),
-          //     hintText: "Password",
-          //     border: OutlineInputBorder(
-          //       borderRadius: BorderRadius.circular(5.0),
-          //       borderSide: const BorderSide(
-          //         width: 2.0,
-          //         style: BorderStyle.none,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(
-          //   height: 10,
-          // ),
-          const SignUpInfoCard(
-            hint:
-                "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8-64 characters long.",
+          SignUpInfoCard(
+            hint: AppLocalizations.of(context)!.signUpPasswordInfo,
           ),
           const Expanded(
             child: SizedBox(),
@@ -378,7 +257,6 @@ class _SignUpPasswordState extends State<SignUpPassword>
                       FocusManager.instance.primaryFocus?.unfocus();
                       _switchPageCallback(_pageIndex - 1);
                     },
-                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
                     child: const Icon(
                       Icons.arrow_back,
                       color: Colors.white,
@@ -393,34 +271,12 @@ class _SignUpPasswordState extends State<SignUpPassword>
                             _createUser();
                           }
                         : null,
-                    // color: _isUsernameValid ? Theme.of(context).primaryColor : Colors.grey,
                     child: const Icon(
                       Icons.check,
                       color: Colors.white,
                       size: 26,
                     ),
                   ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     if (FocusScope.of(context).hasFocus) {
-                  //       FocusScope.of(context).unfocus();
-                  //     }
-                  //     _switchPageCallback(_pageIndex - 1);
-                  //   },
-                  //   icon: Icon(
-                  //     Icons.arrow_circle_left,
-                  //     size: 48,
-                  //     color: Theme.of(context).primaryColor,
-                  //   ),
-                  // ),
-                  // IconButton(
-                  //   onPressed: _isPasswordValid ? _createUser : null,
-                  //   icon: Icon(
-                  //     Icons.create,
-                  //     size: 48,
-                  //     color: _isPasswordValid ? Colors.green : Colors.grey,
-                  //   ),
-                  // )
                 ],
               ),
             ),

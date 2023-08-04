@@ -23,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               children: [
                 ListTile(
-                  title: const Text("Account"),
+                  title: Text(AppLocalizations.of(context)!.account),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -38,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Colors.black,
                 ),
                 ListTile(
-                  title: const Text("General"),
+                  title: Text(AppLocalizations.of(context)!.general),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -46,11 +46,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                 ),
-                // const Divider(
-                //   indent: 10,
-                //   endIndent: 10,
-                //   color: Colors.black,
-                // ),
               ],
             ),
           ),

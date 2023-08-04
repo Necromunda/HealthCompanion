@@ -6,10 +6,10 @@ class NoComponentsFound extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Text(
-        "You dont have any components.",
-        style: TextStyle(fontSize: 22),
+        AppLocalizations.of(context)!.noComponents,
+        style: const TextStyle(fontSize: 22),
       ),
     );
   }

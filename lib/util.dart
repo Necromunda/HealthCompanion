@@ -9,18 +9,7 @@ class Util {
   static bool isDark(context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  static Future<List<Component>?> createComponents(String food) async {
-    final data = await FineliService.getFoodItem(food);
-    return data
-        ?.map((element) => FineliModel.fromJson(element).toComponent())
-        .toList();
-  }
-
   static bool isNextDay({required DateTime now, required DateTime compareTo}) {
-    // Convert both DateTime objects to have the same time (00:00:00) to compare the date only
-    // DateTime date1 = DateTime(now.year, now.month, now.day);
-    // DateTime date2 = DateTime(compareTo.year, compareTo.month, compareTo.day);
-
     // Calculate the difference in days between the two dates
     Duration difference = now.difference(compareTo);
 
@@ -52,7 +41,7 @@ class Util {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text("Ok"),
+            child: const Text('Ok'),
           ),
         ],
       ),

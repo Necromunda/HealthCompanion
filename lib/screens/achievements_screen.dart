@@ -60,8 +60,8 @@ class _AchievementsState extends State<Achievements> {
           future: FirebaseService.getUserAchievements(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text('Error'),
+              return Center(
+                child: Text(AppLocalizations.of(context)!.error),
               );
             }
             if (snapshot.hasData) {
@@ -97,16 +97,16 @@ class _AchievementsState extends State<Achievements> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
-                                  "Components",
-                                  style: TextStyle(fontSize: 18),
+                                    AppLocalizations.of(context)!.component(2),
+                                  style: const TextStyle(fontSize: 18),
                                 ),
                               ),
                               TextButton(
                                 onPressed: () {},
-                                child: const Text("More"),
+                                child: Text(AppLocalizations.of(context)!.more),
                               ),
                             ],
                           ),
@@ -158,16 +158,16 @@ class _AchievementsState extends State<Achievements> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
-                                  'Member',
-                                  style: TextStyle(fontSize: 18),
+                                  AppLocalizations.of(context)!.member,
+                                  style: const TextStyle(fontSize: 18),
                                 ),
                               ),
                               TextButton(
                                 onPressed: () {},
-                                child: const Text("More"),
+                                child: Text(AppLocalizations.of(context)!.more),
                               ),
                             ],
                           ),
@@ -211,8 +211,8 @@ class _AchievementsState extends State<Achievements> {
                 ],
               );
             }
-            return const Center(
-              child: Text('loading'),
+            return Center(
+              child: Text(AppLocalizations.of(context)!.loading),
             );
           },
         ),

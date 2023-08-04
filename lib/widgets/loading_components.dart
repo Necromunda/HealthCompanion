@@ -19,7 +19,7 @@ class LoadingComponents extends StatelessWidget {
               height: 10.0,
             ),
             Text(
-              message ?? "Loading your components",
+              message ?? AppLocalizations.of(context)!.loadingComponents,
               style: const TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),

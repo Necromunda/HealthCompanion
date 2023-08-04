@@ -167,9 +167,9 @@ class _ComponentsState extends State<Components> {
               margin: EdgeInsets.zero,
               // elevation: 3,
               child: ListTile(
-                title: const Text(
-                  "Add component +",
-                  style: TextStyle(fontSize: 22),
+                title: Text(
+                  AppLocalizations.of(context)!.addComponent,
+                  style: const TextStyle(fontSize: 22),
                 ),
                 trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: _addComponent,
@@ -206,8 +206,8 @@ class _ComponentsState extends State<Components> {
                     return const NoComponentsFound();
                   } else {
                     if (_searchString.isNotEmpty && _searchResults.isEmpty) {
-                      return const Center(
-                        child: Text("No matches"),
+                      return Center(
+                        child: Text(AppLocalizations.of(context)!.searchNoMatches),
                       );
                     } else {
                       return _searchResults.isNotEmpty
@@ -319,7 +319,7 @@ class _ComponentsState extends State<Components> {
           ),
           decoration: InputDecoration(
             counterText: "",
-            hintText: "Search",
+            hintText: AppLocalizations.of(context)!.search,
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
             filled: true,
             // fillColor: const Color(0XDEDEDEDE),

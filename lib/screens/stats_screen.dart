@@ -39,9 +39,6 @@ class _StatsState extends State<Stats> {
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
-    final double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -62,11 +59,11 @@ class _StatsState extends State<Stats> {
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Center(
+                  Center(
                     child: Text(
-                      "Your stats",
+                      AppLocalizations.of(context)!.yourStats,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 24),
                     ),
                   ),
                   const SizedBox(
@@ -90,11 +87,14 @@ class _StatsState extends State<Stats> {
                                     mainAxisExtent: 50,
                                     crossAxisSpacing: 0),
                             children: [
-                              const Text(
-                                "Components added",
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .statsComponentsAdded,
                                 textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 (snapshot.data?["componentsAdded"] ?? 0)
@@ -102,11 +102,14 @@ class _StatsState extends State<Stats> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              const Text(
-                                "Components deleted",
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .statsComponentsDeleted,
                                 textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 (snapshot.data?["componentsDeleted"] ?? 0)
@@ -114,11 +117,13 @@ class _StatsState extends State<Stats> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              const Text(
-                                "Bundles added",
+                              Text(
+                                AppLocalizations.of(context)!.statsBundlesAdded,
                                 textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 (snapshot.data?["bundlesAdded"] ?? 0)
@@ -126,11 +131,14 @@ class _StatsState extends State<Stats> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              const Text(
-                                "Bundles deleted",
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .statsBundlesDeleted,
                                 textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 (snapshot.data?["bundlesDeleted"] ?? 0)
@@ -138,11 +146,14 @@ class _StatsState extends State<Stats> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              const Text(
-                                "Achievements unlocked",
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .statsAchievementsUnlocked,
                                 textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               Text(
                                 (snapshot.data?["achievementsUnlocked"] ?? 0)
@@ -153,9 +164,10 @@ class _StatsState extends State<Stats> {
                             ],
                           );
                         }
-
-                        return const Center(
-                          child: Text("Loading stats"),
+                        return Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.loadingStats,
+                          ),
                         );
                       },
                     ),

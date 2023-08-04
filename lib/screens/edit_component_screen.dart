@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 import '../models/component_model.dart';
 import '../util.dart';
@@ -394,7 +395,10 @@ class _EditComponentState extends State<EditComponent> {
             onPressed: () async {
               _isTitleEmpty
                   ? Util.showNotification(
-                      context: context, message: "Title must not be empty")
+                      context: context,
+                      message:
+                          AppLocalizations.of(context)!.titleMustNotBeEmpty,
+                    )
                   : Navigator.of(context).pop(_createComponent());
             },
           )
@@ -428,15 +432,17 @@ class _EditComponentState extends State<EditComponent> {
                   shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  title: const Text(
-                    "Category",
-                    style: TextStyle(fontSize: 22),
+                  title: Text(
+                    AppLocalizations.of(context)!.categories('title'),
+                    style: const TextStyle(fontSize: 22),
                   ),
                   children: [
                     ..._categories.map(
                       (category) => ListTile(
                         title: Text(
-                          category,
+                          AppLocalizations.of(context)!.categories(category.toLowerCase()),
+                          // Intl.message(category),
+                          // category,
                           style: const TextStyle(fontSize: 18),
                         ),
                         trailing: const Icon(Icons.category),
@@ -457,15 +463,15 @@ class _EditComponentState extends State<EditComponent> {
                   shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  title: const Text(
-                    "Macro type",
-                    style: TextStyle(fontSize: 22),
+                  title: Text(
+                    AppLocalizations.of(context)!.macroType('title'),
+                    style: const TextStyle(fontSize: 22),
                   ),
                   children: [
                     ListTile(
-                      title: const Text(
-                        "Set individual",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('individual'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected:
@@ -477,9 +483,9 @@ class _EditComponentState extends State<EditComponent> {
                       onTap: () => _macrosDropdownHandler(Macros.individual),
                     ),
                     ListTile(
-                      title: const Text(
-                        "Inherit from child components",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('inherit'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected:
@@ -491,9 +497,9 @@ class _EditComponentState extends State<EditComponent> {
                       onTap: () => _macrosDropdownHandler(Macros.inherit),
                     ),
                     ListTile(
-                      title: const Text(
-                        "Both",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('both'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected: _macrosSelection == Macros.both ? true : false,
@@ -514,80 +520,76 @@ class _EditComponentState extends State<EditComponent> {
                     shape: Border.all(color: Colors.transparent),
                     onExpansionChanged: (value) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
-                    title: const Text(
-                      "Macros",
-                      style: TextStyle(fontSize: 22),
+                    title: Text(
+                      AppLocalizations.of(context)!.macro('title'),
+                      style: const TextStyle(fontSize: 22),
                     ),
                     children: [
-                      const Text(
-                        "Macros",
-                        style: TextStyle(fontSize: 22),
-                      ),
                       _macroTextField(
                         controller: _energyKcalController,
                         setter: (value) => _energyKcal = value,
-                        hint: "Kcal",
+                        hint: 'kcal',
                         suffixText: null,
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _proteinController,
                         setter: (value) => _protein = value,
-                        hint: "Protein",
+                        hint: "protein",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _carbohydrateController,
                         setter: (value) => _carbohydrate = value,
-                        hint: "Carbohydrate",
+                        hint: "carbohydrate",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saltController,
                         setter: (value) => _salt = value,
-                        hint: "Salt",
+                        hint: "salt",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarController,
                         setter: (value) => _sugar = value,
-                        hint: "Sugar",
+                        hint: "sugar",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fatController,
                         setter: (value) => _fat = value,
-                        hint: "Fat",
+                        hint: "fat",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saturatedFatController,
                         setter: (value) => _saturatedFat = value,
-                        hint: "Saturated fat",
+                        hint: "saturatedFat",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fiberController,
                         setter: (value) => _fiber = value,
-                        hint: "Fiber",
+                        hint: "fiber",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _organicAcidsController,
                         setter: (value) => _organicAcids = value,
-                        hint: "Organic acids",
+                        hint: "organicAcids",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _alcoholController,
                         setter: (value) => _alcohol = value,
-                        hint: "Alcohol",
+                        hint: "alcohol",
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarAlcoholController,
                         setter: (value) => _sugarAlcohol = value,
-                        hint: "Sugar alcohol",
+                        hint: "sugarAlcohol",
                       ),
                     ],
                   ),
@@ -595,10 +597,9 @@ class _EditComponentState extends State<EditComponent> {
               Card(
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ListTile(
-                  title: const Text(
-                    "Add ingredient +",
-                    style: TextStyle(fontSize: 22),
-                    // textAlign: TextAlign.center,
+                  title: Text(
+                    AppLocalizations.of(context)!.addIngredient,
+                    style: const TextStyle(fontSize: 22),
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addIngredientHandler,
@@ -609,9 +610,9 @@ class _EditComponentState extends State<EditComponent> {
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
-                      const Text(
-                        "Your added ingredients",
-                        style: TextStyle(fontSize: 20),
+                      Text(
+                        AppLocalizations.of(context)!.addedIngredients,
+                        style: const TextStyle(fontSize: 20),
                       ),
                       ListView.builder(
                         controller: _listScrollController,
@@ -674,7 +675,7 @@ class _EditComponentState extends State<EditComponent> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Title",
+          hintText: AppLocalizations.of(context)!.hintTitle,
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -744,7 +745,7 @@ class _EditComponentState extends State<EditComponent> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Description",
+          hintText: AppLocalizations.of(context)!.hintDescription,
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -822,7 +823,7 @@ class _EditComponentState extends State<EditComponent> {
       ),
       decoration: InputDecoration(
         counterText: "",
-        hintText: hint,
+        hintText: AppLocalizations.of(context)!.macro(hint),
         suffixText: suffixText,
         contentPadding: const EdgeInsets.only(right: 10),
         filled: true,

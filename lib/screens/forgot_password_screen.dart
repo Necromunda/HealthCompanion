@@ -46,7 +46,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Email",
+          hintText: AppLocalizations.of(context)!.hintEmail,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -102,6 +102,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         ),
       );
 
+  Color get sendButtonColor => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +115,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.close),
-          color: Colors.black,
         ),
       ),
       body: Center(
@@ -122,69 +125,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
                       child: Text(
-                        "Forgot your password?",
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.forgotPassword,
+                        style: const TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
                       child: Text(
-                        "Please enter your email and we will send you instructions on how to change it.",
-                        style: TextStyle(fontSize: 18),
+                        AppLocalizations.of(context)!.forgotPasswordInfo,
+                        style: const TextStyle(fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(bottom: 10.0),
-                    //   child: TextField(
-                    //     controller: _emailController,
-                    //     keyboardType: TextInputType.emailAddress,
-                    //     onChanged: (value) {
-                    //       setState(() {
-                    //         _isEmailValid =
-                    //             EmailValidator.validate(value) ? true : false;
-                    //       });
-                    //     },
-                    //     inputFormatters: [
-                    //       FilteringTextInputFormatter.singleLineFormatter,
-                    //     ],
-                    //     decoration: InputDecoration(
-                    //       errorBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: _emailController.text.isEmpty
-                    //               ? Colors.grey
-                    //               : Colors.red,
-                    //           width: 2.0,
-                    //         ),
-                    //       ),
-                    //       focusedBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: _emailColor,
-                    //           width: 2.0,
-                    //         ),
-                    //       ),
-                    //       enabledBorder: OutlineInputBorder(
-                    //         borderSide: BorderSide(
-                    //           color: _emailColor,
-                    //           width: 2.0,
-                    //         ),
-                    //       ),
-                    //       prefixIcon: Icon(
-                    //         Icons.email,
-                    //         color: _emailColor,
-                    //       ),
-                    //       hintText: "Email",
-                    //       border: OutlineInputBorder(
-                    //           borderRadius: BorderRadius.circular(5.0),
-                    //           borderSide: const BorderSide(
-                    //               width: 1, style: BorderStyle.none)),
-                    //     ),
-                    //   ),
-                    // ),
                     _emailTextField,
                     const SizedBox(
                       height: 10,
@@ -195,13 +151,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         onPressed:
                             _isEmailValid ? _forgotPasswordButtonHandler : null,
                         style: FilledButton.styleFrom(
-                          backgroundColor: Colors.deepPurple.shade400,
+                          backgroundColor: sendButtonColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(1.0),
                             // side: BorderSide(color: Colors.red)
                           ),
                         ),
-                        child: const Text("Send", style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: Text(
+                          AppLocalizations.of(context)!.send,
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                     // const Expanded(flex: 2, child: SizedBox())

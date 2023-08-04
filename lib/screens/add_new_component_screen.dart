@@ -406,81 +406,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
                         height: 5.0,
                       ),
                       _descriptionTextField,
-                      // TextField(
-                      //   controller: _titleController,
-                      //   keyboardType: TextInputType.text,
-                      //   onChanged: (value) => setState(() {
-                      //     _isTitleEmpty = _noOnlySpacesRegexp.hasMatch(value);
-                      //     print("TITLE IS EMPTY: $_isTitleEmpty");
-                      //     _title = value;
-                      //   }),
-                      //   decoration: InputDecoration(
-                      //     errorText: (_titleController.text.isEmpty || !_isTitleEmpty)
-                      //         ? null
-                      //         : "Title must not be empty",
-                      //     errorBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: _titleController.text.isEmpty ? Colors.grey : Colors.red,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     prefixIcon: Icon(
-                      //       Icons.title,
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     hintText: "Title",
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(5.0),
-                      //       borderSide: const BorderSide(
-                      //         width: 2.0,
-                      //         style: BorderStyle.none,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(
-                      //   height: 5.0,
-                      // ),
-                      // TextField(
-                      //   maxLength: 99,
-                      //   controller: _descriptionController,
-                      //   keyboardType: TextInputType.text,
-                      //   onChanged: (value) => setState(() {
-                      //     _description = value;
-                      //   }),
-                      //   decoration: InputDecoration(
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Theme.of(context).primaryColor,
-                      //         width: 2.0,
-                      //       ),
-                      //     ),
-                      //     prefixIcon: Icon(
-                      //       Icons.description,
-                      //       color: Theme.of(context).primaryColor,
-                      //     ),
-                      //     hintText: "Description",
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(5.0),
-                      //       borderSide: const BorderSide(
-                      //         width: 2.0,
-                      //         style: BorderStyle.none,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -492,23 +417,23 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  title: const Text(
-                    "Category",
-                    style: TextStyle(fontSize: 22),
+                  title: Text(
+                    AppLocalizations.of(context)!.categories('title'),
+                    style: const TextStyle(fontSize: 22),
                   ),
                   children: [
                     ..._categories.map(
                       (category) => ListTile(
                         title: Text(
-                          category,
+                          AppLocalizations.of(context)!
+                              .categories(category.toLowerCase()),
                           style: const TextStyle(fontSize: 18),
                         ),
                         trailing: const Icon(Icons.category),
                         selected: _category == category ? true : false,
                         selectedColor: Colors.white,
-                        selectedTileColor: _category == category
-                            ? selectedColor
-                            : null,
+                        selectedTileColor:
+                            _category == category ? selectedColor : null,
                         onTap: () => _categoryDropdownHandler(category),
                       ),
                     ),
@@ -522,15 +447,15 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   shape: Border.all(color: Colors.transparent),
                   onExpansionChanged: (value) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  title: const Text(
-                    "Macro type",
-                    style: TextStyle(fontSize: 22),
+                  title: Text(
+                    AppLocalizations.of(context)!.macroType('title'),
+                    style: const TextStyle(fontSize: 22),
                   ),
                   children: [
                     ListTile(
-                      title: const Text(
-                        "Set individual",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('individual'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected:
@@ -542,9 +467,9 @@ class _AddNewComponentState extends State<AddNewComponent> {
                       onTap: () => _macrosDropdownHandler(Macros.individual),
                     ),
                     ListTile(
-                      title: const Text(
-                        "Inherit from child components",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('inherit'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected:
@@ -556,9 +481,9 @@ class _AddNewComponentState extends State<AddNewComponent> {
                       onTap: () => _macrosDropdownHandler(Macros.inherit),
                     ),
                     ListTile(
-                      title: const Text(
-                        "Both",
-                        style: TextStyle(fontSize: 18),
+                      title: Text(
+                        AppLocalizations.of(context)!.macroType('both'),
+                        style: const TextStyle(fontSize: 18),
                       ),
                       trailing: const Icon(Icons.category),
                       selected: _macrosSelection == Macros.both ? true : false,
@@ -580,244 +505,90 @@ class _AddNewComponentState extends State<AddNewComponent> {
                     shape: Border.all(color: Colors.transparent),
                     onExpansionChanged: (value) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
-                    title: const Text(
-                      "Macros",
-                      style: TextStyle(fontSize: 22),
+                    title: Text(
+                      AppLocalizations.of(context)!.macro('title'),
+                      style: const TextStyle(fontSize: 22),
                     ),
                     children: [
-                      const Text(
-                        "Macros",
-                        style: TextStyle(fontSize: 22),
-                      ),
                       _macroTextField(
                         controller: _energyKcalController,
                         setter: _setEnergyKcal,
-                        hint: "Kcal",
+                        hint: AppLocalizations.of(context)!.macro('kcal'),
                         suffixText: null,
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _proteinController,
                         setter: _setProtein,
-                        hint: "Protein",
+                        hint: AppLocalizations.of(context)!.macro('protein'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _carbohydrateController,
                         setter: _setCarbohydrate,
-                        hint: "Carbohydrate",
+                        hint:
+                            AppLocalizations.of(context)!.macro('carbohydrate'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saltController,
                         setter: _setSalt,
-                        hint: "Salt",
+                        hint: AppLocalizations.of(context)!.macro('salt'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarController,
                         setter: _setSugar,
-                        hint: "Sugar",
+                        hint: AppLocalizations.of(context)!.macro('sugar'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fatController,
                         setter: _setFat,
-                        hint: "Fat",
+                        hint: AppLocalizations.of(context)!.macro('fat'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _saturatedFatController,
                         setter: _setSaturatedFat,
-                        hint: "Saturated fat",
+                        hint:
+                            AppLocalizations.of(context)!.macro('saturatedfat'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _fiberController,
                         setter: _setFiber,
-                        hint: "Fiber",
+                        hint: AppLocalizations.of(context)!.macro('fiber'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _organicAcidsController,
                         setter: _setOrganicAcids,
-                        hint: "Organic acids",
+                        hint:
+                            AppLocalizations.of(context)!.macro('organicacids'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _alcoholController,
                         setter: _setAlcohol,
-                        hint: "Alcohol",
+                        hint: AppLocalizations.of(context)!.macro('alcohol'),
                       ),
                       const SizedBox(height: 10.0),
                       _macroTextField(
                         controller: _sugarAlcoholController,
                         setter: _setSugarAlcohol,
-                        hint: "Sugar alcohol",
+                        hint:
+                            AppLocalizations.of(context)!.macro('sugaralcohol'),
                       ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _energyKcalController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _energyKcalController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _energyKcal = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Kcal"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _proteinController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _proteinController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _protein = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Protein"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _carbohydrateController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _carbohydrateController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _carbohydrate = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Carbohydrates"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _saltController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _saltController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _salt = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Salt"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _sugarController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _sugarController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _sugar = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Sugar"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _fatController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _fatController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _fat = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Fat"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _saturatedFatController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _saturatedFatController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _saturatedFat = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Saturated fat"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _fiberController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _fiberController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _fiber = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Fiber"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _organicAcidsController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _organicAcidsController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _organicAcids = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Organic acids"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _alcoholController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _alcoholController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _alcohol = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Alcohol"),
-                      // ),
-                      // const SizedBox(height: 10.0),
-                      // TextField(
-                      //   controller: _sugarAlcoholController,
-                      //   keyboardType: TextInputType.number,
-                      //   inputFormatters: [
-                      //     FilteringTextInputFormatter.digitsOnly,
-                      //     FilteringTextInputFormatter.deny(_noLeadingZeroRegexp,
-                      //         replacementString: _sugarAlcoholController.text),
-                      //   ],
-                      //   onChanged: (value) => setState(() {
-                      //     _sugarAlcohol = double.tryParse(value);
-                      //   }),
-                      //   decoration: _textfieldInputDecoration("Sugar alcohol"),
-                      // ),
                     ],
                   ),
                 ),
               Card(
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: ListTile(
-                  title: const Text(
-                    "Add ingredient +",
-                    style: TextStyle(fontSize: 22),
+                  title: Text(
+                    AppLocalizations.of(context)!.addIngredient,
+                    style: const TextStyle(fontSize: 22),
                     // textAlign: TextAlign.center,
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
@@ -829,9 +600,9 @@ class _AddNewComponentState extends State<AddNewComponent> {
                   margin: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
-                      const Text(
-                        "Your added ingredients",
-                        style: TextStyle(fontSize: 20),
+                      Text(
+                        AppLocalizations.of(context)!.addedIngredients,
+                        style: const TextStyle(fontSize: 20),
                       ),
                       ListView.builder(
                         controller: _listScrollController,
@@ -894,7 +665,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Title",
+          hintText: AppLocalizations.of(context)!.hintTitle,
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -964,7 +735,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Description",
+          hintText: AppLocalizations.of(context)!.hintDescription,
           contentPadding: const EdgeInsets.only(right: 10),
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),

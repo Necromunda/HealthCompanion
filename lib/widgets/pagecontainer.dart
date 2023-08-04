@@ -97,26 +97,26 @@ class _PageContainerState extends State<PageContainer> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            label: "Settings",
-            icon: Icon(Icons.settings),
+            label: AppLocalizations.of(context)!.settings,
+            icon: const Icon(Icons.settings),
           ),
           BottomNavigationBarItem(
-            label: "Search",
-            icon: Icon(Icons.search),
+            label: AppLocalizations.of(context)!.search,
+            icon: const Icon(Icons.search),
           ),
           BottomNavigationBarItem(
-            label: "Overview",
-            icon: Icon(Icons.menu),
+            label: AppLocalizations.of(context)!.overview,
+            icon: const Icon(Icons.menu),
           ),
           BottomNavigationBarItem(
-            label: "Components",
-            icon: Icon(Icons.emoji_food_beverage),
+            label: AppLocalizations.of(context)!.components,
+            icon: const Icon(Icons.emoji_food_beverage),
           ),
           BottomNavigationBarItem(
-            label: "Profile",
-            icon: Icon(Icons.person),
+            label: AppLocalizations.of(context)!.profile,
+            icon: const Icon(Icons.person),
           ),
         ],
         currentIndex: _currentPageIndex,

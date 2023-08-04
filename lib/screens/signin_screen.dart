@@ -54,31 +54,6 @@ class _SignInState extends State<SignIn> {
     super.dispose();
   }
 
-  Future<void> _showAlertDialog(
-      BuildContext context, String title, String message) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          title,
-          textAlign: TextAlign.center,
-        ),
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-        actions: <Widget>[
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Cancel"),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _login(String email, String password) {
     Navigator.push(
       context,
@@ -96,22 +71,27 @@ class _SignInState extends State<SignIn> {
                   case "wrong-password":
                     Future(
                       () => Util.showNotification(
-                          context: context,
-                          message: "Incorrect email and/or password."),
+                        context: context,
+                        message: AppLocalizations.of(context)!
+                            .incorrectEmailAndOrPassword,
+                      ),
                     );
                     break;
                   case "invalid-email":
                     Future(
                       () => Util.showNotification(
-                          context: context, message: "Email is not valid"),
+                        context: context,
+                        message: AppLocalizations.of(context)!.incorrectEmail,
+                      ),
                     );
                     break;
                   case "user-not-found":
                     Future(
                       () => Util.showNotification(
-                          context: context,
-                          message:
-                              "Could not find a user with that email address."),
+                        context: context,
+                        message:
+                            AppLocalizations.of(context)!.userNotFoundWithEmail,
+                      ),
                     );
                     break;
                 }
@@ -123,7 +103,9 @@ class _SignInState extends State<SignIn> {
               Future(() =>
                   Navigator.of(context).popUntil(ModalRoute.withName('/')));
             }
-            return const LoadingScreen(message: "Logging in");
+            return LoadingScreen(
+              message: AppLocalizations.of(context)!.loggingIn,
+            );
           },
         ),
       ),
@@ -145,18 +127,12 @@ class _SignInState extends State<SignIn> {
 
   void _createAccountButtonHandler() async {
     _clearInput();
-
-    // Map<String, dynamic>? obj = await Navigator.push(
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const SignUp(),
       ),
     );
-    // print(obj);
-    // if (obj != null) {
-    //   _login(obj['email'], obj['password']);
-    // }
   }
 
   void _clearInput() {
@@ -167,18 +143,6 @@ class _SignInState extends State<SignIn> {
       _isPasswordValid = false;
     });
   }
-
-  Color get _emailColor => _emailController.text.isEmpty
-      ? Colors.grey
-      : _isEmailValid
-          ? Colors.green
-          : Colors.red;
-
-  Color get _passwordColor => _passwordController.text.isEmpty
-      ? Colors.grey
-      : _isPasswordValid
-          ? Colors.green
-          : Colors.red;
 
   Widget get _emailTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -197,7 +161,7 @@ class _SignInState extends State<SignIn> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Email",
+          hintText: AppLocalizations.of(context)!.hintEmail,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -269,7 +233,7 @@ class _SignInState extends State<SignIn> {
         ),
         decoration: InputDecoration(
           counterText: "",
-          hintText: "Password",
+          hintText: AppLocalizations.of(context)!.hintPassword,
           contentPadding: EdgeInsets.zero,
           filled: true,
           // fillColor: const Color(0XDEDEDEDE),
@@ -335,6 +299,10 @@ class _SignInState extends State<SignIn> {
         ),
       );
 
+  Color get authButtonColor => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -371,14 +339,14 @@ class _SignInState extends State<SignIn> {
                 child: FilledButton(
                   onPressed: _loginButtonHandler,
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.deepPurple.shade400,
+                    backgroundColor: authButtonColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(1.0),
                     ),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.signIn,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -387,16 +355,20 @@ class _SignInState extends State<SignIn> {
               ),
               TextButton(
                 onPressed: _forgotPasswordButtonHandler,
-                child: const Text(
-                  "Forgot password?",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  AppLocalizations.of(context)!.forgotPassword,
+                  style: TextStyle(
+                      color: Util.isDark(context) ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               TextButton(
                 onPressed: _createAccountButtonHandler,
-                child: const Text(
-                  "Create account",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  AppLocalizations.of(context)!.createAccount,
+                  style: TextStyle(
+                      color: Util.isDark(context) ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],

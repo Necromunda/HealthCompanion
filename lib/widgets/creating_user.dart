@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_companion/util.dart';
 
 import '../services/firebase_service.dart';
 
@@ -29,7 +30,6 @@ class CreatingUser extends StatefulWidget {
 class _CreatingUserState extends State<CreatingUser> {
   late final String _username, _email, _password;
 
-  // late final int _age;
   late final DateTime _dateOfBirth;
   late final double _height, _weight;
   late bool _isRegisterSuccessful;
@@ -39,7 +39,6 @@ class _CreatingUserState extends State<CreatingUser> {
     _username = widget.username;
     _email = widget.email;
     _password = widget.password;
-    // _age = widget.age;
     _dateOfBirth = widget.dateOfBirth;
     _height = widget.height;
     _weight = widget.weight;
@@ -63,6 +62,7 @@ class _CreatingUserState extends State<CreatingUser> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
         title: Text(
           title,
           textAlign: TextAlign.center,
@@ -72,21 +72,17 @@ class _CreatingUserState extends State<CreatingUser> {
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
-          ButtonBar(
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).popUntil(ModalRoute.withName("/"));
-                },
-                child: const Text("Sign in"),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Dismiss"),
-              ),
-            ],
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).popUntil(ModalRoute.withName("/"));
+            },
+            child: Text(AppLocalizations.of(context)!.signIn),
           ),
         ],
       ),
@@ -102,7 +98,6 @@ class _CreatingUserState extends State<CreatingUser> {
                 email: _email,
                 password: _password,
               ),
-              // future: Future.delayed(const Duration(seconds: 4), () => false),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   Future(() => Navigator.of(context).pop());
@@ -111,12 +106,20 @@ class _CreatingUserState extends State<CreatingUser> {
                         snapshot.error as FirebaseAuthException;
                     switch (firebaseError.code) {
                       case "email-already-in-use":
-                        Future(() => _showDialog("Email address already in use",
-                            "$_email is already in use. Login to continue using HealthCompanion."));
+                        Future(
+                          () => _showDialog(
+                            AppLocalizations.of(context)!.emailAlreadyInUse,
+                            AppLocalizations.of(context)!.signInToContinue,
+                          ),
+                        );
                         break;
                       case "invalid-email":
-                        Future(() => _showDialog(
-                            "Invalid email", "$_email is not valid."));
+                        Future(
+                          () => _showDialog(
+                            AppLocalizations.of(context)!.error,
+                            AppLocalizations.of(context)!.invalidEmail,
+                          ),
+                        );
                         break;
                     }
                   }
@@ -134,17 +137,18 @@ class _CreatingUserState extends State<CreatingUser> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Registering",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.registering,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator()),
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                         ],
                       ),
@@ -157,7 +161,6 @@ class _CreatingUserState extends State<CreatingUser> {
               future: FirebaseService.createUserOnSignup(
                 user: FirebaseAuth.instance.currentUser!,
                 username: _username,
-                // age: _age,
                 dateOfBirth: _dateOfBirth,
                 height: _height,
                 weight: _weight,
@@ -167,11 +170,16 @@ class _CreatingUserState extends State<CreatingUser> {
                 if (snapshot.hasError) {
                   Future(() => Navigator.of(context).pop());
                   _showDialog(
-                      "Error", "User could not be created.\nContact support.");
+                    AppLocalizations.of(context)!.error,
+                    AppLocalizations.of(context)!.errorCreatingAccount,
+                  );
                 }
                 if (snapshot.hasData) {
-                  Future(() =>
-                      Navigator.of(context).popUntil(ModalRoute.withName("/")));
+                  Future(
+                    () => Navigator.of(context).popUntil(
+                      ModalRoute.withName("/"),
+                    ),
+                  );
                 }
                 return Center(
                   child: Column(
@@ -179,12 +187,12 @@ class _CreatingUserState extends State<CreatingUser> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Register successful",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.registerSuccessful,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: Icon(
                               Icons.check,
@@ -196,17 +204,18 @@ class _CreatingUserState extends State<CreatingUser> {
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Text(
-                            "Creating account",
-                            style: TextStyle(fontSize: 18),
+                            AppLocalizations.of(context)!.creatingAccount,
+                            style: const TextStyle(fontSize: 18),
                           ),
-                          Padding(
+                          const Padding(
                             padding: EdgeInsets.only(left: 15.0),
                             child: SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator()),
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
                         ],
                       ),

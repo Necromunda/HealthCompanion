@@ -48,10 +48,10 @@ class _OverviewState extends State<Overview> {
         .doc(_currentUser.uid)
         .snapshots();
     userPreferences.then((value) => setState(() {
-      // print(object)
+          // print(object)
           _userPreferences = value;
           // print(_userPreferences);
-    }));
+        }));
     // _userPreferences = UserPreferences();
     super.initState();
   }
@@ -222,15 +222,15 @@ class _OverviewState extends State<Overview> {
             elevation: 3,
             child: ExpansionTile(
               shape: Border.all(color: Colors.transparent),
-              title: const Text(
-                "Add component +",
-                style: TextStyle(fontSize: 22),
+              title: Text(
+                AppLocalizations.of(context)!.addComponent,
+                style: const TextStyle(fontSize: 22),
               ),
               children: [
                 ListTile(
-                  title: const Text(
-                    "Add new component",
-                    style: TextStyle(fontSize: 18),
+                  title: Text(
+                    AppLocalizations.of(context)!.addNewComponent,
+                    style: const TextStyle(fontSize: 18),
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addNewComponentButtonHandler,
@@ -242,9 +242,9 @@ class _OverviewState extends State<Overview> {
                   color: Colors.black,
                 ),
                 ListTile(
-                  title: const Text(
-                    "Add existing component",
-                    style: TextStyle(fontSize: 18),
+                  title: Text(
+                    AppLocalizations.of(context)!.addExistingComponent,
+                    style: const TextStyle(fontSize: 18),
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                   onTap: _addExistingComponentButtonHandler,
@@ -261,14 +261,13 @@ class _OverviewState extends State<Overview> {
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
                     if (snapshot.data?.data() == null) {
-                      print("here");
-                      return const LoadingComponents(
-                        message: "Loading your data",
-                      );
+                      return const LoadingComponents();
                     }
                     if (snapshot.hasError) {
-                      return const Center(
-                        child: Text("Your components could not be displayed"),
+                      return Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.errorLoadingBundles,
+                        ),
                       );
                     }
                     if (snapshot.hasData) {
@@ -295,25 +294,29 @@ class _OverviewState extends State<Overview> {
                         },
                         itemBuilder: (context, pageViewIndex) {
                           Bundle bundle = _userBundles[pageViewIndex];
+                          String created = AppLocalizations.of(context)!
+                              .created
+                              .toLowerCase();
+                          String lastEdited =
+                              AppLocalizations.of(context)!.lastEdited;
 
                           return Column(
-                            // mainAxisSize: MainAxisSize.max,
                             children: [
                               if (bundle.components!.isNotEmpty)
                                 Chart(
-                                  // key: Key("${Random().nextDouble() * 1000}"),
-                                  // key: Key("${bundle.components?.length}"),
                                   key: UniqueKey(),
                                   bundle: bundle,
                                   userPreferences: _userPreferences,
                                 ),
                               const SizedBox(height: 5),
                               Text(
-                                "#${pageViewIndex + 1} Bundle created: ${DateFormat('d.M H:mm').format(bundle.creationDate!)}",
+                                "#${pageViewIndex + 1} Bundle $created: ${DateFormat('d.M H:mm').format(
+                                  bundle.creationDate!,
+                                )}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               Text(
-                                "Last edited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
+                                "$lastEdited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(height: 5),
@@ -324,11 +327,11 @@ class _OverviewState extends State<Overview> {
                                 thickness: 1,
                               ),
                               if (bundle.components!.isEmpty)
-                                const Expanded(
+                                Expanded(
                                   child: Center(
                                     child: Text(
-                                      "This bundle is empty",
-                                      style: TextStyle(fontSize: 18),
+                                      AppLocalizations.of(context)!.emptyBundle,
+                                      style: const TextStyle(fontSize: 18),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -352,28 +355,14 @@ class _OverviewState extends State<Overview> {
                                             ),
                                           ),
                                           subtitle: Text(
-                                            bundle.components?[listviewIndex]
-                                                    .description ??
-                                                "No description",
+                                            bundle.components![listviewIndex]
+                                                .description!,
                                             style:
                                                 const TextStyle(fontSize: 16),
                                           ),
                                           trailing: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: const [
-                                              // IconButton(
-                                              //   onPressed: () =>
-                                              //       _deleteComponentFromBundle(
-                                              //     _userBundles,
-                                              //     pageviewIndex,
-                                              //     listviewIndex,
-                                              //   ),
-                                              //   icon: const Icon(
-                                              //     Icons.delete,
-                                              //     color: Colors.red,
-                                              //     size: 32.0,
-                                              //   ),
-                                              // ),
                                               Icon(Icons.keyboard_arrow_right)
                                             ],
                                           ),

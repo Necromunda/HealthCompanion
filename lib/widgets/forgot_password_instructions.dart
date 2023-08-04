@@ -19,9 +19,9 @@ class ForgotPasswordInstructions extends StatelessWidget {
             size: 32,
           ),
         ),
-        const Text(
-          "Instructions on how to change your password have been sent to",
-          style: TextStyle(fontSize: 18),
+        Text(
+          AppLocalizations.of(context)!.forgotPasswordInstructions,
+          style: const TextStyle(fontSize: 18),
           textAlign: TextAlign.center,
         ),
         Text(

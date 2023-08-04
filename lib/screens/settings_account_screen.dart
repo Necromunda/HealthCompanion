@@ -34,7 +34,7 @@ class _SettingsAccountState extends State<SettingsAccount> {
               child: Column(
                 children: [
                   ListTile(
-                    title: const Text("Preferences"),
+                    title: Text(AppLocalizations.of(context)!.macroLimits),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
@@ -49,7 +49,7 @@ class _SettingsAccountState extends State<SettingsAccount> {
                     color: Colors.black,
                   ),
                   ListTile(
-                    title: const Text("Account details"),
+                    title: Text(AppLocalizations.of(context)!.accountDetails),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
@@ -60,34 +60,6 @@ class _SettingsAccountState extends State<SettingsAccount> {
                 ],
               ),
             ),
-            // Card(
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: ListTile(
-            //     title: const Text("Preferences"),
-            //     trailing: const Icon(Icons.keyboard_arrow_right),
-            //     onTap: () => Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => const EditPreferences(),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // Card(
-            //   shape: RoundedRectangleBorder(
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: ListTile(
-            //     title: const Text("Account details"),
-            //     trailing: const Icon(Icons.keyboard_arrow_right),
-            //     onTap: () => Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => const ChangeAccountDetails(),
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
