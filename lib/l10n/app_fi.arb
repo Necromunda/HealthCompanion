@@ -107,6 +107,7 @@
 	"signUpPasswordInfo": "Salasanan pitää sisältää vähintään yksi iso kirjain, pieni kirjain, numero & erikoismerkki sekä olla 8 - 64 merkkiä pitkä",
 	"height": "Pituus",
 	"weight": "Paino",
+	"initializing": "Alustetaan",
 	"currentLimitIs": "Nykyinen raja on {limit}",
 	"@currentLimitIs": {
 		"placeholders": {

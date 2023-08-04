@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/models/user_achievements_model.dart';
 import 'package:health_companion/models/user_preferences_model.dart';
+import 'package:health_companion/screens/loading_screen.dart';
 
 import '../models/appuser_model.dart';
 import '../util.dart';
@@ -53,7 +55,8 @@ class FirebaseService {
   static DocumentReference get userAchievementsDocRef =>
       db.collection('user_achievements').doc(uid);
 
-  static Future<AppUser?> createUserOnSignup({
+  static Future<void> createUserOnSignup({
+    context,
     required User user,
     required String username,
     required DateTime dateOfBirth,
@@ -100,16 +103,11 @@ class FirebaseService {
           'member': [],
         }
       });
-      return AppUser(
-        email: email,
-        uid: uid,
-        username: username,
-        joinDate: user.metadata.creationTime,
-      );
+      return;
     } catch (e, stackTrace) {
       print("error creating user");
       print("$e, $stackTrace");
-      return null;
+      return;
     }
   }
 

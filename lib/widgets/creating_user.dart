@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:health_companion/util.dart';
 
+import '../screens/loading_screen.dart';
 import '../services/firebase_service.dart';
 
 class CreatingUser extends StatefulWidget {
@@ -175,6 +176,15 @@ class _CreatingUserState extends State<CreatingUser> {
                   );
                 }
                 if (snapshot.hasData) {
+                  // Future(
+                  //   () => Navigator.of(context).push(
+                  //     MaterialPageRoute(
+                  //       builder: (context) => LoadingScreen(
+                  //           message:
+                  //               AppLocalizations.of(context)!.initializing),
+                  //     ),
+                  //   ),
+                  // );
                   Future(
                     () => Navigator.of(context).popUntil(
                       ModalRoute.withName("/"),

@@ -9,18 +9,29 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 15.0),
-              child: CircularProgressIndicator(),
-            ),
-            Text(message),
-          ],
-        ),
+        body: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          Image.asset("assets/images/HealthCompanion-Logo2.png"),
+          const SizedBox(
+            height: 100,
+          ),
+          Text(message),
+        ],
       ),
-    );
+    ));
   }
 }
+// Center(
+// child: Column(
+// mainAxisAlignment: MainAxisAlignment.center,
+// children: [
+// const Padding(
+// padding: EdgeInsets.only(bottom: 15.0),
+// child: CircularProgressIndicator(),
+// ),
+// Text(message),
+// ],
+// ),
+// ),

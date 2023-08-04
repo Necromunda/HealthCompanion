@@ -107,6 +107,7 @@
 	"signUpPasswordInfo": "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character and be between 8 - 64 characters long",
 	"height": "Height",
 	"weight": "Weight",
+	"initializing": "Initializing",
 	"currentLimitIs": "Current limit is {limit}",
 	"@currentLimitIs": {
 		"placeholders": {
