@@ -5,6 +5,7 @@ import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/change_email_dialog.dart';
 import 'package:health_companion/widgets/change_password_dialog.dart';
 import 'package:health_companion/widgets/change_username_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../util.dart';
 

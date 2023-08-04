@@ -5,6 +5,7 @@ import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/creating_user.dart';
 import 'package:health_companion/widgets/signup_info_card.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/signin_screen.dart';
 import '../util.dart';

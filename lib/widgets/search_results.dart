@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/fineli_model.dart';
 import 'package:health_companion/widgets/loading_components.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../screens/component_breakdown_screen.dart';
 import '../services/fineli_service.dart';

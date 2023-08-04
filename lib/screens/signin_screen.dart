@@ -7,7 +7,7 @@ import 'package:health_companion/screens/forgot_password_screen.dart';
 import 'package:health_companion/screens/signup_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/util.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/pagecontainer.dart';
 import 'loading_screen.dart';
 
@@ -376,8 +376,8 @@ class _SignInState extends State<SignIn> {
                       borderRadius: BorderRadius.circular(1.0),
                     ),
                   ),
-                  child: const Text(
-                    "Log in",
+                  child: Text(
+                    AppLocalizations.of(context)!.signIn,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

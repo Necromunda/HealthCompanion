@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/screens/signin_screen.dart';
 import 'package:health_companion/widgets/pagecontainer.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'model_theme.dart';
+import 'model_preferences.dart';
 
 ThemeData get lightTheme => ThemeData(
       useMaterial3: true,
@@ -49,11 +51,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ModelTheme(),
-      child: Consumer<ModelTheme>(
-        builder: (context, ModelTheme themeNotifier, child) {
+      create: (_) => ModelPreferences(),
+      child: Consumer<ModelPreferences>(
+        builder: (context, ModelPreferences themeNotifier, child) {
           return MaterialApp(
-            // theme: themeNotifier.isDark ? lightTheme : darkTheme,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: Locale.fromSubtags(languageCode: themeNotifier.locale),
+            // locale: const Locale.fromSubtags(languageCode: 'fi'),
             theme: themeNotifier.isDark
                 ? ThemeData(
                     useMaterial3: true,

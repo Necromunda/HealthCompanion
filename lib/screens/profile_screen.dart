@@ -7,6 +7,7 @@ import 'package:health_companion/screens/delete_account_screen.dart';
 import 'package:health_companion/screens/loading_screen.dart';
 import 'package:health_companion/screens/stats_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);

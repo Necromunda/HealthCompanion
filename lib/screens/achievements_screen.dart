@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/services/firebase_service.dart';
-import 'package:health_companion/widgets/achievement_template.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 import '../models/user_achievements_model.dart';
 

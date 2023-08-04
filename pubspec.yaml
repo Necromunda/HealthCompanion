@@ -40,13 +40,15 @@ dependencies:
   cloud_firestore: ^4.8.1
   email_validator: ^2.1.17
   http: ^0.13.6
-  intl: ^0.18.1
+  intl: any
   font_awesome_flutter: ^10.4.0
   expandable: ^5.0.1
   equatable: ^2.0.5
   uuid: ^3.0.7
   provider: ^6.0.5
   shared_preferences: ^2.2.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +71,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

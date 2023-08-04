@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/widgets/chartbar.dart';
 import 'package:health_companion/widgets/chartbar_horizontal.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/bundle_model.dart';
 import '../models/user_preferences_model.dart';

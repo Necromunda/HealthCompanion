@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../util.dart';
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:health_companion/widgets/custom_button.dart';
 import 'package:health_companion/widgets/loading_components.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Stats extends StatefulWidget {
   const Stats({Key? key}) : super(key: key);

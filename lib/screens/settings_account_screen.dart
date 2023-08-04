@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_companion/screens/settings_change_account_details_screen.dart';
 import 'package:health_companion/screens/settings_change_preferences_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsAccount extends StatefulWidget {
   const SettingsAccount({Key? key}) : super(key: key);

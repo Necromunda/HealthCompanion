@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../model_theme.dart';
+import '../model_preferences.dart';
 
 class ThemeSwitch extends StatefulWidget {
-  final ModelTheme themeNotifier;
+  final ModelPreferences themeNotifier;
 
   const ThemeSwitch({Key? key, required this.themeNotifier}) : super(key: key);
 
@@ -12,7 +12,7 @@ class ThemeSwitch extends StatefulWidget {
 }
 
 class _ThemeSwitchState extends State<ThemeSwitch> {
-  late final ModelTheme _themeNotifier = widget.themeNotifier;
+  late final ModelPreferences _themeNotifier = widget.themeNotifier;
   final MaterialStateProperty<Icon?> thumbIcon =
   MaterialStateProperty.resolveWith<Icon?>(
         (Set<MaterialState> states) {

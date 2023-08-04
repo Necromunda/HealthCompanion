@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:health_companion/models/bundle_model.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/component_model.dart';
 import '../screens/component_breakdown_screen.dart';

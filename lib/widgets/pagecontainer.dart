@@ -7,6 +7,7 @@ import 'package:health_companion/screens/profile_screen.dart';
 import 'package:health_companion/screens/search_screen.dart';
 import 'package:health_companion/screens/settings_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../util.dart';
 

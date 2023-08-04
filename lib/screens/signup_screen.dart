@@ -5,6 +5,7 @@ import 'package:health_companion/widgets/signup_email.dart';
 import 'package:health_companion/widgets/signup_password.dart';
 import 'package:health_companion/widgets/signup_background_info.dart';
 import 'package:health_companion/widgets/signup_username.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);

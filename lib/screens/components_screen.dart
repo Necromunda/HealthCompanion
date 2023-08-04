@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:health_companion/screens/add_new_component_screen.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/component_model.dart';
 import '../util.dart';
