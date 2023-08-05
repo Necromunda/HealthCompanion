@@ -255,6 +255,7 @@ class _EditComponentState extends State<EditComponent> {
         double.tryParse((_energyKcal! * _kJMultiplier).toStringAsFixed(0));
     Map<String, dynamic> data = {
       "name": _title,
+      "portion": widget.component.portion ?? 100,
       "description": _description,
       "category": _category,
       "macroSelection": _macrosSelectionText,

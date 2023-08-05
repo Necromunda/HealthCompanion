@@ -83,14 +83,13 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
   }
 
   String _getBreakdownTitle(String value) {
-    // print(value);
-    // return value;
-    if (value == 'individual') {
-      return AppLocalizations.of(context)!.breakdownMacroTitle('individual');
+    print(value);
+    if (value == 'ingredients excluded') {
+      return "${AppLocalizations.of(context)!.breakdownMacroTitle('individual')} / ${_component.portion?.toStringAsFixed(0)} g";
     } else if (value == 'ingredients included') {
-      return AppLocalizations.of(context)!.breakdownMacroTitle('inherit');
+      return "${AppLocalizations.of(context)!.breakdownMacroTitle('inherit')} / ${_component.portion?.toStringAsFixed(0)} g";
     } else {
-      return AppLocalizations.of(context)!.breakdownMacroTitle('both');
+      return "${AppLocalizations.of(context)!.breakdownMacroTitle('both')} / ${_component.portion?.toStringAsFixed(0)} g";
     }
   }
 
@@ -111,11 +110,9 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
           controller: _scrollController,
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 mainAxisSize: MainAxisSize.min,
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     AppLocalizations.of(context)!.hintTitle,
@@ -127,6 +124,7 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
                   Text(
                     _component.name!,
                     style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.center,
                     // textAlign: TextAlign.center,
                   ),
                   Text(

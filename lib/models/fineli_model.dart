@@ -58,18 +58,6 @@ class FineliModel {
         preparationMethod!.add(PreparationMethod.fromJson(v));
       });
     }
-    // if (json['specialDiets'] != null) {
-    //   specialDiets = <String>[];
-    //   json['preparationMethod'].forEach((v) {
-    //     specialDiets!.add(v.toString());
-    //   });
-    // }
-    // if (json['themes'] != null) {
-    //   themes = <String>[];
-    //   json['preparationMethod'].forEach((v) {
-    //     themes!.add(v.toString());
-    //   });
-    // }
     ediblePortion = json['ediblePortion'];
     specialDiets = json['specialDiets'].cast<String>();
     themes = json['themes'].cast<String>();
@@ -139,7 +127,7 @@ class FineliModel {
     return data;
   }
 
-  Component toComponent(String locale) {
+  Component toComponent(String locale, [String? portion]) {
     final Map<String, dynamic> data = <String, dynamic>{};
     switch (locale) {
       case 'fi':
@@ -158,21 +146,31 @@ class FineliModel {
         data['category'] = type?.description?.en ?? "";
         break;
     }
+    final List<Units>? unit = units
+        ?.where((element) => element.code?.toLowerCase() == portion)
+        .toList();
+    double size = 1;
+    if (unit != null && unit.isNotEmpty) {
+      if (portion != 'g') {
+        size = (unit.first.mass ?? 1) / 100;
+      }
+    }
+    data['portion'] = size * 100;
     data['creationDate'] = DateTime.now();
-    data['macroSelection'] = 'Individual';
+    data['macroSelection'] = 'ingredients excluded';
     data['subComponents'] = [];
-    data['salt'] = salt;
-    data['energy'] = energy;
-    data['energyKcal'] = energyKcal;
-    data['protein'] = protein;
-    data['carbohydrate'] = carbohydrate;
-    data['alcohol'] = alcohol;
-    data['organicAcids'] = organicAcids;
-    data['sugarAlcohol'] = sugarAlcohol;
-    data['saturatedFat'] = saturatedFat;
-    data['fiber'] = fiber;
-    data['sugar'] = sugar;
-    data['fat'] = fat;
+    data['salt'] = size * salt!;
+    data['energy'] = size * energy!;
+    data['energyKcal'] = size * energyKcal!;
+    data['protein'] = size * protein!;
+    data['carbohydrate'] = size * carbohydrate!;
+    data['alcohol'] = size * alcohol!;
+    data['organicAcids'] = size * organicAcids!;
+    data['sugarAlcohol'] = size * sugarAlcohol!;
+    data['saturatedFat'] = size * saturatedFat!;
+    data['fiber'] = size * fiber!;
+    data['sugar'] = size * sugar!;
+    data['fat'] = size * fat!;
     return Component.fromJson(data);
   }
 }

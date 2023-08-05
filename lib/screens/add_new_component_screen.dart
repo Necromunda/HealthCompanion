@@ -66,7 +66,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _isTitleEmpty = true;
     _category = "Component";
     _macrosSelection = Macros.individual;
-    _macrosSelectionText = "Individual";
+    _macrosSelectionText = "ingredients excluded";
     _subComponents = <Component>[];
     _selectedComponents = <Component>[];
     _listScrollController = ScrollController();
@@ -157,6 +157,7 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _fat ??= 0.0;
     Map<String, dynamic> data = {
       "name": _title,
+      "portion": null,
       "description": _description,
       "category": _category,
       "macroSelection": _macrosSelectionText,
@@ -254,42 +255,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
       ),
     );
   }
-
-  // InputDecoration _textfieldInputDecoration(String hintText) {
-  //   return InputDecoration(
-  //     suffix: const Text("g"),
-  //     errorBorder: OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Theme.of(context).primaryColor,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     focusedBorder: OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Theme.of(context).primaryColor,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     enabledBorder: const OutlineInputBorder(
-  //       borderSide: BorderSide(
-  //         color: Colors.grey,
-  //         width: 2.0,
-  //       ),
-  //     ),
-  //     prefixIcon: Icon(
-  //       Icons.title,
-  //       color: Theme.of(context).primaryColor,
-  //     ),
-  //     hintText: hintText,
-  //     border: OutlineInputBorder(
-  //       borderRadius: BorderRadius.circular(5.0),
-  //       borderSide: const BorderSide(
-  //         width: 2.0,
-  //         style: BorderStyle.none,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   double? get _ingredientsTotalEnergy => _selectedComponents
       ?.map((e) => (e.energy ?? 0.0))

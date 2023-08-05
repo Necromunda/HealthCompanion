@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 
 class Component extends Equatable {
   DateTime? creationDate;
@@ -18,26 +16,10 @@ class Component extends Equatable {
       fiber,
       sugar,
       fat;
-
-  // Component({
-  //   this.name,
-  //   this.description,
-  //   this.subComponents,
-  //   this.salt,
-  //   this.energy,
-  //   this.energyKcal,
-  //   this.protein,
-  //   this.carbohydrate,
-  //   this.alcohol,
-  //   this.organicAcids,
-  //   this.sugarAlcohol,
-  //   this.saturatedFat,
-  //   this.fiber,
-  //   this.sugar,
-  //   this.fat,
-  // });
+  double? portion;
 
   Component.fromJson(Map<String, dynamic> json) {
+    portion = json['portion'] ?? 100;
     name = json['name'];
     description = json['description'] ?? "";
     category = json['category'];
@@ -45,13 +27,6 @@ class Component extends Equatable {
     creationDate = (json['creationDate'] is DateTime)
         ? json['creationDate']
         : json['creationDate'].toDate();
-    // subComponents = json['subComponents'];
-    // subComponents = <Component>[];
-    // if (json['subComponents'] != null) {
-    //   json['subComponents'].forEach((v) {
-    //     subComponents?.add(Component.fromJson(v));
-    //   });
-    // }
     subComponents = (json['subComponents'] as List)
         .map((e) => Component.fromJson(e))
         .toList();
@@ -71,14 +46,12 @@ class Component extends Equatable {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['portion'] = portion;
     data['name'] = name;
     data['description'] = description;
     data['category'] = category;
     data['macroSelection'] = macroSelection;
     data['creationDate'] = creationDate;
-    // if (subComponents != null) {
-    //   data['subComponents'] = subComponents!.map((v) => v.toJson()).toList();
-    // }
     data['subComponents'] = subComponents?.map((v) => v.toJson()).toList();
     data['salt'] = salt;
     data['energy'] = energy;
@@ -96,9 +69,5 @@ class Component extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      // [name, description, category, macroSelection, subComponents?.length];
-      [creationDate];
-
-  static List<String> get macros => ["Alcohol", "Carbohydrate", "Energy kJ", "Energy kcal", "Fat", "Fiber", "Organic acids", "Protein", "Salt", "Saturated fat", "Sugar alcohol", "Sugar"];
+  List<Object?> get props => [creationDate];
 }

@@ -20,8 +20,9 @@ class SearchResults extends StatefulWidget {
 }
 
 class _SearchResultsState extends State<SearchResults> {
+  static const List<String> _portions = ['g', 'ports', 'portm', 'portl'];
   late final String _search = widget.search;
-  List<int> _addedComponents = [];
+  final List<int> _addedComponents = [];
   bool _addingComponent = false;
   int _addingComponentIndex = -1;
 
@@ -37,14 +38,17 @@ class _SearchResultsState extends State<SearchResults> {
     );
   }
 
-  Future<void> _addComponent(int index, Component component) async {
+  // Future<void> _addComponent(int index, Component component) async {
+  Future<void> _addComponent(int index, FineliModel model) async {
+    Locale myLocale = Localizations.localeOf(context);
+    String? portion = await _dialogBuilder(context, model);
+    if (portion == null) return;
     setState(() {
       _addingComponentIndex = index;
       _addingComponent = true;
     });
     int userComponentsLength = await FirebaseService.saveUserComponents(
-      // FirebaseAuth.instance.currentUser!.uid,
-      component,
+      model.toComponent(myLocale.languageCode, portion),
     );
     if (userComponentsLength != 0) {
       await FirebaseService.addToStats(UserStats.addComponent, 1);
@@ -73,6 +77,39 @@ class _SearchResultsState extends State<SearchResults> {
     }
   }
 
+  Future<String?> _dialogBuilder(BuildContext context, FineliModel model) {
+    return showDialog<String?>(
+      context: context,
+      builder: (BuildContext context) {
+        var width = MediaQuery.of(context).size.width;
+        return AlertDialog(
+          insetPadding: const EdgeInsets.all(10),
+          content: SizedBox(
+            width: width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ..._portions
+                    .map((e) => ListTile(
+                        title: Text(AppLocalizations.of(context)!.portions(e)),
+                        subtitle: Text(e == 'g'
+                            ? '100 g'
+                            : "${model.units?.firstWhere((element) => element.code?.toLowerCase() == e).mass?.toStringAsFixed(0)} g"),
+                        onTap: () => Navigator.of(context).pop(e)))
+                    .toList(),
+              ],
+            ),
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(10),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -91,6 +128,8 @@ class _SearchResultsState extends State<SearchResults> {
               .map((e) =>
                   FineliModel.fromJson(e).toComponent(myLocale.languageCode))
               .toList();
+          List<FineliModel> fineliResults =
+              snapshot.data!.map((e) => FineliModel.fromJson(e)).toList();
 
           if (results.isEmpty) {
             return Expanded(
@@ -111,7 +150,6 @@ class _SearchResultsState extends State<SearchResults> {
               itemCount: results.length,
               itemBuilder: (context, index) {
                 return Card(
-                  // elevation: 3,
                   margin: const EdgeInsets.only(bottom: 4),
                   child: ListTile(
                     title: Text(
@@ -136,7 +174,7 @@ class _SearchResultsState extends State<SearchResults> {
                       disabledColor: Theme.of(context).primaryColor,
                       onPressed: !_addedComponents.contains(index) &&
                               _addingComponentIndex != index
-                          ? () => _addComponent(index, results[index])
+                          ? () => _addComponent(index, fineliResults[index])
                           : () {},
                     ),
                     trailing: const Icon(Icons.launch),

@@ -108,6 +108,14 @@
 	"height": "Height",
 	"weight": "Weight",
 	"initializing": "Initializing",
+	"portions": "{size, select, ports{Small portion} portm{Medium portion} portl{Large portion} other{100 grams}}",
+	"@portions": {
+		"placeholders": {
+			"size": {
+				"type": "String"
+			}
+		}
+	},
 	"currentLimitIs": "Current limit is {limit}",
 	"@currentLimitIs": {
 		"placeholders": {
@@ -157,7 +165,7 @@
 			}
 		}
 	},
-	"categories": "{type, select, title{Category} component{Component} breakfast{Breakfast} lunch{Lunch} dinner{Dinner} snack{Snack} other{ERROR!}}",
+	"categories": "{type, select, title{Category} component{Component} breakfast{Breakfast} lunch{Lunch} dinner{Dinner} snack{Snack} other{Other}}",
 	"@categories": {
 		"placeholders": {
 			"type": {
@@ -181,7 +189,7 @@
 			}
 		}
 	},
-	"breakdownMacroTitle": "{type, select, individual{Makrot '(individual)'} inherit{Makrot '(inherited from ingredients)'} both{Makrot '(inherited from ingredients + individual)'} other{ERROR!}}",
+	"breakdownMacroTitle": "{type, select, individual{Macros '(individual)'} inherit{Macros '(inherited from ingredients)'} both{Macros '(inherited from ingredients + individual)'} other{ERROR!}}",
 	"@breakdownMacroTitle": {
 		"placeholders": {
 			"type": {
