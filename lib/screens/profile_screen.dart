@@ -16,7 +16,7 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin<Profile> {
   late final User _currentUser;
   late final Stream _userDocStream;
 
@@ -41,6 +41,14 @@ class _ProfileState extends State<Profile> {
   void dispose() {
     super.dispose();
   }
+
+  @override
+  void didUpdateWidget(covariant Profile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 
   void _logout() async {
     FirebaseAuth.instance.signOut().then((_) {
@@ -76,6 +84,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder(
       stream: _userDocStream,
       builder: (context, snapshot) {
@@ -213,9 +222,10 @@ class _ProfileState extends State<Profile> {
             ),
           );
         }
-        return LoadingScreen(
-          message: AppLocalizations.of(context)!.loadingProfile,
-        );
+        return const Center(child: CircularProgressIndicator(),);
+        // return LoadingScreen(
+        //   message: AppLocalizations.of(context)!.loadingProfile,
+        // );
       },
     );
   }

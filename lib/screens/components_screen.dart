@@ -137,6 +137,7 @@ class _ComponentsState extends State<Components> {
     _userComponents.forEach((component) {
       if (component.name!.toLowerCase().contains(text.toLowerCase())) {
         _searchResults.add(component);
+        // print(com)
       }
     });
 
@@ -152,6 +153,16 @@ class _ComponentsState extends State<Components> {
     );
     if (updatedComponent != null) {
       await FirebaseService.updateUserComponents(updatedComponent);
+      if (_searchResults.isNotEmpty) {
+        setState(() {
+          for (var element in _searchResults) {
+            if (element == updatedComponent) {
+              int index = _searchResults.indexOf(element);
+              _searchResults[index] = updatedComponent;
+            }
+          }
+        });
+      }
     }
   }
 
@@ -207,7 +218,8 @@ class _ComponentsState extends State<Components> {
                   } else {
                     if (_searchString.isNotEmpty && _searchResults.isEmpty) {
                       return Center(
-                        child: Text(AppLocalizations.of(context)!.searchNoMatches),
+                        child:
+                            Text(AppLocalizations.of(context)!.searchNoMatches),
                       );
                     } else {
                       return _searchResults.isNotEmpty
@@ -233,7 +245,11 @@ class _ComponentsState extends State<Components> {
                                       children: [
                                         IconButton(
                                           onPressed: () =>
-                                              _editComponent(components[index]),
+                                              _searchResults.isEmpty
+                                                  ? _editComponent(
+                                                      components[index])
+                                                  : _editComponent(
+                                                      _searchResults[index]),
                                           icon: const Icon(
                                             Icons.edit,
                                             // color: Colors.white,

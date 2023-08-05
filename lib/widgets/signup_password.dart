@@ -42,7 +42,8 @@ class SignUpPassword extends StatefulWidget {
 class _SignUpPasswordState extends State<SignUpPassword>
     with AutomaticKeepAliveClientMixin<SignUpPassword> {
   final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordValid = false;
+  // bool _isPasswordValid = false;
+  bool _isPasswordValid = true;
   bool _obscureText = true;
   final RegExp _passwordRegExp = RegExp(
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
@@ -131,12 +132,18 @@ class _SignUpPasswordState extends State<SignUpPassword>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreatingUser(
-          email: _getEmailCallback(),
-          password: _getPasswordCallback(),
-          username: _getUsernameCallback(),
-          dateOfBirth: _getDateOfBirthCallback(),
-          height: _getHeightCallback(),
-          weight: _getWeightCallback(),
+          // email: _getEmailCallback(),
+          // password: _getPasswordCallback(),
+          // username: _getUsernameCallback(),
+          // dateOfBirth: _getDateOfBirthCallback(),
+          // height: _getHeightCallback(),
+          // weight: _getWeightCallback(),
+          email: 'test000@gmail.com',
+          password: 'Test000!',
+          username: 'test',
+          dateOfBirth: DateTime(2000,3,6),
+          height: 180,
+          weight: 80,
         ),
       ),
     );

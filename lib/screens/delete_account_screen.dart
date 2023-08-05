@@ -24,7 +24,8 @@ class _DeleteAccountState extends State<DeleteAccount> {
   void initState() {
     _currentUser = FirebaseAuth.instance.currentUser!;
     _deleteConfirm = false;
-    _isPasswordValid = false;
+    // _isPasswordValid = false;
+    _isPasswordValid = true;
     _obscureText = true;
     _passwordController = TextEditingController();
     _passwordRegExp = RegExp(
@@ -57,7 +58,8 @@ class _DeleteAccountState extends State<DeleteAccount> {
 
   void _deleteAccountButtonHandler() async {
     try {
-      String password = _passwordController.text;
+      // String password = _passwordController.text;
+      String password = 'Test000!';
       final AuthCredential credential = EmailAuthProvider.credential(
           email: _currentUser.email!, password: password);
 
@@ -69,12 +71,6 @@ class _DeleteAccountState extends State<DeleteAccount> {
       print("Error deleting user: $e, $stackTrace");
     }
   }
-
-  Color get _passwordColor => _passwordController.text.isEmpty
-      ? Colors.grey
-      : _isPasswordValid
-          ? Colors.green
-          : Colors.red;
 
   Widget get _passwordTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),

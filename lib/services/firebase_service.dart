@@ -55,7 +55,7 @@ class FirebaseService {
   static DocumentReference get userAchievementsDocRef =>
       db.collection('user_achievements').doc(uid);
 
-  static Future<void> createUserOnSignup({
+  static Future<bool> createUserOnSignup({
     context,
     required User user,
     required String username,
@@ -103,11 +103,11 @@ class FirebaseService {
           'member': [],
         }
       });
-      return;
+      return true;
     } catch (e, stackTrace) {
       print("error creating user");
       print("$e, $stackTrace");
-      return;
+      return false;
     }
   }
 

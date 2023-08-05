@@ -15,7 +15,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final PageController _pageController = PageController();
+  final PageController _pageController = PageController(initialPage: 3);
   String? _username, _email, _password;
 
   // int? _age;
