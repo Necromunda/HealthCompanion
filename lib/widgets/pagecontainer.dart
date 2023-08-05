@@ -22,6 +22,7 @@ class _PageContainerState extends State<PageContainer> {
   late final User _currentUser;
   late final PageController _pageController;
   late int _currentPageIndex, _maxPageDistance;
+
   // late Stream _statsDocumentReference;
 
   @override
@@ -46,18 +47,15 @@ class _PageContainerState extends State<PageContainer> {
   void _checkAccountCreationDate() {
     int days =
         DateTime.now().difference(_currentUser.metadata.creationTime!).inDays;
+    print(days);
 
     if (days >= 365) {
-      print("Account  is 1 year old");
       FirebaseService.addAchievement(context, UserAchievementType.member365);
     } else if (days >= 165) {
-      print("Account  is 6 months old");
       FirebaseService.addAchievement(context, UserAchievementType.member165);
     } else if (days >= 28) {
-      print("Account  is 1 month old");
       FirebaseService.addAchievement(context, UserAchievementType.member28);
     } else if (days >= 7) {
-      print("Account  is 7 days old");
       FirebaseService.addAchievement(context, UserAchievementType.member7);
     }
   }

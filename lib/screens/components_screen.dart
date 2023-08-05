@@ -187,8 +187,6 @@ class _ComponentsState extends State<Components> {
               ),
             ),
           ),
-          // const SizedBox(height: 10,),
-          // _searchTextField,
           const SizedBox(
             height: 10,
           ),

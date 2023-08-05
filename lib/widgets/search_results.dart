@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../screens/component_breakdown_screen.dart';
 import '../services/fineli_service.dart';
 import '../services/firebase_service.dart';
+import '../util.dart';
 
 class SearchResults extends StatefulWidget {
   final String search;
@@ -87,7 +88,8 @@ class _SearchResultsState extends State<SearchResults> {
         if (snapshot.hasData) {
           Locale myLocale = Localizations.localeOf(context);
           List<Component> results = snapshot.data!
-              .map((e) => FineliModel.fromJson(e).toComponent(myLocale.languageCode))
+              .map((e) =>
+                  FineliModel.fromJson(e).toComponent(myLocale.languageCode))
               .toList();
 
           if (results.isEmpty) {

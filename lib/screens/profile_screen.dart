@@ -9,6 +9,8 @@ import 'package:health_companion/screens/stats_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../util.dart';
+
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
 
@@ -16,7 +18,8 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin<Profile> {
+class _ProfileState extends State<Profile>
+    with AutomaticKeepAliveClientMixin<Profile> {
   late final User _currentUser;
   late final Stream _userDocStream;
 
@@ -222,10 +225,9 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin<Pr
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator(),);
-        // return LoadingScreen(
-        //   message: AppLocalizations.of(context)!.loadingProfile,
-        // );
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
       },
     );
   }

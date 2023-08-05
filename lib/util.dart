@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:health_companion/models/fineli_model.dart';
-import 'package:health_companion/models/user_achievements_model.dart';
+import 'package:health_companion/models/user_achievement_model.dart';
 import 'package:health_companion/services/fineli_service.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'models/component_model.dart';
 
@@ -65,31 +67,58 @@ class Util {
     );
   }
 
-  static bool userHasAchievement(List<UserAchievement> achievements, String name) {
-    return achievements.map((e) => e.name == name).toList().isNotEmpty;
+  static bool userHasAchievement(
+      List<UserAchievement> achievements, String name) {
+    for (final element in achievements) {
+      if (element.name == name) {
+        return true;
+      }
+    }
+    return false;
   }
 
-//   static Future<void> showDialog(BuildContext context, String title, String message) {
-//     return showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         title: Text(
-//           title,
-//           textAlign: TextAlign.center,
-//         ),
-//         content: Text(
-//           message,
-//           textAlign: TextAlign.center,
-//         ),
-//         actions: <Widget>[
-//           TextButton(
-//             onPressed: () {
-//               Navigator.pop(context);
-//             },
-//             child: const Text("Dismiss"),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
+  static Future<void> showAchievementNotification(
+      context, String title, String imagePath) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              const Text(
+                'New achievement unlocked!',
+                style: TextStyle(fontSize: 22),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                DateFormat('d.M.yyyy H:mm').format(DateTime.now()),
+                style:
+                    const TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                child: Image.asset(
+                  imagePath,
+                  width: 200,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }

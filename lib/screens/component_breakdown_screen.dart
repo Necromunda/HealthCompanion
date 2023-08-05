@@ -40,12 +40,12 @@ class _ComponentBreakdownState extends State<ComponentBreakdown> {
     'carbohydrate',
     'fat',
     'fiber',
-    'organicAcids',
+    'organicacids',
     'protein',
     'salt',
-    'saturatedFat',
+    'saturatedfat',
     'sugar',
-    'sugarAlcohol'
+    'sugaralcohol'
   ];
 
   @override

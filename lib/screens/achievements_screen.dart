@@ -4,8 +4,7 @@ import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/services/firebase_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
-import '../models/user_achievements_model.dart';
+import '../models/user_achievement_model.dart';
 
 class Achievements extends StatefulWidget {
   const Achievements({Key? key}) : super(key: key);
@@ -18,7 +17,7 @@ class _AchievementsState extends State<Achievements> {
   late final ScrollController _componentAchievementsScrollController,
       _memberAchievementsScrollController;
   late final User _currentUser;
-  late final List<UserAchievements> _userAchievements;
+  late final List<UserAchievement> _userAchievements;
 
   @override
   void initState() {
@@ -65,26 +64,34 @@ class _AchievementsState extends State<Achievements> {
               );
             }
             if (snapshot.hasData) {
-              UserAchievements userAchievements =
-                  UserAchievements.fromJson(snapshot.data!);
-              int componentAchievementsLeft =
-                  (4 - userAchievements.componentAchievements!.length).abs();
-              int memberAchievementsLeft =
-              (4 - userAchievements.memberAchievements!.length).abs();
+              _userAchievements = (snapshot.data!['achievements'] as List)
+                  .map((e) => UserAchievement.fromJson(e))
+                  .toList();
 
-              userAchievements.componentAchievements?.addAll(List.generate(
+              List<UserAchievement> componentAchievements = _userAchievements
+                  .where((element) => element.category == 'component')
+                  .toList();
+              List<UserAchievement> memberAchievements = _userAchievements
+                  .where((element) => element.category == 'member')
+                  .toList();
+
+              int componentAchievementsLeft =
+                  (4 - componentAchievements.length).abs();
+              int memberAchievementsLeft =
+                  (4 - memberAchievements.length).abs();
+
+              componentAchievements.addAll(List.generate(
                   componentAchievementsLeft,
                   (index) => UserAchievement.fromJson({
                         'name': 'achievement-locked',
                         'unlockDate': DateTime.now()
                       })).toList());
-              userAchievements.memberAchievements?.addAll(List.generate(
+              memberAchievements.addAll(List.generate(
                   memberAchievementsLeft,
-                      (index) => UserAchievement.fromJson({
-                    'name': 'achievement-locked',
-                    'unlockDate': DateTime.now()
-                  })).toList());
-
+                  (index) => UserAchievement.fromJson({
+                        'name': 'achievement-locked',
+                        'unlockDate': DateTime.now()
+                      })).toList());
               return Column(
                 children: [
                   SizedBox(
@@ -98,9 +105,10 @@ class _AchievementsState extends State<Achievements> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
-                                    AppLocalizations.of(context)!.component(2),
+                                  AppLocalizations.of(context)!.component(2),
                                   style: const TextStyle(fontSize: 18),
                                 ),
                               ),
@@ -116,8 +124,7 @@ class _AchievementsState extends State<Achievements> {
                               child: ListView.builder(
                                 controller:
                                     _componentAchievementsScrollController,
-                                itemCount: userAchievements
-                                    .componentAchievements?.length,
+                                itemCount: componentAchievements.length,
                                 scrollDirection: Axis.horizontal,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 5),
@@ -131,7 +138,7 @@ class _AchievementsState extends State<Achievements> {
                                         height: 200,
                                         width: 100,
                                         child: Image.asset(
-                                          'assets/images/${userAchievements.componentAchievements?[index].name}.png',
+                                          'assets/images/${componentAchievements[index].name}.png',
                                           // 'assets/images/achievement-unlock.png',
                                         ),
                                       ),
@@ -159,7 +166,8 @@ class _AchievementsState extends State<Achievements> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: Text(
                                   AppLocalizations.of(context)!.member,
                                   style: const TextStyle(fontSize: 18),
@@ -176,8 +184,7 @@ class _AchievementsState extends State<Achievements> {
                               width: double.infinity,
                               child: ListView.builder(
                                 controller: _memberAchievementsScrollController,
-                                itemCount:
-                                    userAchievements.memberAchievements?.length,
+                                itemCount: memberAchievements.length,
                                 scrollDirection: Axis.horizontal,
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 5),
@@ -191,7 +198,7 @@ class _AchievementsState extends State<Achievements> {
                                         height: 200,
                                         width: 100,
                                         child: Image.asset(
-                                          'assets/images/${userAchievements.memberAchievements?[index].name}.png',
+                                          'assets/images/${memberAchievements[index].name}.png',
                                           // 'assets/images/achievement-unlock.png',
                                         ),
                                       ),
@@ -220,345 +227,3 @@ class _AchievementsState extends State<Achievements> {
     );
   }
 }
-
-// class Achievements extends StatelessWidget {
-//   const Achievements({Key? key}) : super(key: key);
-
-// late Achievement _componentAchievements;
-
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//     appBar: AppBar(
-//       backgroundColor: Colors.transparent,
-//       elevation: 0.0,
-//       leading: IconButton(
-//         onPressed: () => Navigator.of(context).pop(),
-//         icon: const Icon(Icons.close),
-//       ),
-//     ),
-//     body: Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 10),
-//       child: Column(
-//         children: [
-//           SizedBox(
-//             width: double.infinity,
-//             height: 150,
-//             child: Card(
-//               clipBehavior: Clip.antiAlias,
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: [
-//                       const Padding(
-//                         padding: EdgeInsets.symmetric(horizontal: 10),
-//                         child: Text(
-//                           "Components",
-//                           style: TextStyle(fontSize: 18),
-//                         ),
-//                       ),
-//                       TextButton(
-//                         onPressed: () {
-//                           // FirebaseService.setUserInfo();
-//                         },
-//                         child: const Text("More"),
-//                       ),
-//                     ],
-//                   ),
-//                   Expanded(
-//                     child: SizedBox(
-//                         // height: 150,
-//                         width: double.infinity,
-//                         child: FutureBuilder(
-//                           future:
-//                               FirebaseService.getAchievements('components'),
-//                           builder: (context, snapshot) {
-//                             if (snapshot.hasError) {
-//                               return const Text("error");
-//                             }
-//                             if (snapshot.hasData) {
-//                               print(snapshot.data);
-//                               // List<Achievement> componentAchievements = snapshot.data!;
-//
-//                               return ListView.builder(
-//                                 // shrinkWrap: true,
-//                                 // itemCount: componentAchievements.length,
-//                                 itemCount: snapshot.data?.length,
-//                                 scrollDirection: Axis.horizontal,
-//                                 padding:
-//                                     const EdgeInsets.symmetric(horizontal: 5),
-//                                 itemBuilder: (context, index) {
-//                                   return Padding(
-//                                     padding: const EdgeInsets.symmetric(
-//                                         horizontal: 5),
-//                                     child: Center(
-//                                       child: SizedBox(
-//                                         height: 200,
-//                                         width: 100,
-//                                         child: Image.asset(
-//                                             'assets/images/${snapshot.data![index].name}.png'),
-//                                       ),
-//                                     ),
-//                                   );
-//                                 },
-//                               );
-//                             }
-//                             return const Text("Loading");
-//                           },
-//                         )),
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ),
-//           SizedBox(
-//             width: double.infinity,
-//             height: 150,
-//             child: Card(
-//               clipBehavior: Clip.antiAlias,
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                     children: const [
-//                       Padding(
-//                         padding: EdgeInsets.symmetric(horizontal: 10),
-//                         child: Text(
-//                           "Member",
-//                           style: TextStyle(fontSize: 18),
-//                         ),
-//                       ),
-//                       TextButton(
-//                         onPressed: null,
-//                         child: Text("More"),
-//                       ),
-//                     ],
-//                   ),
-//                   Expanded(
-//                     child: SizedBox(
-//                       // height: 150,
-//                       width: double.infinity,
-//                       child: ListView.builder(
-//                         // shrinkWrap: true,
-//                         itemCount: 10,
-//                         scrollDirection: Axis.horizontal,
-//                         padding: const EdgeInsets.symmetric(horizontal: 5),
-//                         itemBuilder: (context, index) {
-//                           return Padding(
-//                             padding:
-//                                 const EdgeInsets.symmetric(horizontal: 5),
-//                             child: Center(
-//                               child: Container(
-//                                 height: 200,
-//                                 width: 100,
-//                                 color:
-//                                     Theme.of(context).colorScheme.onTertiary,
-//                                 child: Text(
-//                                   "Achievement\n${index + 1}",
-//                                   textAlign: TextAlign.center,
-//                                 ),
-//                               ),
-//                             ),
-//                           );
-//                           // return Padding(
-//                           //   padding: const EdgeInsets.all(5),
-//                           //   child: Image.network(
-//                           //     "https://logo.uplead.com/amazon.com",
-//                           //     // scale: 0.5,
-//                           //   ),
-//                           // );
-//                         },
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   )
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }
-
-// @override
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//     appBar: AppBar(
-//       backgroundColor: Colors.transparent,
-//       elevation: 0.0,
-//       leading: IconButton(
-//         onPressed: () => Navigator.of(context).pop(),
-//         icon: const Icon(Icons.close),
-//       ),
-//     ),
-//     body: Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 10),
-//       child: Column(
-//         // mainAxisSize: MainAxisSize.max,
-//         children: [
-//           FutureBuilder(
-//             future: Future.delayed(Duration(seconds: 5)),
-//             builder: (BuildContext context, snapshot) {
-//               if (snapshot.hasError) {
-//                 return const Center(
-//                   child: Text("Error"),
-//                 );
-//               }
-//               return Column(
-//                 children: [
-//                   SizedBox(
-//                     width: double.infinity,
-//                     height: 150,
-//                     child: Card(
-//                       clipBehavior: Clip.antiAlias,
-//                       child: Column(
-//                         children: [
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: const [
-//                               Padding(
-//                                 padding: EdgeInsets.symmetric(horizontal: 10),
-//                                 child: Text(
-//                                   "Components",
-//                                   style: TextStyle(fontSize: 18),
-//                                 ),
-//                               ),
-//                               TextButton(
-//                                 onPressed: null,
-//                                 child: Text("More"),
-//                               ),
-//                             ],
-//                           ),
-//                           Expanded(
-//                             child: SizedBox(
-//                               // height: 150,
-//                               width: double.infinity,
-//                               child: ListView.builder(
-//                                 // shrinkWrap: true,
-//                                 itemCount: 10,
-//                                 scrollDirection: Axis.horizontal,
-//                                 padding:
-//                                     const EdgeInsets.symmetric(horizontal: 5),
-//                                 itemBuilder: (context, index) {
-//                                   return Padding(
-//                                     padding: const EdgeInsets.symmetric(
-//                                         horizontal: 5),
-//                                     child: Center(
-//                                       child: Container(
-//                                         height: 200,
-//                                         width: 100,
-//                                         color: Theme.of(context)
-//                                             .colorScheme
-//                                             .onTertiary,
-//                                         child: Text(
-//                                           "Achievement\n${index + 1}",
-//                                           textAlign: TextAlign.center,
-//                                         ),
-//                                       ),
-//                                     ),
-//                                   );
-//                                   // return Padding(
-//                                   //   padding: const EdgeInsets.all(5),
-//                                   //   child: Image.network(
-//                                   //     "https://logo.uplead.com/amazon.com",
-//                                   //     // scale: 0.5,
-//                                   //   ),
-//                                   // );
-//                                 },
-//                               ),
-//                             ),
-//                           ),
-//                           const SizedBox(
-//                             height: 10,
-//                           )
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     width: double.infinity,
-//                     height: 150,
-//                     child: Card(
-//                       clipBehavior: Clip.antiAlias,
-//                       child: Column(
-//                         children: [
-//                           Row(
-//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                             children: const [
-//                               Padding(
-//                                 padding: EdgeInsets.symmetric(horizontal: 10),
-//                                 child: Text(
-//                                   "Member",
-//                                   style: TextStyle(fontSize: 18),
-//                                 ),
-//                               ),
-//                               TextButton(
-//                                 onPressed: null,
-//                                 child: Text("More"),
-//                               ),
-//                             ],
-//                           ),
-//                           Expanded(
-//                             child: SizedBox(
-//                               // height: 150,
-//                               width: double.infinity,
-//                               child: ListView.builder(
-//                                 // shrinkWrap: true,
-//                                 itemCount: 10,
-//                                 scrollDirection: Axis.horizontal,
-//                                 padding:
-//                                 const EdgeInsets.symmetric(horizontal: 5),
-//                                 itemBuilder: (context, index) {
-//                                   return Padding(
-//                                     padding: const EdgeInsets.symmetric(
-//                                         horizontal: 5),
-//                                     child: Center(
-//                                       child: Container(
-//                                         height: 200,
-//                                         width: 100,
-//                                         color: Theme.of(context)
-//                                             .colorScheme
-//                                             .onTertiary,
-//                                         child: Text(
-//                                           "Achievement\n${index + 1}",
-//                                           textAlign: TextAlign.center,
-//                                         ),
-//                                       ),
-//                                     ),
-//                                   );
-//                                   // return Padding(
-//                                   //   padding: const EdgeInsets.all(5),
-//                                   //   child: Image.network(
-//                                   //     "https://logo.uplead.com/amazon.com",
-//                                   //     // scale: 0.5,
-//                                   //   ),
-//                                   // );
-//                                 },
-//                               ),
-//                             ),
-//                           ),
-//                           const SizedBox(
-//                             height: 10,
-//                           )
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               );
-//             },
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }
-// }

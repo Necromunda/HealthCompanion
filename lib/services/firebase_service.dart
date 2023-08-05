@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/achievement_model.dart';
 import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/bundle_model.dart';
-import 'package:health_companion/models/user_achievements_model.dart';
+import 'package:health_companion/models/user_achievement_model.dart';
 import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/screens/loading_screen.dart';
 
@@ -65,8 +65,15 @@ class FirebaseService {
     required String email,
   }) async {
     try {
+      await userStatsDocRef.set({
+        "joinDate": user.metadata.creationTime,
+        "componentsAdded": 0,
+        "componentsDeleted": 0,
+        "bundlesAdded": 0,
+        "bundlesDeleted": 0,
+        "achievementsUnlocked": 0,
+      });
       await userComponentsDocRef.set({"components": []});
-      await userBundlesDocRef.set({"data": []});
       await userPreferencesDocRef.set({
         "energyKcal": 0,
         "energyKj": 0,
@@ -81,14 +88,6 @@ class FirebaseService {
         "sugar": 0,
         "fat": 0
       });
-      await userStatsDocRef.set({
-        "joinDate": user.metadata.creationTime,
-        "componentsAdded": 0,
-        "componentsDeleted": 0,
-        "bundlesAdded": 0,
-        "bundlesDeleted": 0,
-        "achievementsUnlocked": 0,
-      });
       await userDocRef.set({
         "username": username,
         "dateOfBirth": dateOfBirth,
@@ -97,12 +96,9 @@ class FirebaseService {
         "email": email,
         "joinDate": user.metadata.creationTime,
       });
-      await userAchievementsDocRef.set({
-        'achievements': {
-          'components': [],
-          'member': [],
-        }
-      });
+      await userAchievementsDocRef.set({'achievements': []});
+      await userBundlesDocRef.set({"data": []});
+      print("creating data");
       return true;
     } catch (e, stackTrace) {
       print("error creating user");
@@ -138,7 +134,8 @@ class FirebaseService {
   static Future<Map<String, dynamic>> getUserAchievements() async {
     final DocumentSnapshot userAchievementsDocSnapshot =
         await userAchievementsDocRef.get();
-    final data = userAchievementsDocSnapshot.data() as Map<String, dynamic>;
+    final Map<String, dynamic> data =
+        userAchievementsDocSnapshot.data() as Map<String, dynamic>;
 
     return data;
   }
@@ -260,128 +257,73 @@ class FirebaseService {
   static Future<void> addAchievement(context, UserAchievementType type) async {
     try {
       final Map<String, dynamic> json = await getUserAchievements();
-      final UserAchievements userAchievements = UserAchievements.fromJson(json);
+
+      String name = '', category = '', title = '';
+      bool isEligible = false;
+      List<UserAchievement> userAchievements = (json['achievements'] as List)
+          .map((e) => UserAchievement.fromJson(e))
+          .toList();
 
       switch (type) {
         case UserAchievementType.components10:
-          if (!Util.userHasAchievement(
-            userAchievements.componentAchievements!,
-            'achievement-10-components',
-          )) {
-            userAchievements.componentAchievements
-                ?.add(UserAchievement.fromJson({
-              'name': 'achievement-10-components',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, 10 components added!");
-          }
+          title = 'Add 10 components';
+          name = 'achievement-10-components';
+          category = 'component';
           break;
         case UserAchievementType.components50:
-          if (!Util.userHasAchievement(
-            userAchievements.componentAchievements!,
-            'achievement-50-components',
-          )) {
-            userAchievements.componentAchievements
-                ?.add(UserAchievement.fromJson({
-              'name': 'achievement-50-components',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, 50 components added!");
-          }
+          title = 'Add 50 components';
+          name = 'achievement-50-components';
+          category = 'component';
           break;
         case UserAchievementType.components100:
-          if (!Util.userHasAchievement(
-            userAchievements.componentAchievements!,
-            'achievement-100-components',
-          )) {
-            userAchievements.componentAchievements
-                ?.add(UserAchievement.fromJson({
-              'name': 'achievement-100-components',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, 100 components added!");
-          }
+          title = 'Add 100 components';
+          name = 'achievement-100-components';
+          category = 'component';
           break;
         case UserAchievementType.components250:
-          if (!Util.userHasAchievement(
-            userAchievements.componentAchievements!,
-            'achievement-250-components',
-          )) {
-            userAchievements.componentAchievements
-                ?.add(UserAchievement.fromJson({
-              'name': 'achievement-250-components',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, 250 components added!");
-          }
+          title = 'Add 250 components';
+          name = 'achievement-250-components';
+          category = 'component';
           break;
         case UserAchievementType.member7:
-          if (!Util.userHasAchievement(
-            userAchievements.memberAchievements!,
-            'achievement-7-days',
-          )) {
-            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
-              'name': 'achievement-7-days',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, member for 7 days!");
-          }
+          title = 'Member for 7 days';
+          name = 'achievement-7-days';
+          category = 'member';
           break;
         case UserAchievementType.member28:
-          if (!Util.userHasAchievement(
-            userAchievements.memberAchievements!,
-            'achievement-1-month',
-          )) {
-            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
-              'name': 'achievement-1-month',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, member for 1 month!");
-          }
+          title = 'Member for 1 month';
+          name = 'achievement-1-month';
+          category = 'member';
           break;
         case UserAchievementType.member165:
-          if (!Util.userHasAchievement(
-            userAchievements.memberAchievements!,
-            'achievement-6-months',
-          )) {
-            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
-              'name': 'achievement-6-months',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, member for 6 months!");
-          }
+          title = 'Member for 6 months';
+          name = 'achievement-6-months';
+          category = 'member';
           break;
         case UserAchievementType.member365:
-          if (!Util.userHasAchievement(
-            userAchievements.memberAchievements!,
-            'achievement-1-year',
-          )) {
-            userAchievements.memberAchievements?.add(UserAchievement.fromJson({
-              'name': 'achievement-1-year',
-              'unlockDate': DateTime.now(),
-            }));
-            addToStats(UserStats.addAchievement, 1);
-            Util.showSnackBar(
-                context, "Achievement unlocked, member for 1 year!");
-          }
+          title = 'Member for 1 year';
+          name = 'achievement-1-year';
+          category = 'member';
           break;
       }
 
-      Map<String, dynamic> data = userAchievements.toJson();
+      isEligible = !Util.userHasAchievement(
+        userAchievements,
+        name,
+      );
+
+      if (isEligible) {
+        userAchievements.add(UserAchievement.fromJson({
+          'name': name,
+          'category': category,
+          'unlockDate': DateTime.now(),
+        }));
+        addToStats(UserStats.addAchievement, 1);
+        Util.showAchievementNotification(context, title, 'assets/images/$name.png');
+      }
+
+      List<Map<String, dynamic>> data =
+          userAchievements.map((e) => e.toJson()).toList();
       await userAchievementsDocRef.update({'achievements': data});
     } catch (e, stackTrace) {
       print("Error adding achievements: $e, $stackTrace");

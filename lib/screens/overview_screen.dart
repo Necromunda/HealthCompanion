@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:health_companion/models/bundle_model.dart';
 import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
+import 'package:health_companion/shared_preferences_helper.dart';
 import 'package:health_companion/widgets/chart.dart';
 import 'package:health_companion/widgets/loading_components.dart';
 import 'package:intl/intl.dart';
@@ -35,24 +36,23 @@ class _OverviewState extends State<Overview> {
   @override
   void initState() {
     print("Overview screen init");
-    // FirebaseAuth.instance.signOut();
-    _currentUser = FirebaseAuth.instance.currentUser!;
-    _scrollController = ScrollController();
-    _listScrollController = ScrollController();
-    _bundlePageViewController = PageController();
-    _currentBundleIndex = 0;
-    _lastBundleIndex = 0;
-    _userBundles = [];
+    _currentUser = FirebaseService.user;
     _userDailyDataDocStream = FirebaseFirestore.instance
         .collection("user_daily_data")
         .doc(_currentUser.uid)
         .snapshots();
+    _scrollController = ScrollController();
+    _listScrollController = ScrollController();
+    Future(() async {
+      int initialPage = await SharedPreferencesHelper.getBundle();
+      _bundlePageViewController = PageController(initialPage: initialPage);
+      _currentBundleIndex = initialPage;
+    });
+    _lastBundleIndex = 0;
+    _userBundles = [];
     userPreferences.then((value) => setState(() {
-          // print(object)
           _userPreferences = value;
-          // print(_userPreferences);
         }));
-    // _userPreferences = UserPreferences();
     super.initState();
   }
 
@@ -117,11 +117,8 @@ class _OverviewState extends State<Overview> {
   }
 
   void _addNewBundle() async {
-    // print(_currentBundleIndex);
     Bundle newBundle = Bundle.fromJson({
-      // "creationDate": DateTime.now().millisecondsSinceEpoch,
       "creationDate": DateTime.now(),
-      // "lastEdited": DateTime.now().millisecondsSinceEpoch,
       "lastEdited": DateTime.now(),
       "components": [],
     });
@@ -129,6 +126,7 @@ class _OverviewState extends State<Overview> {
     await FirebaseService.updateDailyData(_userBundles);
     await FirebaseService.addToStats(UserStats.addBundle, 1);
     _scrollBundles(_lastBundleIndex);
+    SharedPreferencesHelper.setBundle(_userBundles.length - 1);
   }
 
   void _deleteComponentFromBundle(
@@ -148,9 +146,7 @@ class _OverviewState extends State<Overview> {
         updatedBundles.removeAt(0);
       } else {
         updatedBundles[0] = Bundle.fromJson({
-          // "creationDate": DateTime.now().millisecondsSinceEpoch,
           "creationDate": DateTime.now(),
-          // "lastEdited": DateTime.now().millisecondsSinceEpoch,
           "lastEdited": DateTime.now(),
           "components": [],
         });
@@ -163,6 +159,7 @@ class _OverviewState extends State<Overview> {
     }
     await FirebaseService.updateDailyData(updatedBundles);
     await FirebaseService.addToStats(UserStats.deleteBundle, 1);
+    SharedPreferencesHelper.setBundle(updatedBundles.length - 1);
   }
 
   void _showPreviousBundle() {
@@ -261,6 +258,8 @@ class _OverviewState extends State<Overview> {
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
                     if (snapshot.data?.data() == null) {
+                    // if (snapshot.connectionState == ConnectionState.waiting) {
+                      print("data is null");
                       return const LoadingComponents();
                     }
                     if (snapshot.hasError) {
@@ -271,7 +270,6 @@ class _OverviewState extends State<Overview> {
                       );
                     }
                     if (snapshot.hasData) {
-                      // print("ERROR!!");
                       List<Map<String, dynamic>> data =
                           snapshot.data["data"].cast<Map<String, dynamic>>();
                       _userBundles =
@@ -280,7 +278,6 @@ class _OverviewState extends State<Overview> {
                       if (_userBundles.isEmpty) {
                         _addNewBundle();
                       }
-                      // print('USERBUNDLES $_userBundles');
                       _lastBundleIndex = _userBundles.length - 1;
 
                       return PageView.builder(
@@ -343,7 +340,6 @@ class _OverviewState extends State<Overview> {
                                     controller: _listScrollController,
                                     itemCount: bundle.components!.length,
                                     itemBuilder: (context, listviewIndex) {
-                                      // _scrollBundles(_lastBundleIndex);
                                       return Card(
                                         clipBehavior: Clip.antiAlias,
                                         child: ListTile(
@@ -423,13 +419,6 @@ class _OverviewState extends State<Overview> {
               ],
             ),
           ),
-          // Card(
-          //   child: BundleButtonBar(
-          //     onPressedLeft: _showPreviousBundle,
-          //     onPressedCenter: _addNewBundle,
-          //     onPressedRight: _showNextBundle,
-          //   ),
-          // ),
         ],
       ),
     );
