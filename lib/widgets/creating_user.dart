@@ -1,15 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:health_companion/util.dart';
 
-import '../screens/loading_screen.dart';
-import '../services/firebase_service.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 class CreatingUser extends StatefulWidget {
   final String username, email, password;
-
-  // final int age;
   final DateTime dateOfBirth;
   final double height, weight;
 
@@ -18,7 +14,6 @@ class CreatingUser extends StatefulWidget {
     required this.email,
     required this.password,
     required this.username,
-    // required this.age,
     required this.dateOfBirth,
     required this.height,
     required this.weight,
@@ -176,15 +171,6 @@ class _CreatingUserState extends State<CreatingUser> {
                   );
                 }
                 if (snapshot.hasData) {
-                  // Future(
-                  //   () => Navigator.of(context).push(
-                  //     MaterialPageRoute(
-                  //       builder: (context) => LoadingScreen(
-                  //           message:
-                  //               AppLocalizations.of(context)!.initializing),
-                  //     ),
-                  //   ),
-                  // );
                   Future(
                     () => Navigator.of(context).popUntil(
                       ModalRoute.withName("/"),

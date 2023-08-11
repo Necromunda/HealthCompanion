@@ -1,15 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/screens/components_screen.dart';
-import 'package:health_companion/screens/overview_screen.dart';
-import 'package:health_companion/screens/profile_screen.dart';
-import 'package:health_companion/screens/search_screen.dart';
-import 'package:health_companion/screens/settings_screen.dart';
-import 'package:health_companion/services/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/screens/search_screen.dart';
+import 'package:health_companion/screens/profile_screen.dart';
+import 'package:health_companion/screens/overview_screen.dart';
+import 'package:health_companion/screens/settings_screen.dart';
+import 'package:health_companion/screens/components_screen.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 class PageContainer extends StatefulWidget {
   const PageContainer({Key? key}) : super(key: key);
@@ -23,8 +22,6 @@ class _PageContainerState extends State<PageContainer> {
   late final PageController _pageController;
   late int _currentPageIndex, _maxPageDistance;
 
-  // late Stream _statsDocumentReference;
-
   @override
   void initState() {
     print("Pagcontainer init");
@@ -33,21 +30,12 @@ class _PageContainerState extends State<PageContainer> {
     _maxPageDistance = 1;
     _currentUser = FirebaseAuth.instance.currentUser!;
     _checkAccountCreationDate();
-    // _statsDocumentReference = FirebaseFirestore.instance.collection('user_stats').doc(_currentUser.uid).snapshots();
-    // FirebaseAuth.instance.idTokenChanges().listen((event) {
-    //   if (event != null) {
-    //     _statsDocumentReference.listen((event) {
-    //       print(event);
-    //     });
-    //   }
-    // });
     super.initState();
   }
 
   void _checkAccountCreationDate() {
     int days =
         DateTime.now().difference(_currentUser.metadata.creationTime!).inDays;
-    print(days);
 
     if (days >= 365) {
       FirebaseService.addAchievement(context, UserAchievementType.member365);

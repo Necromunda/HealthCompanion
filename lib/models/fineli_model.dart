@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:health_companion/models/component_model.dart';
 
 class FineliModel {

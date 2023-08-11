@@ -1,64 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'component_model.dart';
+import 'package:health_companion/models/component_model.dart';
 
 class Bundle {
-  // int? creationDate, lastEdited;
   DateTime? creationDate, lastEdited;
   List<Component>? components;
 
-  // double? salt,
-  //     energy,
-  //     energyKcal,
-  //     protein,
-  //     carbohydrate,
-  //     alcohol,
-  //     organicAcids,
-  //     sugarAlcohol,
-  //     saturatedFat,
-  //     fiber,
-  //     sugar,
-  //     fat;
-
-  // DailyData({
-  //   this.components,
-  //   this.salt,
-  //   this.energy,
-  //   this.energyKcal,
-  //   this.protein,
-  //   this.carbohydrate,
-  //   this.alcohol,
-  //   this.organicAcids,
-  //   this.sugarAlcohol,
-  //   this.saturatedFat,
-  //   this.fiber,
-  //   this.sugar,
-  //   this.fat,
-  // });
-
   Bundle.fromJson(Map<String, dynamic> json) {
-    // temp fix because these dates used to be int because they were in millisecondsSinceEpoch
-    if (json["creationDate"] is int) {
-      creationDate = DateTime.fromMillisecondsSinceEpoch(json["creationDate"]);
-    } else {
-      creationDate = (json["creationDate"] is DateTime)
-          ? json["creationDate"]
-          : json["creationDate"].toDate();
-    }
-    // temp fix because these dates used to be int because they were in millisecondsSinceEpoch
-    if (json["lastEdited"] is int) {
-      lastEdited = DateTime.fromMillisecondsSinceEpoch(json["lastEdited"]);
-    } else {
-      lastEdited = (json["lastEdited"] is DateTime)
-          ? json["lastEdited"]
-          : json["lastEdited"].toDate();
-    }
-    // creationDate = json["creationDate"];
-    // lastEdited = json["lastEdited"];
+    creationDate = (json["creationDate"] is DateTime)
+        ? json["creationDate"]
+        : json["creationDate"].toDate();
+    lastEdited = (json["lastEdited"] is DateTime)
+        ? json["lastEdited"]
+        : json["lastEdited"].toDate();
     components =
         (json["components"] as List).map((e) => Component.fromJson(e)).toList();
-    // components = json["components"];
-    // sumComponents();
+    // if (json["creationDate"] is int) {
+    //   creationDate = DateTime.fromMillisecondsSinceEpoch(json["creationDate"]);
+    // } else {
+    //   creationDate = (json["creationDate"] is DateTime)
+    //       ? json["creationDate"]
+    //       : json["creationDate"].toDate();
+    // }
+    // if (json["lastEdited"] is int) {
+    //   lastEdited = DateTime.fromMillisecondsSinceEpoch(json["lastEdited"]);
+    // } else {
+    //   lastEdited = (json["lastEdited"] is DateTime)
+    //       ? json["lastEdited"]
+    //       : json["lastEdited"].toDate();
+    // }
   }
 
   Map<String, dynamic> toJson() {
@@ -68,7 +36,6 @@ class Bundle {
     if (components != null) {
       data['components'] = components!.map((v) => v.toJson()).toList();
     }
-    // _sumComponents();
     data['energy'] = totalEnergy ?? 0.0;
     data['energyKcal'] = totalEnergyKcal ?? 0.0;
     data['salt'] = totalSalt ?? 0.0;
@@ -83,21 +50,6 @@ class Bundle {
     data['fat'] = totalFat ?? 0.0;
     return data;
   }
-
-  // void _sumComponents() {
-  //   energy = totalEnergy ?? 0.0;
-  //   energyKcal = totalEnergyKcal ?? 0.0;
-  //   salt = totalSalt ?? 0.0;
-  //   protein = totalProtein ?? 0.0;
-  //   carbohydrate = totalCarbohydrate ?? 0.0;
-  //   alcohol = totalAlcohol ?? 0.0;
-  //   organicAcids = totalOrganicAcids ?? 0.0;
-  //   sugarAlcohol = totalSugarAlcohol ?? 0.0;
-  //   saturatedFat = totalSaturatedFat ?? 0.0;
-  //   fiber = totalFiber ?? 0.0;
-  //   sugar = totalSugar ?? 0.0;
-  //   fat = totalFat ?? 0.0;
-  // }
 
   double? get totalEnergy => components
       ?.map((e) => (e.energy ?? 0.0))

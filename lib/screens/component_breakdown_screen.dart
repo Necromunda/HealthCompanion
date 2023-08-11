@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/component_model.dart';
+import 'package:health_companion/models/component_model.dart';
 
 class ComponentBreakdown extends StatefulWidget {
   final Component component;
@@ -18,21 +17,6 @@ class ComponentBreakdown extends StatefulWidget {
 class _ComponentBreakdownState extends State<ComponentBreakdown> {
   late final ScrollController _scrollController, _listScrollController;
   late final Component _component;
-
-  // static const List<String> _labels = [
-  //   "EnergyKJ",
-  //   "EnergyKcal",
-  //   "Alcohol",
-  //   "Carbohydrates",
-  //   "Fat",
-  //   "Fiber",
-  //   "Organic acids",
-  //   "Protein",
-  //   "Salt",
-  //   "Saturated fat",
-  //   "Sugar",
-  //   "Sugar alcohol"
-  // ];
   static const List<String> _labels = [
     'energykj',
     'energykcal',

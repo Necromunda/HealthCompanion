@@ -1,13 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/screens/authenticate_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:health_companion/util.dart';
 import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/screens/authenticate_screen.dart';
 import 'package:health_companion/widgets/change_email_dialog.dart';
 import 'package:health_companion/widgets/change_password_dialog.dart';
 import 'package:health_companion/widgets/change_username_dialog.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import '../util.dart';
 
 enum Account {
   username,

@@ -1,21 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:health_companion/models/fineli_model.dart';
-import 'package:health_companion/models/user_achievement_model.dart';
-import 'package:health_companion/services/fineli_service.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
-import 'models/component_model.dart';
+import 'package:health_companion/models/user_achievement_model.dart';
 
 class Util {
   static bool isDark(context) =>
       Theme.of(context).brightness == Brightness.dark;
 
   static bool isNextDay({required DateTime now, required DateTime compareTo}) {
-    // Calculate the difference in days between the two dates
     Duration difference = now.difference(compareTo);
-
-    // If the difference is exactly one day, then it's the next day
     return difference.inDays >= 1;
   }
 
@@ -102,8 +95,7 @@ class Util {
               ),
               Text(
                 DateFormat('d.M.yyyy H:mm').format(DateTime.now()),
-                style:
-                    const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(

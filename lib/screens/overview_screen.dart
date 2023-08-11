@@ -1,21 +1,19 @@
-import 'dart:math';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:health_companion/models/bundle_model.dart';
-import 'package:health_companion/models/user_preferences_model.dart';
-import 'package:health_companion/screens/add_existing_component_screen.dart';
-import 'package:health_companion/shared_preferences_helper.dart';
-import 'package:health_companion/widgets/chart.dart';
-import 'package:health_companion/widgets/loading_components.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/component_model.dart';
-import '../services/firebase_service.dart';
-import 'add_new_component_screen.dart';
-import 'component_breakdown_screen.dart';
+import 'package:health_companion/widgets/chart.dart';
+import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/shared_preferences_helper.dart';
+import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/widgets/loading_components.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
+import 'package:health_companion/screens/add_new_component_screen.dart';
+import 'package:health_companion/screens/component_breakdown_screen.dart';
+import 'package:health_companion/screens/add_existing_component_screen.dart';
 
 class Overview extends StatefulWidget {
   const Overview({Key? key}) : super(key: key);
@@ -258,7 +256,7 @@ class _OverviewState extends State<Overview> {
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
                     if (snapshot.data?.data() == null) {
-                    // if (snapshot.connectionState == ConnectionState.waiting) {
+                      // if (snapshot.connectionState == ConnectionState.waiting) {
                       print("data is null");
                       return const LoadingComponents();
                     }

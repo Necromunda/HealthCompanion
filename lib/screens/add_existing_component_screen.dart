@@ -1,13 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/util.dart';
-import 'package:health_companion/widgets/loading_components.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/component_model.dart';
-import '../widgets/no_components_found.dart';
-import 'component_breakdown_screen.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/widgets/loading_components.dart';
+import 'package:health_companion/widgets/no_components_found.dart';
+import 'package:health_companion/screens/component_breakdown_screen.dart';
 
 class AddExistingComponent extends StatefulWidget {
   const AddExistingComponent({Key? key}) : super(key: key);

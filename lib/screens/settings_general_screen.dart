@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:health_companion/widgets/theme_switch.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../model_preferences.dart';
-import '../util.dart';
+import 'package:health_companion/model_preferences.dart';
+import 'package:health_companion/widgets/theme_switch.dart';
 
 class SettingsGeneral extends StatefulWidget {
   const SettingsGeneral({Key? key}) : super(key: key);

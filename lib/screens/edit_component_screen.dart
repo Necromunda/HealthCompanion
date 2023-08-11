@@ -1,13 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_companion/screens/add_existing_component_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:intl/intl.dart';
 
-import '../models/component_model.dart';
-import '../util.dart';
-import 'component_breakdown_screen.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/screens/component_breakdown_screen.dart';
+import 'package:health_companion/screens/add_existing_component_screen.dart';
 
 enum Macros { individual, inherit, both }
 

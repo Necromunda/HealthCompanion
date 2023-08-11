@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:health_companion/widgets/search_results.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/widgets/search_results.dart';
 
 class Search extends StatefulWidget {
   const Search({Key? key}) : super(key: key);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
 
 class ChartBarHorizontal extends StatelessWidget {
   final String label;
@@ -18,7 +17,6 @@ class ChartBarHorizontal extends StatelessWidget {
   double get totalValuePct {
     double pct = value.ceil() / goal;
     return pct;
-    // return pct > 1.0 ? 1.0 : pct;
   }
 
   double get widthFactor {
@@ -29,7 +27,6 @@ class ChartBarHorizontal extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     if (isGoalZero || totalValuePct < 1.0) {
-      // return theme.colorScheme.onPrimary;
       return Util.isDark(context)
           ? theme.colorScheme.onPrimary
           : theme.colorScheme.primary;
@@ -81,11 +78,8 @@ class ChartBarHorizontal extends StatelessWidget {
                           ? Text("${value.ceil()} $label")
                           : Text(
                               "$goal $label / ${value.ceil()} $label",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black
-                                  // color: Util.isDark(context)
-                                  //     ? Colors.white
-                                  //     : Colors.black
                               ),
                             ),
                     ),

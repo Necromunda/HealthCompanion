@@ -1,8 +1,8 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
 
 class ChangeEmailDialog extends StatefulWidget {
   const ChangeEmailDialog({Key? key}) : super(key: key);

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/appuser_model.dart';
-import 'package:health_companion/services/firebase_service.dart';
+
 import 'package:health_companion/widgets/signup_email.dart';
 import 'package:health_companion/widgets/signup_password.dart';
-import 'package:health_companion/widgets/signup_background_info.dart';
 import 'package:health_companion/widgets/signup_username.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_companion/widgets/signup_background_info.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -17,8 +15,6 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController(initialPage: 3);
   String? _username, _email, _password;
-
-  // int? _age;
   DateTime? _dateOfBirth;
   double? _height, _weight;
   int _selectedIndex = 0;

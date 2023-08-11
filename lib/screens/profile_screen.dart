@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:health_companion/models/appuser_model.dart';
-import 'package:health_companion/screens/achievements_screen.dart';
-import 'package:health_companion/screens/delete_account_screen.dart';
-import 'package:health_companion/screens/loading_screen.dart';
-import 'package:health_companion/screens/stats_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/models/appuser_model.dart';
+import 'package:health_companion/screens/stats_screen.dart';
+import 'package:health_companion/screens/achievements_screen.dart';
+import 'package:health_companion/screens/delete_account_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);

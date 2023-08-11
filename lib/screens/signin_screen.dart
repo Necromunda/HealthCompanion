@@ -1,15 +1,12 @@
-import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:health_companion/models/appuser_model.dart';
-import 'package:health_companion/screens/forgot_password_screen.dart';
-import 'package:health_companion/screens/signup_screen.dart';
-import 'package:health_companion/services/firebase_service.dart';
-import 'package:health_companion/util.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../widgets/pagecontainer.dart';
-import 'loading_screen.dart';
+
+import 'package:health_companion/util.dart';
+import 'package:health_companion/screens/signup_screen.dart';
+import 'package:health_companion/screens/loading_screen.dart';
+import 'package:health_companion/screens/forgot_password_screen.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);

@@ -1,15 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/appuser_model.dart';
-import 'package:health_companion/screens/loading_screen.dart';
-import 'package:health_companion/services/firebase_service.dart';
-import 'package:health_companion/widgets/creating_user.dart';
-import 'package:health_companion/widgets/signup_info_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../screens/signin_screen.dart';
-import '../util.dart';
-import 'custom_button.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/widgets/custom_button.dart';
+import 'package:health_companion/widgets/creating_user.dart';
+import 'package:health_companion/widgets/signup_info_card.dart';
 
 class SignUpPassword extends StatefulWidget {
   final int pageIndex;
@@ -42,8 +37,7 @@ class SignUpPassword extends StatefulWidget {
 class _SignUpPasswordState extends State<SignUpPassword>
     with AutomaticKeepAliveClientMixin<SignUpPassword> {
   final TextEditingController _passwordController = TextEditingController();
-  // bool _isPasswordValid = false;
-  bool _isPasswordValid = true;
+  bool _isPasswordValid = false;
   bool _obscureText = true;
   final RegExp _passwordRegExp = RegExp(
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
@@ -132,18 +126,12 @@ class _SignUpPasswordState extends State<SignUpPassword>
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreatingUser(
-          // email: _getEmailCallback(),
-          // password: _getPasswordCallback(),
-          // username: _getUsernameCallback(),
-          // dateOfBirth: _getDateOfBirthCallback(),
-          // height: _getHeightCallback(),
-          // weight: _getWeightCallback(),
-          email: 'test000@gmail.com',
-          password: 'Test000!',
-          username: 'test',
-          dateOfBirth: DateTime(2000,3,6),
-          height: 180,
-          weight: 80,
+          email: _getEmailCallback(),
+          password: _getPasswordCallback(),
+          username: _getUsernameCallback(),
+          dateOfBirth: _getDateOfBirthCallback(),
+          height: _getHeightCallback(),
+          weight: _getWeightCallback(),
         ),
       ),
     );

@@ -1,14 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/component_model.dart';
-import 'package:health_companion/models/fineli_model.dart';
-import 'package:health_companion/widgets/loading_components.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../screens/component_breakdown_screen.dart';
-import '../services/fineli_service.dart';
-import '../services/firebase_service.dart';
-import '../util.dart';
+import 'package:health_companion/models/fineli_model.dart';
+import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/services/fineli_service.dart';
+import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/widgets/loading_components.dart';
+import 'package:health_companion/screens/component_breakdown_screen.dart';
 
 class SearchResults extends StatefulWidget {
   final String search;

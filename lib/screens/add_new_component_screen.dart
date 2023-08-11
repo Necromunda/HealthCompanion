@@ -1,13 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_companion/screens/add_existing_component_screen.dart';
-import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/component_model.dart';
-import '../util.dart';
-import 'component_breakdown_screen.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/models/component_model.dart';
+import 'package:health_companion/screens/component_breakdown_screen.dart';
+import 'package:health_companion/screens/add_existing_component_screen.dart';
 
 enum Macros { individual, inherit, both }
 
@@ -19,7 +18,6 @@ class AddNewComponent extends StatefulWidget {
 }
 
 class _AddNewComponentState extends State<AddNewComponent> {
-  static final RegExp _noLeadingZeroRegexp = RegExp(r'^0[0-9]+');
   static final RegExp _noOnlySpacesRegexp = RegExp(r'^\s*$');
   static const List<String> _categories = [
     "Component",
@@ -84,7 +82,6 @@ class _AddNewComponentState extends State<AddNewComponent> {
     _sugarController = TextEditingController();
     _fatController = TextEditingController();
     _macroRegExp = RegExp(r"^[0-9]\d*((\.|,)\d?)?");
-    // _macroRegExp = RegExp(r"^[0-9][1-9]*((\.|,)\d?)?");
 
     super.initState();
   }

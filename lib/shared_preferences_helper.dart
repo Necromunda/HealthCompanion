@@ -5,22 +5,22 @@ class SharedPreferencesHelper {
   static const localeKey = 'locale_key';
   static const bundleKey = 'bundle_key';
 
-  setTheme(bool value) async {
+  void setTheme(bool value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setBool(themeKey, value);
   }
 
-  getTheme() async {
+  Future<bool> getTheme() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getBool(themeKey) ?? false;
   }
 
-  setLocale(String value) async {
+  void setLocale(String value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString(localeKey, value);
   }
 
-  getLocale() async {
+  Future<String> getLocale() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return sharedPreferences.getString(localeKey) ?? 'en';
   }

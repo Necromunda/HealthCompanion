@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'shared_preferences_helper.dart';
+
+import 'package:health_companion/shared_preferences_helper.dart';
 
 class ModelPreferences extends ChangeNotifier {
   late bool _isDark;
@@ -17,7 +18,6 @@ class ModelPreferences extends ChangeNotifier {
     getPreferences();
   }
 
-//Switching the themes
   set isDark(bool value) {
     _isDark = value;
     _preferences.setTheme(value);
@@ -30,7 +30,7 @@ class ModelPreferences extends ChangeNotifier {
     notifyListeners();
   }
 
-  getPreferences() async {
+  void getPreferences() async {
     _isDark = await _preferences.getTheme();
     _locale = await _preferences.getLocale();
     notifyListeners();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
 
 class ChangeUsernameDialog extends StatefulWidget {
   const ChangeUsernameDialog({Key? key}) : super(key: key);

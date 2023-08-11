@@ -1,12 +1,12 @@
-// import 'package:flutter/material.dart';
-// import 'package:health_companion/models/bundle_model.dart';
 // import 'package:intl/intl.dart';
+// import 'package:flutter/material.dart';
 // import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //
-// import '../models/component_model.dart';
-// import '../screens/component_breakdown_screen.dart';
-// import '../services/firebase_service.dart';
-// import 'bundle_button_bar.dart';
+// import 'package:health_companion/models/bundle_model.dart';
+// import 'package:health_companion/models/component_model.dart';
+// import 'package:health_companion/services/firebase_service.dart';
+// import 'package:health_companion/widgets/bundle_button_bar.dart';
+// import 'package:health_companion/screens/component_breakdown_screen.dart';
 //
 // class Bundles extends StatefulWidget {
 //   final int initialPageIndex;

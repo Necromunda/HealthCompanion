@@ -1,13 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/widgets/chartbar.dart';
-import 'package:health_companion/widgets/chartbar_horizontal.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/bundle_model.dart';
-import '../models/user_preferences_model.dart';
+import 'package:health_companion/widgets/chartbar.dart';
+import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/widgets/chartbar_horizontal.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
 
 class Chart extends StatefulWidget {
   final Bundle bundle;

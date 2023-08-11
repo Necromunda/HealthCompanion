@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/achievement_model.dart';
-import 'package:health_companion/services/firebase_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../models/user_achievement_model.dart';
+import 'package:health_companion/services/firebase_service.dart';
+import 'package:health_companion/models/user_achievement_model.dart';
 
 class Achievements extends StatefulWidget {
   const Achievements({Key? key}) : super(key: key);
@@ -16,13 +14,10 @@ class Achievements extends StatefulWidget {
 class _AchievementsState extends State<Achievements> {
   late final ScrollController _componentAchievementsScrollController,
       _memberAchievementsScrollController;
-  late final User _currentUser;
   late final List<UserAchievement> _userAchievements;
 
   @override
   void initState() {
-    print("Overview screen init");
-    _currentUser = FirebaseAuth.instance.currentUser!;
     _componentAchievementsScrollController = ScrollController();
     _memberAchievementsScrollController = ScrollController();
     super.initState();

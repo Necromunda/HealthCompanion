@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'custom_button.dart';
+import 'package:health_companion/widgets/custom_button.dart';
 
 class BundleButtonBar extends StatelessWidget {
   final VoidCallback? onPressedLeft, onPressedCenter, onPressedRight;

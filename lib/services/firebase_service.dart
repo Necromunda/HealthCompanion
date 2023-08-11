@@ -1,16 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:health_companion/models/achievement_model.dart';
-import 'package:health_companion/models/component_model.dart';
+
+import 'package:health_companion/util.dart';
 import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/models/component_model.dart';
 import 'package:health_companion/models/user_achievement_model.dart';
 import 'package:health_companion/models/user_preferences_model.dart';
-import 'package:health_companion/screens/loading_screen.dart';
-
-import '../models/appuser_model.dart';
-import '../util.dart';
 
 enum UserStats {
   addBundle,

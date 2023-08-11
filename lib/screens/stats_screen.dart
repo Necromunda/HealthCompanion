@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/services/firebase_service.dart';
-import 'package:health_companion/widgets/custom_button.dart';
-import 'package:health_companion/widgets/loading_components.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:health_companion/services/firebase_service.dart';
 
 class Stats extends StatefulWidget {
   const Stats({Key? key}) : super(key: key);
@@ -13,13 +11,10 @@ class Stats extends StatefulWidget {
 }
 
 class _StatsState extends State<Stats> {
-  late final User _currentUser;
   late final ScrollController _scrollController;
 
   @override
   void initState() {
-    print("Overview screen init");
-    _currentUser = FirebaseAuth.instance.currentUser!;
     _scrollController = ScrollController();
     super.initState();
   }
@@ -48,7 +43,6 @@ class _StatsState extends State<Stats> {
           icon: const Icon(Icons.close),
         ),
       ),
-      // body: const Center(child: Text("Stats screen"),),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: CustomScrollView(

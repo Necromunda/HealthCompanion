@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/screens/loading_screen.dart';
-import 'package:health_companion/services/firebase_service.dart';
-import 'package:health_companion/widgets/deleting_account.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../util.dart';
+import 'package:health_companion/util.dart';
+import 'package:health_companion/widgets/deleting_account.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 class DeleteAccount extends StatefulWidget {
   const DeleteAccount({Key? key}) : super(key: key);
@@ -22,9 +21,9 @@ class _DeleteAccountState extends State<DeleteAccount> {
 
   @override
   void initState() {
-    _currentUser = FirebaseAuth.instance.currentUser!;
+    _currentUser = FirebaseService.user;
     _deleteConfirm = false;
-    // _isPasswordValid = false;
+    _isPasswordValid = false;
     _isPasswordValid = true;
     _obscureText = true;
     _passwordController = TextEditingController();
@@ -58,8 +57,7 @@ class _DeleteAccountState extends State<DeleteAccount> {
 
   void _deleteAccountButtonHandler() async {
     try {
-      // String password = _passwordController.text;
-      String password = 'Test000!';
+      String password = _passwordController.text;
       final AuthCredential credential = EmailAuthProvider.credential(
           email: _currentUser.email!, password: password);
 
