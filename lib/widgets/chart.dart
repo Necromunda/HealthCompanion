@@ -17,22 +17,14 @@ class Chart extends StatefulWidget {
 }
 
 class _ChartState extends State<Chart> {
-  // late final User _currentUser;
   late final Bundle _bundle;
   final ScrollController _scrollController = ScrollController();
-  // late final Stream _userPreferencesDocStream;
   late final UserPreferences? prefs;
 
   @override
   void initState() {
-    print("Chart screen init");
-    // _currentUser = FirebaseAuth.instance.currentUser!;
     _bundle = widget.bundle;
     prefs = widget.userPreferences;
-    // _userPreferencesDocStream = FirebaseFirestore.instance
-    //     .collection("user_preferences")
-    //     .doc(_currentUser.uid)
-    //     .snapshots();
     super.initState();
   }
 

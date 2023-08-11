@@ -7,6 +7,10 @@ class Util {
   static bool isDark(context) =>
       Theme.of(context).brightness == Brightness.dark;
 
+  static Color getPrimaryColor(context) => Util.isDark(context)
+      ? Theme.of(context).colorScheme.onTertiary
+      : Theme.of(context).colorScheme.tertiary;
+
   static bool isNextDay({required DateTime now, required DateTime compareTo}) {
     Duration difference = now.difference(compareTo);
     return difference.inDays >= 1;

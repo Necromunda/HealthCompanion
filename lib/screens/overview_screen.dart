@@ -1,3 +1,4 @@
+import 'package:health_companion/screens/bundle_statistics_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -204,6 +205,16 @@ class _OverviewState extends State<Overview> {
     );
   }
 
+  void _bundleStatsButtonHandler(
+      Bundle bundle, UserPreferences userPreferences) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) =>
+            BundleStatistics(bundle: bundle, userPreferences: userPreferences),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -295,12 +306,23 @@ class _OverviewState extends State<Overview> {
                           return Column(
                             children: [
                               if (bundle.components!.isNotEmpty)
-                                Chart(
-                                  key: UniqueKey(),
-                                  bundle: bundle,
-                                  userPreferences: _userPreferences,
+                                Column(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          _bundleStatsButtonHandler(
+                                        bundle,
+                                        _userPreferences!,
+                                      ),
+                                      child: const Text('Bundle statistics'),
+                                    ),
+                                    Chart(
+                                      key: UniqueKey(),
+                                      bundle: bundle,
+                                      userPreferences: _userPreferences,
+                                    ),
+                                  ],
                                 ),
-                              const SizedBox(height: 5),
                               Text(
                                 "#${pageViewIndex + 1} Bundle $created: ${DateFormat('d.M H:mm').format(
                                   bundle.creationDate!,
@@ -311,12 +333,10 @@ class _OverviewState extends State<Overview> {
                                 "$lastEdited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
-                              const SizedBox(height: 5),
                               const Divider(
-                                indent: 20,
-                                endIndent: 20,
+                                indent: 10,
+                                endIndent: 10,
                                 color: Colors.black,
-                                thickness: 1,
                               ),
                               if (bundle.components!.isEmpty)
                                 Expanded(

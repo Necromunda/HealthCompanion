@@ -108,6 +108,7 @@
 	"height": "Pituus",
 	"weight": "Paino",
 	"initializing": "Alustetaan",
+	"limit": "Raja",
 	"portions": "{size, select, ports{Pieni annos} portm{Keskikokoinen annos} portl{Suuri annos} other{100 grammaa}}",
 	"@portions": {
 		"placeholders": {

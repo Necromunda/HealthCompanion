@@ -49,6 +49,8 @@ dependencies:
   shared_preferences: ^2.2.0
   flutter_localizations:
     sdk: flutter
+  syncfusion_flutter_charts: ^21.2.4
+  collection: ^1.17.0
 
 dev_dependencies:
   flutter_test:

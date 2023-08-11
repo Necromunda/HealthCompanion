@@ -108,6 +108,7 @@
 	"height": "Height",
 	"weight": "Weight",
 	"initializing": "Initializing",
+	"limit": "Limit",
 	"portions": "{size, select, ports{Small portion} portm{Medium portion} portl{Large portion} other{100 grams}}",
 	"@portions": {
 		"placeholders": {
