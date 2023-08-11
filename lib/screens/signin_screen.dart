@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 import 'package:health_companion/util.dart';
 import 'package:health_companion/screens/signup_screen.dart';
@@ -30,10 +31,6 @@ class _SignInState extends State<SignIn> {
     _obscureText = true;
     _passwordRegExp = RegExp(
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_\-+=]).{8,63}$');
-    setState(() {
-      _emailController.text = "johannes.rantapaa@gmail.com";
-      _passwordController.text = "Johannes00!!";
-    });
     super.initState();
   }
 
@@ -52,12 +49,12 @@ class _SignInState extends State<SignIn> {
   }
 
   void _login(String email, String password) {
+    if (email.isEmpty || password.isEmpty) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => FutureBuilder(
-          future: FirebaseAuth.instance
-              .signInWithEmailAndPassword(email: email, password: password),
+          future: FirebaseService.signIn(email: email, password: password),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               Future(() => Navigator.of(context).pop());
@@ -110,7 +107,8 @@ class _SignInState extends State<SignIn> {
   }
 
   void _loginButtonHandler() async {
-    _login(_emailController.text, _passwordController.text);
+    // _login(_emailController.text, _passwordController.text);
+    _login('johannes.rantapaa@gmail.com', 'Johannes00!?');
   }
 
   void _forgotPasswordButtonHandler() {

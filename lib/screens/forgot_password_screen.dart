@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:health_companion/services/firebase_service.dart';
 
 import 'package:health_companion/util.dart';
 import 'package:health_companion/widgets/forgot_password_instructions.dart';
@@ -21,13 +23,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     setState(() {
       _didPressButton = true;
     });
+    FirebaseService.sendPasswordResetEmail(email: _emailController.text);
   }
-
-  Color get _emailColor => _emailController.text.isEmpty
-      ? Colors.grey
-      : _isEmailValid
-          ? Colors.green
-          : Colors.red;
 
   Widget get _emailTextField => TextField(
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
@@ -65,7 +62,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           ),
           prefixIcon: Container(
             margin: const EdgeInsets.only(right: 15.0),
-            // padding: const EdgeInsets.symmetric(horizontal: 10.0),
             decoration: BoxDecoration(
               color: _emailController.text.isEmpty
                   ? null
@@ -83,7 +79,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   offset: const Offset(2, 0), // changes position of shadow
                 ),
                 BoxShadow(
-                  // color: const Color(0XDEDEDEDE).withOpacity(1),
                   color: Theme.of(context).colorScheme.secondaryContainer,
                   spreadRadius: 0,
                   offset: const Offset(1, 0.5), // changes position of shadow

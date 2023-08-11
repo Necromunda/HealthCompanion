@@ -29,9 +29,11 @@ enum UserAchievementType {
 class FirebaseService {
   static FirebaseFirestore get db => FirebaseFirestore.instance;
 
-  static User get user => FirebaseAuth.instance.currentUser!;
+  static FirebaseAuth get auth => FirebaseAuth.instance;
 
-  static String get uid => FirebaseAuth.instance.currentUser!.uid;
+  static User get user => auth.currentUser!;
+
+  static String get uid => auth.currentUser!.uid;
 
   static DocumentReference get userDocRef => db.collection('users').doc(uid);
 
@@ -49,6 +51,15 @@ class FirebaseService {
 
   static DocumentReference get userAchievementsDocRef =>
       db.collection('user_achievements').doc(uid);
+
+  static Future<UserCredential> signIn(
+      {required String email, required String password}) async {
+    return auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  static Future<void> sendPasswordResetEmail({required String email}) async {
+    auth.sendPasswordResetEmail(email: email);
+  }
 
   static Future<bool> createUserOnSignup({
     context,
@@ -314,7 +325,8 @@ class FirebaseService {
           'unlockDate': DateTime.now(),
         }));
         addToStats(UserStats.addAchievement, 1);
-        Util.showAchievementNotification(context, title, 'assets/images/$name.png');
+        Util.showAchievementNotification(
+            context, title, 'assets/images/$name.png');
       }
 
       List<Map<String, dynamic>> data =

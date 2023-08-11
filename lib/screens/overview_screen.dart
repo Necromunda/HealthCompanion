@@ -186,12 +186,10 @@ class _OverviewState extends State<Overview> {
 
   void _scrollBundles(int index) {
     print("Scroll to $index");
-    // _bundlePageViewController.animateToPage(
     _bundlePageViewController.jumpToPage(
       index,
-      // duration: const Duration(milliseconds: 300),
-      // curve: Curves.easeInOut,
     );
+    SharedPreferencesHelper.setBundle(index);
   }
 
   void _showComponentBreakdown(Component component) {
@@ -256,7 +254,6 @@ class _OverviewState extends State<Overview> {
                   stream: _userDailyDataDocStream,
                   builder: (context, snapshot) {
                     if (snapshot.data?.data() == null) {
-                      // if (snapshot.connectionState == ConnectionState.waiting) {
                       print("data is null");
                       return const LoadingComponents();
                     }
