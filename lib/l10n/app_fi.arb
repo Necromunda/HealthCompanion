@@ -1,0 +1,201 @@
+{
+	"joined": "Liitytty",
+	"dateOfBirth": "Syntymäaika",
+	"signIn": "Kirjaudu sisään",
+	"signOut": "Kirjaudu ulos",
+	"stats": "Tilastot",
+	"achievements": "Saavutukset",
+	"generalTitle": "suomeksi",
+	"loadingProfile": "Ladataan profiilia",
+	"loadingStats": "Ladataan tilastoja",
+	"loadingBundles": "Ladataan bundleja",
+	"errorLoadingBundles": "Bundleja ei voitu ladata",
+	"lastEdited": "Viimeksi muokattu",
+	"account": "Tili",
+	"general": "Yleinen",
+	"changeTheme": "Vaihda teema",
+	"changeLocale": "Vaihda kieli",
+	"emptyBundle": "Tämä bundle on tyhjä",
+	"yourStats": "Tilastosi",
+	"statsComponentsAdded": "Komponentteja lisätty",
+	"statsComponentsDeleted": "Komponentteja poistettu",
+	"statsBundlesAdded": "Bundleja lisätty",
+	"statsBundlesDeleted": "Bundleja poistettu",
+	"statsAchievementsUnlocked": "Saavutuksia avattu",
+	"hintEmail": "Sähköposti",
+	"hintPassword": "Salasana",
+	"hintTitle": "Nimi",
+	"hintDescription": "Kuvaus",
+	"forgotPassword": "Unohditko salasanan?",
+	"createAccount": "Luo tili",
+	"error": "Virhe",
+	"more": "Lisää",
+	"member": "Jäsenyys",
+	"loading": "Ladataan",
+	"addComponent": "Lisää komponentti +",
+	"addNewComponent": "Lisää uusi komponentti",
+	"addExistingComponent": "Lisää olemassaoleva komponentti",
+	"addIngredient": "Lisää ainesosa +",
+	"addedIngredients": "Lisätyt ainesosat",
+	"search": "Haku",
+	"searchNoMatches": "Ei osumia",
+	"loadingComponents": "Ladataan komponentteja",
+	"authenticate": "Todenna",
+	"authenticated": "Todennettu",
+	"authenticating": "Todennetaan",
+	"authFailed": "Todentaminen epäonnistui",
+	"somethingWentWrong": "Jokin meni pieleen",
+	"incorrectPassword": "Salasana on virheellinen",
+	"incorrectEmail": "Sähköposti on virheellinen",
+	"incorrectUsername": "Käyttäjänimi on virheellinen",
+	"incorrectEmailAndOrPassword": "Incorrect email and/or password",
+	"noDescription": "Ei kuvausta",
+	"created": "Luotu",
+	"noIngredients": "Ei ainesosia",
+	"deleteAccountWarning": "Oletko varma että haluat poistaa tilisi? Tilin poistaminen on pysyvä toimenpide",
+	"proceed": "Jatka",
+	"cancel": "Peruuta",
+	"deleteAccount": "Poista tili",
+	"deletingAccount": "Poistetaan tiliä",
+	"accountDeleted": "Tili poistettu",
+	"titleMustNotBeEmpty": "Nimi ei voi olla tyhjä",
+	"forgotPasswordInfo": "Syötä sähköpostisi alas ja lähetämme sinulle linkin minkä avulla voit vaihtaa salasanasi",
+	"forgotPasswordInstructions": "Ohjeet salasanan vaihtamiseen on lähetetty sähköpostiosoitteeseen",
+	"send": "Lähetä",
+	"loggingIn": "Kirjaudutaan sisään",
+	"userNotFoundWithEmail": "Antamallasi sähköpostiosoitteella ei löytynyt käyttäjää",
+	"darkThemeSelected": "Tumma teema on valittuna",
+	"lightThemeSelected": "Vaalea teema on valittuna",
+	"macroLimits": "Makro rajat",
+	"accountDetails": "Tilin tiedot",
+	"locale": "Suomi",
+	"updateFailed": "Päivitys epäonnistui",
+	"username": "Käyttäjänimi",
+	"email": "Sähköposti",
+	"password": "Salasana",
+	"changeUsername": "Vaihda käyttäjänimi",
+	"changeEmail": "Vaihda sähköposti",
+	"changePassword": "Vaihda salasana",
+	"usernameUpdated": "Käyttäjänimi päivitetty",
+	"emailUpdated": "Sähköposti päivitetty",
+	"passwordUpdated": "Salasana päivitetty",
+	"passwordUpdatedSuccessfully": "Salasanasi on päivitetty onnistuneesti",
+	"usernameCouldNotBeUpdated": "Käyttäjänimeä ei voitu päivittää",
+	"emailCouldNotBeUpdated": "Sähköpostia ei voitu päivittää",
+	"passwordCouldNotBeUpdated": "Salasanaa ei voitu päivittää",
+	"reset": "Nollaa",
+	"confirm": "Vahvista",
+	"set": "Aseta",
+	"emailAlreadyInUse": "Sähköposti on jo käytössä",
+	"signInToContinue": "Kirjaudu sisään jatkaaksesi sovelluksen käyttöä",
+	"invalidUsername": "Käyttäjänimi ei kelpaa",
+	"invalidEmail": "Sähköposti ei kelpaa",
+	"invalidPassword": "Salasana ei kelpaa",
+	"registering": "Rekisteröidään",
+	"registerSuccessful": "Rekisteröinti onnistui",
+	"errorCreatingAccount": "Käyttäjää ei voitu luoda",
+	"creatingAccount": "Luodaan käyttäjää",
+	"noComponents": "Sinulla ei ole yhtään komponenttia",
+	"settings": "Asetukset",
+	"search": "Haku",
+	"overview": "Koti",
+	"components": "Komponentit",
+	"profile": "Profiili",
+	"signUpUsernameInfo": "Käyttäjänimen pitää alkaa kirjaimella, sisältää vain kirjaimia & numeroita sekä olla pituudeltaan 3 - 30 merkkiä pitkä. Käyttäjänimeä ei käytetä kirjautumisessa",
+	"signUpBackgroundInfo": "Syntymäaika, pituus ja paino ovat tarpeellisia tietoja kalorien & makrojen kulutuksen laskemisen kannalta",
+	"signUpEmailInfo": "Sähköpostin on oltava oikea sähköpostiosoite. Sähköpostia käytetään kirjautumisessa",
+	"signUpPasswordInfo": "Salasanan pitää sisältää vähintään yksi iso kirjain, pieni kirjain, numero & erikoismerkki sekä olla 8 - 64 merkkiä pitkä",
+	"height": "Pituus",
+	"weight": "Paino",
+	"initializing": "Alustetaan",
+	"limit": "Raja",
+	"portions": "{size, select, ports{Pieni annos} portm{Keskikokoinen annos} portl{Suuri annos} other{100 grammaa}}",
+	"@portions": {
+		"placeholders": {
+			"size": {
+				"type": "String"
+			}
+		}
+	},
+	"currentLimitIs": "Nykyinen raja on {limit}",
+	"@currentLimitIs": {
+		"placeholders": {
+			"limit": {
+				"type": "String"
+			}
+		}
+	},
+	"newUsernameIs": "Uusi käyttäjänimesi on {username}",
+	"@newUsernameIs": {
+		"placeholders": {
+			"username": {
+				"type": "String"
+			}
+		}
+	},
+	"newEmailIs": "Uusi sähköpostisi on {email}",
+	"@newEmailIs": {
+		"placeholders": {
+			"email": {
+				"type": "String"
+			}
+		}
+	},
+	"locales": "{locale, select, finnish{Suomi} english{Englanti} other{Ei tuettu}}",
+	"@locales": {
+		"placeholders": {
+			"locale": {
+				"type": "String"
+			}
+		}
+	},
+	"currentLocale": "Valittu kieli on {locale}",
+	"@currentLocale": {
+		"placeholders": {
+			"locale": {
+				"type": "String"
+			}
+		}
+	},
+	"component": "{count, plural, =1{Komponentti} other{Komponentit}}",
+	"@component": {
+		"placeholders": {
+			"count": {
+				"type": "num",
+				"format": "compact"
+			}
+		}
+	},
+	"categories": "{type, select, title{Kategoria} component{Komponentti} breakfast{Aamupala} lunch{Lounas} dinner{Päivällinen} snack{Välipala} other{Muu}}",
+	"@categories": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},
+	"macroType": "{type, select, title{Makrojen laskentatapa} individual{Yksittäinen} inherit{Peri aineksista} both{Molemmat} other{ERROR!}}",
+	"@macroType": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},
+	"macro": "{type, select, title{Makrot} energykj{Energia kJ} energykcal{Energia Kcal} kcal{Kcal} protein{Proteiini} carbohydrate{Hiilihydraatti} salt{Suola} sugar{Sokeri} fat{Rasva} saturatedfat{Tyydyttynyt rasva} fiber{Kuitu} organicacids{Orgaaniset hapot} alcohol{Alkoholi} sugaralcohol{Sokerialkoholi} other{ERROR!}}",
+	"@macro": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	},
+	"breakdownMacroTitle": "{type, select, individual{Makrot '(yksittäiset)'} inherit{Makrot '(peritty ainesosista)'} both{Makrot '(peritty ainesosista + yksittäiset)'} other{ERROR!}}",
+	"@breakdownMacroTitle": {
+		"placeholders": {
+			"type": {
+				"type": "String"
+			}
+		}
+	}
+}
