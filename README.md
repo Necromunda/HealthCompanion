@@ -127,9 +127,13 @@ Install flutter and dart from their respective sources.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-|                           Sign in                            |         Overview          |                            Profile                            |                        Create component                        |                           Statistics                           |                          Achievements                          |
-|:------------------------------------------------------------:|:-------------------------:|:-------------------------------------------------------------:|:--------------------------------------------------------------:|:--------------------------------------------------------------:|:--------------------------------------------------------------:|
-| <img src="assets/images/signin.png" alt="Logo" height="400"> | <img src="assets/images/overview.png" alt="Logo" height="400"> | <img src="assets/images/profile.png" alt="Logo" height="400"> | <img src="assets/images/create_component.png" alt="Logo" height="400"> | <img src="assets/images/stats.png" alt="Logo" height="400"> | <img src="assets/images/achievements.png" alt="Logo" height="400"> |
+|                           Sign in                            |         Overview          |                            Profile                            |
+|:------------------------------------------------------------:|:-------------------------:|:-------------------------------------------------------------:|
+| <img src="assets/images/signin.png" alt="Logo" height="400"> | <img src="assets/images/overview.png" alt="Logo" height="400"> | <img src="assets/images/profile.png" alt="Logo" height="400"> |
+
+|                        Create component                        |                           Statistics                           |                            Achievements                            |
+|:--------------------------------------------------------------:|:--------------------------------------------------------------:|:------------------------------------------------------------------:|
+| <img src="assets/images/create_component.png" alt="Logo" height="400"> | <img src="assets/images/stats.png" alt="Logo" height="400"> | <img src="assets/images/achievements.png" alt="Logo" height="400"> |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
