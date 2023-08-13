@@ -93,7 +93,6 @@ class _SignInState extends State<SignIn> {
             }
             if (snapshot.hasData) {
               print("VALUE : ${snapshot.data}");
-              // return const PageContainer();
               Future(() =>
                   Navigator.of(context).popUntil(ModalRoute.withName('/')));
             }
@@ -107,8 +106,7 @@ class _SignInState extends State<SignIn> {
   }
 
   void _loginButtonHandler() async {
-    // _login(_emailController.text, _passwordController.text);
-    _login('johannes.rantapaa@gmail.com', 'Johannes00!?');
+    _login(_emailController.text, _passwordController.text);
   }
 
   void _forgotPasswordButtonHandler() {
@@ -308,11 +306,8 @@ class _SignInState extends State<SignIn> {
       ),
       body: Center(
         child: Padding(
-          // padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            // mainAxisSize: MainAxisSize.max,
             children: [
               Align(
                 alignment: Alignment.topCenter,
