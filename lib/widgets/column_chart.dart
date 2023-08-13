@@ -1,27 +1,25 @@
-import 'package:collection/collection.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:health_companion/models/user_preferences_model.dart';
+import 'package:collection/collection.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:health_companion/models/bundle_model.dart';
+import 'package:health_companion/models/user_preferences_model.dart';
+import 'package:health_companion/util.dart';
 
-import '../util.dart';
-
-class BundleStatistics extends StatefulWidget {
+class ColumnChart extends StatefulWidget {
   final Bundle bundle;
   final UserPreferences userPreferences;
 
-  const BundleStatistics(
+  const ColumnChart(
       {Key? key, required this.bundle, required this.userPreferences})
       : super(key: key);
 
   @override
-  State<BundleStatistics> createState() => _BundleStatisticsState();
+  State<ColumnChart> createState() => _ColumnChartState();
 }
 
-class _BundleStatisticsState extends State<BundleStatistics> {
+class _ColumnChartState extends State<ColumnChart> {
   late final Bundle _bundle;
   late final UserPreferences _userPreferences;
   late final List<_ChartData> data;
@@ -52,8 +50,7 @@ class _BundleStatisticsState extends State<BundleStatistics> {
       _bundle.totalFat!,
       _bundle.totalFiber!,
       _bundle.totalOrganicAcids!,
-      // _bundle.totalProtein!,
-      10,
+      _bundle.totalProtein!,
       _bundle.totalSalt!,
       _bundle.totalSaturatedFat!,
       _bundle.totalSugar!,
@@ -92,57 +89,47 @@ class _BundleStatisticsState extends State<BundleStatistics> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.close),
+    return SizedBox(
+      height: 250,
+      child: SfCartesianChart(
+        primaryXAxis: CategoryAxis(
+          labelIntersectAction: AxisLabelIntersectAction.rotate45,
+          labelsExtent: 60,
         ),
-      ),
-      body: SizedBox(
-        height: 300,
-        child: SfCartesianChart(
-          primaryXAxis: CategoryAxis(
-            labelIntersectAction: AxisLabelIntersectAction.rotate45,
-            labelsExtent: 60,
+        primaryYAxis: NumericAxis(minimum: 0, interval: 5),
+        tooltipBehavior: TooltipBehavior(enable: true),
+        enableSideBySideSeriesPlacement: false,
+        series: <ChartSeries<_ChartData, String>>[
+          ColumnSeries<_ChartData, String>(
+            width: 0.9,
+            dataSource: data,
+            xValueMapper: (_ChartData data, _) =>
+                AppLocalizations.of(context)!.macro(data.x),
+            yValueMapper: (_ChartData data, _) => data.y,
+            name: AppLocalizations.of(context)!.macro('title'),
+            color: Util.getPrimaryColor(context),
           ),
-          primaryYAxis: NumericAxis(minimum: 0, interval: 5),
-          tooltipBehavior: TooltipBehavior(enable: true),
-          enableSideBySideSeriesPlacement: false,
-          series: <ChartSeries<_ChartData, String>>[
-            ColumnSeries<_ChartData, String>(
-              width: 0.9,
-              dataSource: data,
-              xValueMapper: (_ChartData data, _) =>
-                  AppLocalizations.of(context)!.macro(data.x),
-              yValueMapper: (_ChartData data, _) => data.y,
-              name: AppLocalizations.of(context)!.macro('title'),
-              color: Util.getPrimaryColor(context),
+          RangeColumnSeries<_ChartData, String>(
+            dataSource: data,
+            width: 0.9,
+            xValueMapper: (_ChartData data, _) =>
+                AppLocalizations.of(context)!.macro(data.x),
+            lowValueMapper: (_ChartData data, _) => data.y,
+            highValueMapper: (_ChartData data, _) => data.yLimit,
+            name: AppLocalizations.of(context)!.limit,
+            pointColorMapper: (_ChartData data, _) {
+              if (data.yLimit == null) {
+                return Util.getPrimaryColor(context);
+              } else {
+                return data.y <= data.yLimit! ? Colors.green : Colors.red;
+              }
+            },
+            dataLabelSettings: const DataLabelSettings(
+              isVisible: true,
+              // labelAlignment: ChartDataLabelAlignment.top,
             ),
-            RangeColumnSeries<_ChartData, String>(
-              dataSource: data,
-              width: 0.9,
-              xValueMapper: (_ChartData data, _) =>
-                  AppLocalizations.of(context)!.macro(data.x),
-              lowValueMapper: (_ChartData data, _) => data.y,
-              highValueMapper: (_ChartData data, _) => data.yLimit,
-              name: AppLocalizations.of(context)!.limit,
-              pointColorMapper: (_ChartData data, _) {
-                if (data.yLimit == null) {
-                  return Util.getPrimaryColor(context);
-                } else {
-                  return data.y <= data.yLimit! ? Colors.green : Colors.red;
-                }
-              },
-              dataLabelSettings: const DataLabelSettings(
-                isVisible: true,
-                labelAlignment: ChartDataLabelAlignment.top,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,7 @@
 import 'package:health_companion/screens/bundle_statistics_screen.dart';
+import 'package:health_companion/widgets/bar_chart.dart';
+import 'package:health_companion/widgets/circular_chart.dart';
+import 'package:health_companion/widgets/column_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +18,7 @@ import 'package:health_companion/models/user_preferences_model.dart';
 import 'package:health_companion/screens/add_new_component_screen.dart';
 import 'package:health_companion/screens/component_breakdown_screen.dart';
 import 'package:health_companion/screens/add_existing_component_screen.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Overview extends StatefulWidget {
   const Overview({Key? key}) : super(key: key);
@@ -308,36 +312,56 @@ class _OverviewState extends State<Overview> {
                               if (bundle.components!.isNotEmpty)
                                 Column(
                                   children: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          _bundleStatsButtonHandler(
-                                        bundle,
-                                        _userPreferences!,
-                                      ),
-                                      child: const Text('Bundle statistics'),
-                                    ),
+                                    // TextButton(
+                                    //   onPressed: () =>
+                                    //       _bundleStatsButtonHandler(
+                                    //     bundle,
+                                    //     _userPreferences!,
+                                    //   ),
+                                    //   child: const Text('Bundle statistics'),
+                                    // ),
                                     Chart(
                                       key: UniqueKey(),
                                       bundle: bundle,
                                       userPreferences: _userPreferences,
                                     ),
+                                    // CircularChart(bundle: bundle, userPreferences: _userPreferences ?? UserPreferences()),
+                                    // ColumnChart(
+                                    //   key: UniqueKey(),
+                                    //   bundle: bundle,
+                                    //   userPreferences: _userPreferences ?? UserPreferences(),
+                                    // ),
+                                    // BarChart(
+                                    //   key: UniqueKey(),
+                                    //   bundle: bundle,
+                                    //   userPreferences: _userPreferences ?? UserPreferences(),
+                                    // ),
                                   ],
                                 ),
+                              // const Divider(
+                              //   indent: 10,
+                              //   endIndent: 10,
+                              //   color: Colors.black,
+                              // ),
                               Text(
-                                "#${pageViewIndex + 1} Bundle $created: ${DateFormat('d.M H:mm').format(
-                                  bundle.creationDate!,
-                                )}",
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              Text(
-                                "$lastEdited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              const Divider(
-                                indent: 10,
-                                endIndent: 10,
-                                color: Colors.black,
-                              ),
+                                  "#${pageViewIndex + 1} $created: ${DateFormat('d.M H:mm').format(
+                                bundle.creationDate!,
+                              )}, ${lastEdited.toLowerCase()}: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}", style: const TextStyle(fontSize: 16),),
+                              // Text(
+                              //   "#${pageViewIndex + 1} Bundle $created: ${DateFormat('d.M H:mm').format(
+                              //     bundle.creationDate!,
+                              //   )}",
+                              //   style: const TextStyle(fontSize: 16),
+                              // ),
+                              // Text(
+                              //   "$lastEdited: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
+                              //   style: const TextStyle(fontSize: 16),
+                              // ),
+                              // const Divider(
+                              //   indent: 10,
+                              //   endIndent: 10,
+                              //   color: Colors.black,
+                              // ),
                               if (bundle.components!.isEmpty)
                                 Expanded(
                                   child: Center(
