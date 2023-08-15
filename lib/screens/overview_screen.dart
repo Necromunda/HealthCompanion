@@ -344,9 +344,12 @@ class _OverviewState extends State<Overview> {
                               //   color: Colors.black,
                               // ),
                               Text(
-                                  "#${pageViewIndex + 1} $created: ${DateFormat('d.M H:mm').format(
-                                bundle.creationDate!,
-                              )}, ${lastEdited.toLowerCase()}: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}", style: const TextStyle(fontSize: 16),),
+                                "#${pageViewIndex + 1} $created: ${DateFormat('d.M H:mm').format(
+                                  bundle.creationDate!,
+                                )}, ${lastEdited.toLowerCase()}: ${DateFormat('d.M H:mm').format(bundle.lastEdited!)}",
+                                style: const TextStyle(fontSize: 16),
+                                textAlign: TextAlign.center,
+                              ),
                               // Text(
                               //   "#${pageViewIndex + 1} Bundle $created: ${DateFormat('d.M H:mm').format(
                               //     bundle.creationDate!,
